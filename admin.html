@@ -3,13 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Admin Workspace | กองทุนสวัสดิการชุมชน</title>
+  <title>Admin Workspace | กองทุนสวัสดิการชุมชน (Secure Login)</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- 🚨 [NEW] นำเข้า LINE LIFF SDK -->
+  <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   
   <style>
@@ -17,16 +20,16 @@
       --admin-primary: #0F172A; /* Slate 900 */
       --admin-secondary: #1E293B; /* Slate 800 */
       --admin-accent: #3B82F6; /* Blue 500 */
+      --line-green: #06C755;
       --bg-light: #F8FAFC;
-      --text-muted: #64748B;
     }
     body { background-color: var(--bg-light); font-family: 'Prompt', sans-serif; color: #333; }
     
     /* 🔐 Login Gate Overlay */
     #loginGate { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--admin-primary); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; color: white; }
-    .login-box { background: var(--admin-secondary); padding: 40px; border-radius: 20px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.3); width: 90%; max-width: 400px; }
-    .pin-input { font-size: 2rem; text-align: center; letter-spacing: 10px; font-weight: bold; background: #0F172A; color: white; border: 1px solid #334155; border-radius: 12px; }
-    .pin-input:focus { border-color: var(--admin-accent); box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2); outline: none; }
+    .login-box { background: var(--admin-secondary); padding: 40px; border-radius: 20px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.3); width: 90%; max-width: 400px; border-top: 5px solid var(--line-green); }
+    .btn-line-login { background-color: var(--line-green); color: white; border: none; border-radius: 12px; padding: 14px; font-weight: 600; font-size: 1.1rem; width: 100%; transition: 0.3s; box-shadow: 0 10px 20px rgba(6, 199, 85, 0.2); }
+    .btn-line-login:hover { background-color: #05A346; color: white; transform: translateY(-2px); }
 
     /* 📊 Admin Navbar & Layout */
     .admin-navbar { background: var(--admin-primary); color: white; padding: 15px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
@@ -34,180 +37,110 @@
     .nav-pills .nav-link:hover { background: #1E293B; color: white; }
     .nav-pills .nav-link.active { background: var(--admin-accent); color: white; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3); }
     
-    /* 📦 Content Cards */
+    /* 📦 Content Cards & Tables */
     .dashboard-card { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; margin-bottom: 20px; }
     .stat-box { border-left: 4px solid var(--admin-accent); background: #F1F5F9; padding: 15px; border-radius: 0 10px 10px 0; }
-    
-    /* 📋 Data Tables */
     .table-responsive { border-radius: 12px; overflow: hidden; border: 1px solid #E2E8F0; }
     .table thead { background-color: var(--admin-secondary); color: white; }
     .table th { font-weight: 500; font-size: 0.9rem; padding: 15px; border-bottom: none; }
     .table td { padding: 15px; vertical-align: middle; font-size: 0.9rem; border-bottom: 1px solid #F1F5F9; }
     .table tbody tr:hover { background-color: #F8FAFC; }
-    
     .badge-status { padding: 6px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 600; }
     .bg-pending { background: #FEF3C7; color: #D97706; }
     .bg-approved { background: #DCFCE7; color: #166534; }
-    .bg-rejected { background: #FEE2E2; color: #991B1B; }
-    
     .btn-action { border-radius: 8px; padding: 6px 12px; font-size: 0.8rem; font-weight: 500; margin-right: 5px; }
     
-    /* Loading Spinner Overlay */
-    #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); z-index: 999; display: none; align-items: center; justify-content: center; flex-direction: column; }
+    #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 999; display: none; align-items: center; justify-content: center; flex-direction: column; }
   </style>
 </head>
 <body>
 
-<!-- 🔐 Security Gate: Admin Login -->
+<!-- 🔐 Security Gate: LINE Admin Login -->
 <div id="loginGate">
   <div class="login-box">
     <div class="mb-4">
-      <i class="fa-solid fa-shield-halved fa-3x text-primary mb-3"></i>
+      <i class="fa-solid fa-shield-check fa-3x text-success mb-3"></i>
       <h4 class="fw-bold">Admin Workspace</h4>
-      <p class="text-secondary small">ระบบจัดการกองทุนสวัสดิการชุมชน</p>
+      <p class="text-secondary small">เข้าสู่ระบบด้วยมาตรฐาน Zero-Trust Security</p>
     </div>
-    <input type="password" id="adminPin" class="form-control pin-input mb-4" placeholder="••••" maxlength="6" autocomplete="off">
-    <button onclick="verifyAdmin()" class="btn btn-primary w-100 py-3 fw-bold rounded-3">เข้าสู่ระบบจัดการ</button>
+    
+    <div id="loginStatusSection">
+      <div class="spinner-border text-success mb-2" role="status"></div>
+      <p class="text-white-50 small">กำลังตรวจสอบโปรไฟล์ LINE...</p>
+    </div>
+
+    <button id="btnLineLogin" onclick="handleLiffLogin()" class="btn-line-login" style="display: none;">
+      <i class="fa-brands fa-line me-2"></i> ยืนยันตัวตนผ่าน LINE
+    </button>
   </div>
 </div>
 
 <!-- ⏳ Loading Overlay -->
 <div id="loader">
   <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
-  <p class="mt-2 fw-medium text-dark">กำลังซิงค์ข้อมูลกับฐานข้อมูล...</p>
+  <p class="mt-2 fw-medium text-dark" id="loader-text">กำลังซิงค์ข้อมูล...</p>
 </div>
 
 <!-- 🖥️ Main Dashboard Layout -->
 <div id="mainWorkspace" style="display: none;">
-  
   <div class="admin-navbar d-flex justify-content-between align-items-center">
     <div>
       <h6 class="mb-0 fw-bold"><i class="fa-solid fa-database me-2 text-primary"></i>ศูนย์จัดการข้อมูลกองทุน</h6>
-      <small class="text-white-50" style="font-size: 0.7rem;">Sukhirin Community Welfare Fund</small>
+      <small class="text-white-50" style="font-size: 0.75rem;">ผู้ดูแลระบบ: <span id="adminNameDisplay" class="text-warning fw-bold"></span></small>
     </div>
-    <button onclick="logout()" class="btn btn-sm btn-outline-light rounded-circle" title="ออกจากระบบ"><i class="fa-solid fa-power-off"></i></button>
+    <button onclick="logout()" class="btn btn-sm btn-outline-light rounded-circle"><i class="fa-solid fa-power-off"></i></button>
   </div>
 
   <div class="container-fluid py-4">
     <div class="row">
-      
       <!-- 🗂️ Sidebar Navigation -->
       <div class="col-lg-2 col-md-3 mb-4">
-        <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-          <button class="nav-link active text-start" id="tab-overview" data-bs-toggle="pill" data-bs-target="#view-overview" type="button" role="tab" onclick="loadDashboardOverview()"><i class="fa-solid fa-chart-pie me-2"></i> ภาพรวมระบบ</button>
-          <button class="nav-link text-start" id="tab-members" data-bs-toggle="pill" data-bs-target="#view-members" type="button" role="tab" onclick="loadData('members')"><i class="fa-solid fa-users me-2"></i> ทะเบียนสมาชิก</button>
-          <button class="nav-link text-start" id="tab-transactions" data-bs-toggle="pill" data-bs-target="#view-transactions" type="button" role="tab" onclick="loadData('transactions')"><i class="fa-solid fa-money-bill-transfer me-2"></i> ระบบการเงิน <span class="badge bg-danger ms-1" id="badge-tx">0</span></button>
-          <button class="nav-link text-start" id="tab-claims" data-bs-toggle="pill" data-bs-target="#view-claims" type="button" role="tab" onclick="loadData('claims')"><i class="fa-solid fa-hand-holding-medical me-2"></i> ประวัติเบิกจ่าย <span class="badge bg-danger ms-1" id="badge-claim">0</span></button>
-          <button class="nav-link text-start" id="tab-rules" data-bs-toggle="pill" data-bs-target="#view-rules" type="button" role="tab" onclick="loadData('rules')"><i class="fa-solid fa-scale-balanced me-2"></i> ระเบียบสวัสดิการ</button>
+        <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
+          <button class="nav-link active text-start" data-bs-toggle="pill" data-bs-target="#view-overview" type="button" onclick="loadDashboardOverview()"><i class="fa-solid fa-chart-pie me-2"></i> ภาพรวมระบบ</button>
+          <button class="nav-link text-start" data-bs-toggle="pill" data-bs-target="#view-members" type="button" onclick="loadData('members')"><i class="fa-solid fa-users me-2"></i> ทะเบียนสมาชิก</button>
+          <button class="nav-link text-start" data-bs-toggle="pill" data-bs-target="#view-transactions" type="button" onclick="loadData('transactions')"><i class="fa-solid fa-money-bill-transfer me-2"></i> ระบบการเงิน <span class="badge bg-danger ms-1" id="badge-tx">0</span></button>
+          <button class="nav-link text-start" data-bs-toggle="pill" data-bs-target="#view-claims" type="button" onclick="loadData('claims')"><i class="fa-solid fa-hand-holding-medical me-2"></i> ประวัติเบิกจ่าย <span class="badge bg-danger ms-1" id="badge-claim">0</span></button>
+          <button class="nav-link text-start" data-bs-toggle="pill" data-bs-target="#view-rules" type="button" onclick="loadData('rules')"><i class="fa-solid fa-scale-balanced me-2"></i> ระเบียบสวัสดิการ</button>
         </div>
       </div>
 
       <!-- 🖥️ Content Area -->
       <div class="col-lg-10 col-md-9">
-        <div class="tab-content" id="v-pills-tabContent">
-          
-          <!-- View 1: ภาพรวมระบบ -->
-          <div class="tab-pane fade show active" id="view-overview" role="tabpanel">
+        <div class="tab-content">
+          <!-- ภาพรวม -->
+          <div class="tab-pane fade show active" id="view-overview">
             <h5 class="fw-bold mb-4 text-dark">ภาพรวมสถานะกองทุน</h5>
             <div class="row g-3">
-              <div class="col-md-3 col-6">
-                <div class="dashboard-card stat-box" style="border-left-color: #3B82F6;">
-                  <small class="text-muted d-block">สมาชิกทั้งหมด</small>
-                  <h3 class="fw-bold mb-0 text-dark" id="stat-members">--</h3>
-                </div>
-              </div>
-              <div class="col-md-3 col-6">
-                <div class="dashboard-card stat-box" style="border-left-color: #10B981;">
-                  <small class="text-muted d-block">เงินสมทบสะสม (บาท)</small>
-                  <h3 class="fw-bold mb-0 text-dark" id="stat-income">--</h3>
-                </div>
-              </div>
-              <div class="col-md-3 col-6">
-                <div class="dashboard-card stat-box" style="border-left-color: #F59E0B;">
-                  <small class="text-muted d-block">รอตรวจสลิป/รับเงิน</small>
-                  <h3 class="fw-bold mb-0 text-warning" id="stat-pending-tx">--</h3>
-                </div>
-              </div>
-              <div class="col-md-3 col-6">
-                <div class="dashboard-card stat-box" style="border-left-color: #EF4444;">
-                  <small class="text-muted d-block">รออนุมัติสวัสดิการ</small>
-                  <h3 class="fw-bold mb-0 text-danger" id="stat-pending-claim">--</h3>
-                </div>
-              </div>
-            </div>
-            
-            <div class="dashboard-card mt-4 bg-light border-0">
-              <h6 class="fw-bold text-primary"><i class="fa-solid fa-robot me-2"></i>SLA Automation Status</h6>
-              <p class="small text-muted mb-0">ระบบจะทำการตรวจสอบและอนุมัติอัตโนมัติ (คำขอที่เกิน 30 วัน) ทุกวันเวลาเที่ยงคืน พร้อมแจ้งเตือนเข้ากลุ่ม LINE กรรมการล่วงหน้า 10 วัน</p>
+              <div class="col-md-3 col-6"><div class="dashboard-card stat-box" style="border-left-color: #3B82F6;"><small class="text-muted d-block">สมาชิก</small><h3 class="fw-bold mb-0 text-dark" id="stat-members">--</h3></div></div>
+              <div class="col-md-3 col-6"><div class="dashboard-card stat-box" style="border-left-color: #10B981;"><small class="text-muted d-block">เงินสมทบ (บาท)</small><h3 class="fw-bold mb-0 text-dark" id="stat-income">--</h3></div></div>
+              <div class="col-md-3 col-6"><div class="dashboard-card stat-box" style="border-left-color: #F59E0B;"><small class="text-muted d-block">รอตรวจสลิป</small><h3 class="fw-bold mb-0 text-warning" id="stat-pending-tx">--</h3></div></div>
+              <div class="col-md-3 col-6"><div class="dashboard-card stat-box" style="border-left-color: #EF4444;"><small class="text-muted d-block">รออนุมัติสวัสดิการ</small><h3 class="fw-bold mb-0 text-danger" id="stat-pending-claim">--</h3></div></div>
             </div>
           </div>
 
-          <!-- View 2: ทะเบียนสมาชิก -->
-          <div class="tab-pane fade" id="view-members" role="tabpanel">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-              <h5 class="fw-bold text-dark mb-0">จัดการทะเบียนสมาชิก</h5>
-              <button class="btn btn-sm btn-outline-primary" onclick="loadData('members')"><i class="fa-solid fa-rotate me-1"></i> รีเฟรชข้อมูล</button>
-            </div>
-            <div class="dashboard-card p-0">
-              <div class="table-responsive">
-                <table class="table table-hover mb-0">
-                  <thead><tr><th>รหัสสมาชิก</th><th>วันที่สมัคร</th><th>ชื่อ-นามสกุล</th><th>ศูนย์/ชุมชน</th><th>แต้ม CWF</th><th>สถานะ</th></tr></thead>
-                  <tbody id="table-members"><tr><td colspan="6" class="text-center py-4 text-muted">กำลังโหลดข้อมูล...</td></tr></tbody>
-                </table>
-              </div>
-            </div>
+          <!-- สมาชิก -->
+          <div class="tab-pane fade" id="view-members">
+            <div class="d-flex justify-content-between mb-4"><h5 class="fw-bold">จัดการทะเบียนสมาชิก</h5><button class="btn btn-sm btn-outline-primary" onclick="loadData('members')"><i class="fa-solid fa-rotate me-1"></i></button></div>
+            <div class="dashboard-card p-0"><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>รหัสสมาชิก</th><th>วันที่สมัคร</th><th>ชื่อ-นามสกุล</th><th>ศูนย์</th><th>แต้ม</th><th>สถานะ</th></tr></thead><tbody id="table-members"></tbody></table></div></div>
           </div>
 
-          <!-- View 3: ระบบการเงิน -->
-          <div class="tab-pane fade" id="view-transactions" role="tabpanel">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-              <h5 class="fw-bold text-dark mb-0">ตรวจสอบสลิปและเงินสมทบ</h5>
-              <button class="btn btn-sm btn-outline-primary" onclick="loadData('transactions')"><i class="fa-solid fa-rotate me-1"></i> รีเฟรชข้อมูล</button>
-            </div>
-            <div class="dashboard-card p-0">
-              <div class="table-responsive">
-                <table class="table table-hover mb-0">
-                  <thead><tr><th>รหัสธุรกรรม</th><th>วันที่/เวลา</th><th>ชื่อ-นามสกุล</th><th>ยอดเงิน (฿)</th><th>ช่องทาง</th><th>หลักฐาน</th><th>สถานะ</th><th>การตัดสินใจ</th></tr></thead>
-                  <tbody id="table-transactions"><tr><td colspan="8" class="text-center py-4 text-muted">กำลังโหลดข้อมูล...</td></tr></tbody>
-                </table>
-              </div>
-            </div>
+          <!-- ธุรกรรม -->
+          <div class="tab-pane fade" id="view-transactions">
+            <div class="d-flex justify-content-between mb-4"><h5 class="fw-bold">ตรวจสอบเงินสมทบ</h5><button class="btn btn-sm btn-outline-primary" onclick="loadData('transactions')"><i class="fa-solid fa-rotate me-1"></i></button></div>
+            <div class="dashboard-card p-0"><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>รหัสธุรกรรม</th><th>วันที่/เวลา</th><th>ชื่อ-นามสกุล</th><th>ยอดเงิน</th><th>ช่องทาง</th><th>หลักฐาน</th><th>สถานะ</th><th>การตัดสินใจ</th></tr></thead><tbody id="table-transactions"></tbody></table></div></div>
           </div>
 
-          <!-- View 4: ประวัติเบิกจ่ายสวัสดิการ -->
-          <div class="tab-pane fade" id="view-claims" role="tabpanel">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-              <h5 class="fw-bold text-dark mb-0">พิจารณาคำขอเบิกสวัสดิการ</h5>
-              <button class="btn btn-sm btn-outline-primary" onclick="loadData('claims')"><i class="fa-solid fa-rotate me-1"></i> รีเฟรชข้อมูล</button>
-            </div>
-            <div class="dashboard-card p-0">
-              <div class="table-responsive">
-                <table class="table table-hover mb-0">
-                  <thead><tr><th>รหัสคำขอ</th><th>วันที่ยื่น</th><th>ชื่อ-นามสกุล</th><th>ประเภทสวัสดิการ</th><th>จำนวนเงิน (฿)</th><th>เอกสาร</th><th>สถานะคำขอ</th><th>การพิจารณา</th></tr></thead>
-                  <tbody id="table-claims"><tr><td colspan="8" class="text-center py-4 text-muted">กำลังโหลดข้อมูล...</td></tr></tbody>
-                </table>
-              </div>
-            </div>
+          <!-- เบิกจ่าย -->
+          <div class="tab-pane fade" id="view-claims">
+            <div class="d-flex justify-content-between mb-4"><h5 class="fw-bold">พิจารณาคำขอเบิก</h5><button class="btn btn-sm btn-outline-primary" onclick="loadData('claims')"><i class="fa-solid fa-rotate me-1"></i></button></div>
+            <div class="dashboard-card p-0"><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>รหัสคำขอ</th><th>วันที่ยื่น</th><th>ชื่อ-นามสกุล</th><th>ประเภท</th><th>ยอดเงิน</th><th>เอกสาร</th><th>สถานะ</th><th>พิจารณา</th></tr></thead><tbody id="table-claims"></tbody></table></div></div>
           </div>
 
-          <!-- View 5: ระเบียบสวัสดิการ -->
-          <div class="tab-pane fade" id="view-rules" role="tabpanel">
-            <div class="alert alert-info border-0 d-flex align-items-center" role="alert">
-              <i class="fa-solid fa-circle-info fa-2x me-3"></i>
-              <div>
-                <strong>คำแนะนำสำหรับผู้ดูแลระบบ:</strong> การแสดงผลระเบียบสวัสดิการที่ดึงจากระบบอัตโนมัติ เพื่อให้คณะกรรมการตรวจสอบเงื่อนไขปัจจุบัน
-              </div>
-            </div>
-            <div class="dashboard-card p-0 mt-3">
-              <div class="table-responsive">
-                <table class="table table-hover mb-0">
-                  <thead><tr><th>ประเภทสวัสดิการ</th><th>อายุสมาชิกขั้นต่ำ (วัน)</th><th>สูงสุดต่อครั้ง (฿)</th><th>สูงสุดต่อปี (฿)</th><th>สถานะเปิดใช้งาน</th></tr></thead>
-                  <tbody id="table-rules"><tr><td colspan="5" class="text-center py-4 text-muted">กำลังโหลดข้อมูล...</td></tr></tbody>
-                </table>
-              </div>
-            </div>
+          <!-- ระเบียบ -->
+          <div class="tab-pane fade" id="view-rules">
+            <h5 class="fw-bold mb-4">ระเบียบสวัสดิการ</h5>
+            <div class="dashboard-card p-0"><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>ประเภทสวัสดิการ</th><th>อายุสมาชิกขั้นต่ำ (วัน)</th><th>สูงสุดต่อครั้ง (฿)</th><th>สูงสุดต่อปี (฿)</th><th>สถานะ</th></tr></thead><tbody id="table-rules"></tbody></table></div></div>
           </div>
-
         </div>
       </div>
     </div>
@@ -216,28 +149,99 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  // ⚠️ ใช้ GAS_API_URL เส้นเดียวกับระบบหลักของคุณ
-  const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxgI_DtJa8IbX18N_-eJX4ZBvtpt_s1u9hrvEEzrYZwmJ-t6pFA_rMlchMTDNRxD8Y4/exec"; 
-  const ADMIN_SECRET_PIN = "123456"; 
+  // ==========================================
+  // ⚙️ CONFIGURATION & STATE
+  // ==========================================
+  const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzmTZH5oLyEgCNmdG0NCCaztLalpk4PDMJnU6BnnkhdJOt9g517d25w07do-QNRvLyG/exec"; 
+  
+  // 🚨 [IMPORTANT] ใส่รหัส LIFF ID สำหรับหน้า Admin ของคุณที่นี่
+  const LIFF_ID_ADMIN = "2010764982-wudH3EsZ"; 
+  
+  let currentAdminData = { uid: "", name: "", role: "" };
 
-  function verifyAdmin() {
-    const pin = document.getElementById('adminPin').value;
-    if (pin === ADMIN_SECRET_PIN) {
-      document.getElementById('loginGate').style.display = 'none';
-      document.getElementById('mainWorkspace').style.display = 'block';
-      loadDashboardOverview();
-    } else {
-      Swal.fire({ icon: 'error', title: 'รหัสผ่านไม่ถูกต้อง', text: 'ปฏิเสธการเข้าถึงระบบบริหารจัดการ' });
-      document.getElementById('adminPin').value = '';
+  // ==========================================
+  // 🔐 ZERO-TRUST AUTHENTICATION (LIFF)
+  // ==========================================
+  document.addEventListener("DOMContentLoaded", () => {
+    initializeLiff();
+  });
+
+  async function initializeLiff() {
+    try {
+      await liff.init({ liffId: LIFF_ID_ADMIN });
+      
+      if (liff.isLoggedIn()) {
+        const profile = await liff.getProfile();
+        verifyAdminWhitelist(profile.userId);
+      } else {
+        // กรณียังไม่ได้ล็อกอิน ให้แสดงปุ่ม LINE
+        document.getElementById('loginStatusSection').style.display = 'none';
+        document.getElementById('btnLineLogin').style.display = 'block';
+      }
+    } catch (err) {
+      document.getElementById('loginStatusSection').innerHTML = `<p class="text-danger small">Liff Init Error: ${err.message}</p>`;
+    }
+  }
+
+  function handleLiffLogin() {
+    if (!liff.isLoggedIn()) {
+      liff.login();
     }
   }
 
   function logout() {
-    document.getElementById('mainWorkspace').style.display = 'none';
-    document.getElementById('loginGate').style.display = 'flex';
-    document.getElementById('adminPin').value = '';
+    liff.logout();
+    window.location.reload();
   }
 
+  async function verifyAdminWhitelist(uid) {
+    document.getElementById('loader-text').innerText = "กำลังยืนยันสิทธิ์ผู้ดูแลระบบ...";
+    showLoader(true);
+
+    try {
+      const response = await fetch(GAS_API_URL, {
+        method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "verifyAdmin", uid: uid })
+      });
+      const res = await response.json();
+      showLoader(false);
+
+      if (res.status === 'success') {
+        // อนุมัติการเข้าถึง
+        currentAdminData = res.adminData;
+        document.getElementById('adminNameDisplay').innerText = `${currentAdminData.name} (${currentAdminData.role})`;
+        document.getElementById('loginGate').style.display = 'none';
+        document.getElementById('mainWorkspace').style.display = 'block';
+        loadDashboardOverview();
+        
+        Swal.fire({
+          icon: 'success',
+          title: 'เข้าสู่ระบบสำเร็จ',
+          text: `ยินดีต้อนรับคุณ ${currentAdminData.name}`,
+          timer: 1500,
+          showConfirmButton: false
+        });
+      } else {
+        // ปฏิเสธการเข้าถึง (ไม่พบในชีต Admins)
+        Swal.fire({
+          icon: 'error',
+          title: 'Access Denied',
+          text: res.message,
+          confirmButtonColor: '#3B82F6'
+        }).then(() => {
+          liff.logout(); // บังคับเตะออก
+          window.location.reload();
+        });
+      }
+    } catch (error) {
+      showLoader(false);
+      Swal.fire('ข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้', 'error');
+    }
+  }
+
+  // ==========================================
+  // 🚀 CORE DATA & UI ENGINE
+  // ==========================================
   function showLoader(show) { document.getElementById('loader').style.display = show ? 'flex' : 'none'; }
 
   async function loadDashboardOverview() {
@@ -256,9 +260,7 @@
         document.getElementById('badge-tx').innerText = res.data.pendingTx;
         document.getElementById('badge-claim').innerText = res.data.pendingClaims;
       }
-    } catch (e) {
-      console.error("Error loading overview", e);
-    }
+    } catch (e) { console.error(e); }
     showLoader(false);
   }
 
@@ -270,101 +272,41 @@
         body: JSON.stringify({ action: "getAdminData", module: moduleName })
       });
       const res = await response.json();
-      
-      if(res.status === 'success') {
-        renderTable(moduleName, res.data);
-      } else {
-        document.getElementById(`table-${moduleName}`).innerHTML = `<tr><td colspan="8" class="text-center text-danger py-4">${res.message}</td></tr>`;
-      }
-    } catch (error) {
-      document.getElementById(`table-${moduleName}`).innerHTML = `<tr><td colspan="8" class="text-center text-danger py-4">เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์</td></tr>`;
-    }
+      if(res.status === 'success') renderTable(moduleName, res.data);
+    } catch (error) { console.error(error); }
     showLoader(false);
   }
 
-  // ฟังก์ชันเรนเดอร์ข้อมูลลงในตารางแต่ละหมวดหมู่
   function renderTable(module, dataArray) {
     const tbody = document.getElementById(`table-${module}`);
     if (!dataArray || dataArray.length === 0) {
       tbody.innerHTML = `<tr><td colspan="8" class="text-center py-4 text-muted">ไม่พบข้อมูลในระบบ</td></tr>`;
       return;
     }
-
     tbody.innerHTML = "";
     dataArray.forEach(item => {
       if (module === 'members') {
-        tbody.innerHTML += `
-          <tr>
-            <td><strong class="text-primary">${item.id}</strong></td>
-            <td>${item.date}</td>
-            <td>${item.name}</td>
-            <td>${item.center}</td>
-            <td><span class="badge bg-warning text-dark">${item.cwfPoints} แต้ม</span></td>
-            <td><span class="badge-status ${item.status === 'เป็นสมาชิก' ? 'bg-approved' : 'bg-pending'}">${item.status}</span></td>
-          </tr>
-        `;
+        tbody.innerHTML += `<tr><td><strong class="text-primary">${item.id}</strong></td><td>${item.date}</td><td>${item.name}</td><td>${item.center}</td><td><span class="badge bg-warning text-dark">${item.cwfPoints} แต้ม</span></td><td><span class="badge-status ${item.status === 'เป็นสมาชิก' ? 'bg-approved' : 'bg-pending'}">${item.status}</span></td></tr>`;
       } 
       else if (module === 'transactions') {
         const isPending = item.status === 'รอตรวจสอบ' || item.status === 'รอคณะกรรมการยืนยันรับเงินสด';
-        tbody.innerHTML += `
-          <tr>
-            <td><strong class="text-dark">${item.txId}</strong></td>
-            <td>${item.date}</td>
-            <td>${item.name}</td>
-            <td class="fw-bold text-success">${item.amount} ฿</td>
-            <td><span class="badge bg-light text-dark border">${item.method}</span></td>
-            <td>${item.slipUrl !== '-' ? `<a href="${item.slipUrl}" target="_blank" class="btn btn-sm btn-outline-secondary py-0 px-2"><i class="fa-solid fa-receipt"></i> ดูสลิป</a>` : '-'}</td>
-            <td><span class="badge-status ${isPending ? 'bg-pending' : 'bg-approved'}">${item.status}</span></td>
-            <td>
-              ${isPending ? `
-                <button onclick="updateStatus('transactions', ${item.rowIndex}, 'อนุมัติแล้ว', '${item.txId}')" class="btn btn-sm btn-success btn-action"><i class="fa-solid fa-check"></i> อนุมัติ</button>
-                <button onclick="updateStatus('transactions', ${item.rowIndex}, 'ปฏิเสธ/สลิปไม่ถูกต้อง', '${item.txId}')" class="btn btn-sm btn-danger btn-action"><i class="fa-solid fa-xmark"></i> ปฏิเสธ</button>
-              ` : '<span class="text-muted small">ดำเนินการแล้ว</span>'}
-            </td>
-          </tr>
-        `;
+        tbody.innerHTML += `<tr><td><strong class="text-dark">${item.txId}</strong></td><td>${item.date}</td><td>${item.name}</td><td class="fw-bold text-success">${item.amount} ฿</td><td><span class="badge bg-light text-dark border">${item.method}</span></td><td>${item.slipUrl !== '-' ? `<a href="${item.slipUrl}" target="_blank" class="btn btn-sm btn-outline-secondary py-0 px-2"><i class="fa-solid fa-receipt"></i> ดูสลิป</a>` : '-'}</td><td><span class="badge-status ${isPending ? 'bg-pending' : 'bg-approved'}">${item.status}</span></td><td>${isPending ? `<button onclick="updateStatus('transactions', ${item.rowIndex}, 'อนุมัติแล้ว', '${item.txId}')" class="btn btn-sm btn-success btn-action">อนุมัติ</button><button onclick="updateStatus('transactions', ${item.rowIndex}, 'ปฏิเสธ/สลิปไม่ถูกต้อง', '${item.txId}')" class="btn btn-sm btn-danger btn-action">ปฏิเสธ</button>` : '<span class="text-muted small">ดำเนินการแล้ว</span>'}</td></tr>`;
       } 
       else if (module === 'claims') {
         const isPending = item.status === 'รอคณะกรรมการตรวจสอบ';
-        tbody.innerHTML += `
-          <tr>
-            <td><strong class="text-dark">${item.claimId}</strong></td>
-            <td>${item.date}</td>
-            <td>${item.name}</td>
-            <td>${item.welfareName}</td>
-            <td class="fw-bold text-primary">${item.amount} ฿</td>
-            <td>${item.docUrl !== '-' ? `<a href="${item.docUrl}" target="_blank" class="btn btn-sm btn-outline-secondary py-0 px-2"><i class="fa-solid fa-file-pdf"></i> ดูเอกสาร</a>` : '-'}</td>
-            <td><span class="badge-status ${isPending ? 'bg-pending' : 'bg-approved'}">${item.status}</span></td>
-            <td>
-              ${isPending ? `
-                <button onclick="updateStatus('claims', ${item.rowIndex}, 'อนุมัติแล้ว', '${item.claimId}')" class="btn btn-sm btn-success btn-action"><i class="fa-solid fa-check"></i> อนุมัติ</button>
-                <button onclick="updateStatus('claims', ${item.rowIndex}, 'ปฏิเสธ/เอกสารไม่ครบ', '${item.claimId}')" class="btn btn-sm btn-danger btn-action"><i class="fa-solid fa-xmark"></i> ปฏิเสธ</button>
-              ` : '<span class="text-muted small">ดำเนินการแล้ว</span>'}
-            </td>
-          </tr>
-        `;
+        tbody.innerHTML += `<tr><td><strong class="text-dark">${item.claimId}</strong></td><td>${item.date}</td><td>${item.name}</td><td>${item.welfareName}</td><td class="fw-bold text-primary">${item.amount} ฿</td><td>${item.docUrl !== '-' ? `<a href="${item.docUrl}" target="_blank" class="btn btn-sm btn-outline-secondary py-0 px-2">ดูเอกสาร</a>` : '-'}</td><td><span class="badge-status ${isPending ? 'bg-pending' : 'bg-approved'}">${item.status}</span></td><td>${isPending ? `<button onclick="updateStatus('claims', ${item.rowIndex}, 'อนุมัติแล้ว', '${item.claimId}')" class="btn btn-sm btn-success btn-action">อนุมัติ</button><button onclick="updateStatus('claims', ${item.rowIndex}, 'ปฏิเสธ/เอกสารไม่ครบ', '${item.claimId}')" class="btn btn-sm btn-danger btn-action">ปฏิเสธ</button>` : '<span class="text-muted small">ดำเนินการแล้ว</span>'}</td></tr>`;
       } 
       else if (module === 'rules') {
-        tbody.innerHTML += `
-          <tr>
-            <td><strong class="text-dark">${item.welfareName}</strong></td>
-            <td>${item.minDays} วัน</td>
-            <td>${item.maxPerClaim.toLocaleString()} ฿</td>
-            <td>${item.maxPerYear.toLocaleString()} ฿</td>
-            <td><span class="badge ${item.isActive ? 'bg-success' : 'bg-secondary'}">${item.isActive ? 'เปิดใช้งาน' : 'ปิดใช้งาน'}</span></td>
-          </tr>
-        `;
+        tbody.innerHTML += `<tr><td><strong class="text-dark">${item.welfareName}</strong></td><td>${item.minDays} วัน</td><td>${item.maxPerClaim.toLocaleString()} ฿</td><td>${item.maxPerYear.toLocaleString()} ฿</td><td><span class="badge ${item.isActive ? 'bg-success' : 'bg-secondary'}">${item.isActive ? 'เปิดใช้งาน' : 'ปิดใช้งาน'}</span></td></tr>`;
       }
     });
   }
 
-  // ฟังก์ชันอัปเดตสถานะ (อนุมัติ / ปฏิเสธ)
   async function updateStatus(module, rowIndex, newStatus, id) {
     const actionText = newStatus.includes('อนุมัติ') ? 'อนุมัติรายการนี้' : 'ปฏิเสธรายการนี้';
-    
     Swal.fire({
       title: 'ยืนยันการพิจารณา?',
-      text: `คุณต้องการ${actionText} (รหัส: ${id})`,
+      text: `คุณต้องการ${actionText} (รหัส: ${id})\nทำรายการโดย: ${currentAdminData.name}`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3B82F6',
@@ -373,26 +315,26 @@
       cancelButtonText: 'ยกเลิก'
     }).then(async (result) => {
       if (result.isConfirmed) {
+        document.getElementById('loader-text').innerText = "กำลังบันทึกและส่งแจ้งเตือน...";
         showLoader(true);
         try {
           const response = await fetch(GAS_API_URL, {
-            method: "POST",
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
             body: JSON.stringify({
               action: "adminUpdateStatus",
               module: module,
               rowIndex: rowIndex,
               status: newStatus,
-              id: id
+              id: id,
+              adminName: currentAdminData.name // 🚨 [NEW] ส่งชื่อแอดมินไปเก็บใน Audit Trail
             })
           });
           const res = await response.json();
           showLoader(false);
-
           if (res.status === 'success') {
             Swal.fire('สำเร็จ', res.message, 'success');
-            loadData(module); // รีโหลดตารางข้อมูลใหม่
-            loadDashboardOverview(); // อัปเดตตัวเลขสรุปภาพรวม
+            loadData(module); 
+            loadDashboardOverview(); 
           } else {
             Swal.fire('ข้อผิดพลาด', res.message, 'error');
           }
