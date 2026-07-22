@@ -45,10 +45,10 @@
       border-radius: 12px; 
       border: 1px solid #E2E8F0; 
       overflow-x: auto; 
-      -webkit-overflow-scrolling: touch; /* ให้เลื่อนบนมือถือได้สมูทขึ้น */
+      -webkit-overflow-scrolling: touch; 
     }
     .table th, .table td { 
-      white-space: nowrap; /* ห้ามข้อความตกบรรทัด */
+      white-space: nowrap; 
       vertical-align: middle; 
       font-size: 0.9rem;
       padding: 15px;
@@ -56,13 +56,13 @@
     .table thead { background-color: var(--admin-secondary); color: white; }
     .table tbody tr:hover { background-color: #F8FAFC; }
     
-    /* 🎯 Sticky Action Column: ตรึงปุ่มกดไว้ขวาสุดเสมอ */
+    /* 🎯 Sticky Action Column */
     .table thead th:last-child,
     .table tbody td:last-child {
       position: sticky;
       right: 0;
       background-color: white;
-      box-shadow: -4px 0 8px rgba(0,0,0,0.05); /* สร้างเงาให้ดูมีมิติว่าเลื่อนได้ */
+      box-shadow: -4px 0 8px rgba(0,0,0,0.05);
       z-index: 1;
     }
     .table thead th:last-child {
@@ -85,7 +85,6 @@
 
     /* 📱 Mobile Specific Adjustments */
     @media (max-width: 768px) {
-      /* ปรับเมนูด้านซ้ายให้เป็นแนวนอนและใช้นิ้วเลื่อนได้ */
       .nav-pills {
         display: flex;
         flex-direction: row !important;
@@ -291,7 +290,6 @@
     try {
       const response = await fetch(GAS_API_URL, {
         method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
-        // 🚨 ส่ง adminUid ไปด้วย
         body: JSON.stringify({ action: "getAdminOverview", adminUid: currentAdminData.uid }) 
       });
       const res = await response.json();
@@ -312,12 +310,10 @@
     try {
       const response = await fetch(GAS_API_URL, {
         method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
-        // 🚨 ส่ง adminUid ไปด้วย
         body: JSON.stringify({ action: "getAdminData", module: moduleName, adminUid: currentAdminData.uid })
       });
       const res = await response.json();
       if(res.status === 'success') {
-         // เก็บ Role ไว้ใช้ควบคุม UI
          currentAdminData.role = res.userRole; 
          renderTable(moduleName, res.data);
       }
@@ -339,7 +335,6 @@
       else if (module === 'transactions') {
         const isPending = item.status === 'รอตรวจสอบ' || item.status === 'รอคณะกรรมการยืนยันรับเงินสด';
         
-        // 🚨 [วางตรงนี้] ระบบเช็ก Role เพื่อเปลี่ยนหน้าตาปุ่มตามสิทธิ์ Maker-Checker
         let actionButtons = '';
         if (currentAdminData.role === 'Admin-ศูนย์ประสานงาน') {
           actionButtons = `<button onclick="updateStatus('${module}', ${item.rowIndex}, 'ตรวจสอบผ่าน', '${item.txId}')" class="btn btn-sm btn-info btn-action text-white">ตรวจสอบผ่าน</button>
@@ -364,12 +359,27 @@
       }
       else if (module === 'claims') {
         const isPending = item.status === 'รอคณะกรรมการตรวจสอบ';
+        
+        // 🚨 [FIXED] เพิ่มระบบเช็ก Role Maker-Checker ให้กับโมดูลเบิกจ่ายสวัสดิการแล้ว
+        let actionButtons = '';
+        if (currentAdminData.role === 'Admin-ศูนย์ประสานงาน') {
+          actionButtons = `<button onclick="updateStatus('${module}', ${item.rowIndex}, 'ตรวจสอบผ่าน', '${item.claimId}')" class="btn btn-sm btn-info btn-action text-white">ตรวจสอบผ่าน</button>
+                           <button onclick="updateStatus('${module}', ${item.rowIndex}, 'ปฏิเสธ/ส่งกลับ', '${item.claimId}')" class="btn btn-sm btn-danger btn-action">ปฏิเสธ</button>`;
+        } else {
+          actionButtons = `<button onclick="updateStatus('${module}', ${item.rowIndex}, 'อนุมัติแล้ว', '${item.claimId}')" class="btn btn-sm btn-success btn-action">อนุมัติเงิน</button>
+                           <button onclick="updateStatus('${module}', ${item.rowIndex}, 'ปฏิเสธข้อมูล', '${item.claimId}')" class="btn btn-sm btn-danger btn-action">ปฏิเสธ</button>`;
+        }
+
         tbody.innerHTML += `<tr>
-          <td><strong class="text-dark">${item.claimId}</strong></td><td>${item.date}</td><td>${item.name}</td><td>${item.welfareName}</td><td class="fw-bold text-primary">${item.amount} ฿</td>
+          <td><strong class="text-dark">${item.claimId}</strong></td>
+          <td>${item.date}</td>
+          <td>${item.name}</td>
+          <td>${item.welfareName}</td>
+          <td class="fw-bold text-primary">${item.amount} ฿</td>
           <td>${item.docUrl !== '-' ? `<a href="${item.docUrl}" target="_blank" class="btn btn-sm btn-outline-secondary py-0 px-2">ดูเอกสาร</a>` : '-'}</td>
           <td><span class="badge-status ${isPending ? 'bg-pending' : 'bg-approved'}">${item.status}</span></td>
           <td class="text-center">
-            ${isPending ? `<div class="action-group"><button onclick="updateStatus('claims', ${item.rowIndex}, 'อนุมัติแล้ว', '${item.claimId}')" class="btn btn-sm btn-success btn-action">อนุมัติ</button><button onclick="updateStatus('claims', ${item.rowIndex}, 'ปฏิเสธ/เอกสารไม่ครบ', '${item.claimId}')" class="btn btn-sm btn-danger btn-action">ปฏิเสธ</button></div>` : '<span class="text-muted small">ดำเนินการแล้ว</span>'}
+            ${isPending ? `<div class="action-group">${actionButtons}</div>` : '<span class="text-muted small">ดำเนินการแล้ว</span>'}
           </td>
         </tr>`;
       } 
@@ -380,10 +390,10 @@
   }
 
   async function updateStatus(module, rowIndex, newStatus, id) {
-    const actionText = newStatus.includes('อนุมัติ') ? 'อนุมัติรายการนี้' : 'ปฏิเสธรายการนี้';
+    const actionText = newStatus.includes('อนุมัติ') || newStatus.includes('ตรวจสอบผ่าน') ? 'พิจารณาอนุมัติรายการนี้' : 'ปฏิเสธรายการนี้';
     Swal.fire({
       title: 'ยืนยันการพิจารณา?',
-      text: `คุณต้องการ${actionText} (รหัส: ${id})\nทำรายการโดย: ${currentAdminData.name}`,
+      text: `คุณต้องการ${actionText} (รหัส: ${id})\nทำรายการโดย: ${currentAdminData.name} (${currentAdminData.role})`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3B82F6',
@@ -392,7 +402,7 @@
       cancelButtonText: 'ยกเลิก'
     }).then(async (result) => {
       if (result.isConfirmed) {
-        document.getElementById('loader-text').innerText = "กำลังบันทึกและสร้างเอกสาร...";
+        document.getElementById('loader-text').innerText = "กำลังบันทึกและตรวจสอบสิทธิ์...";
         showLoader(true);
         try {
           const response = await fetch(GAS_API_URL, {
@@ -403,7 +413,7 @@
               rowIndex: rowIndex,
               status: newStatus,
               id: id,
-              adminUid: currentAdminData.uid // 🚨 ส่ง UID ของแอดมินไปให้ระบบหลังบ้านตรวจสอบสิทธิ์
+              adminUid: currentAdminData.uid 
             })
           });
           const res = await response.json();
@@ -417,7 +427,7 @@
           }
         } catch (err) {
           showLoader(false);
-          Swal.fire('ข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้', 'error');
+          Swal.fire('ข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์กับ Google Apps Script ได้', 'error');
         }
       }
     });
