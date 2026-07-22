@@ -214,7 +214,7 @@
   // ==========================================
   // ⚙️ CONFIGURATION & STATE
   // ==========================================
-  const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwenEl7UjUMxAsQy4LHhZILe9-qvzWwhFNFwoZ1KJsXC3aLRKRFqfaZNAd0---xgjoP/exec"; 
+  const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxl40GUVyOAyEYKgstghIvXtQUdC7Ck-xWeD8NuGEbunazQv060QIiPKav89Dyq4kKh/exec"; 
   const LIFF_ID_ADMIN = "2010764982-wudH3EsZ"; 
   
   let currentAdminData = { uid: "", name: "", role: "" };
@@ -291,7 +291,8 @@
     try {
       const response = await fetch(GAS_API_URL, {
         method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({ action: "getAdminOverview" })
+        // 🚨 ส่ง adminUid ไปด้วย
+        body: JSON.stringify({ action: "getAdminOverview", adminUid: currentAdminData.uid }) 
       });
       const res = await response.json();
       if(res.status === 'success') {
@@ -311,10 +312,15 @@
     try {
       const response = await fetch(GAS_API_URL, {
         method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({ action: "getAdminData", module: moduleName })
+        // 🚨 ส่ง adminUid ไปด้วย
+        body: JSON.stringify({ action: "getAdminData", module: moduleName, adminUid: currentAdminData.uid })
       });
       const res = await response.json();
-      if(res.status === 'success') renderTable(moduleName, res.data);
+      if(res.status === 'success') {
+         // เก็บ Role ไว้ใช้ควบคุม UI
+         currentAdminData.role = res.userRole; 
+         renderTable(moduleName, res.data);
+      }
     } catch (error) { console.error(error); }
     showLoader(false);
   }
@@ -332,16 +338,30 @@
       } 
       else if (module === 'transactions') {
         const isPending = item.status === 'รอตรวจสอบ' || item.status === 'รอคณะกรรมการยืนยันรับเงินสด';
+        
+        // 🚨 [วางตรงนี้] ระบบเช็ก Role เพื่อเปลี่ยนหน้าตาปุ่มตามสิทธิ์ Maker-Checker
+        let actionButtons = '';
+        if (currentAdminData.role === 'Admin-ศูนย์ประสานงาน') {
+          actionButtons = `<button onclick="updateStatus('${module}', ${item.rowIndex}, 'ตรวจสอบผ่าน', '${item.txId}')" class="btn btn-sm btn-info btn-action text-white">ตรวจสอบผ่าน</button>
+                           <button onclick="updateStatus('${module}', ${item.rowIndex}, 'ปฏิเสธ/ส่งกลับ', '${item.txId}')" class="btn btn-sm btn-danger btn-action">ปฏิเสธ</button>`;
+        } else {
+          actionButtons = `<button onclick="updateStatus('${module}', ${item.rowIndex}, 'อนุมัติแล้ว', '${item.txId}')" class="btn btn-sm btn-success btn-action">อนุมัติเงิน</button>
+                           <button onclick="updateStatus('${module}', ${item.rowIndex}, 'ปฏิเสธข้อมูล', '${item.txId}')" class="btn btn-sm btn-danger btn-action">ปฏิเสธ</button>`;
+        }
+
         tbody.innerHTML += `<tr>
-          <td><strong class="text-dark">${item.txId}</strong></td><td>${item.date}</td><td>${item.name}</td><td class="fw-bold text-success">${item.amount} ฿</td>
+          <td><strong class="text-dark">${item.txId}</strong></td>
+          <td>${item.date}</td>
+          <td>${item.name}</td>
+          <td class="fw-bold text-success">${item.amount} ฿</td>
           <td><span class="badge bg-light text-dark border">${item.method}</span></td>
           <td>${item.slipUrl !== '-' ? `<a href="${item.slipUrl}" target="_blank" class="btn btn-sm btn-outline-secondary py-0 px-2"><i class="fa-solid fa-receipt"></i> ดูสลิป</a>` : '-'}</td>
           <td><span class="badge-status ${isPending ? 'bg-pending' : 'bg-approved'}">${item.status}</span></td>
           <td class="text-center">
-            ${isPending ? `<div class="action-group"><button onclick="updateStatus('transactions', ${item.rowIndex}, 'อนุมัติแล้ว', '${item.txId}')" class="btn btn-sm btn-success btn-action">อนุมัติ</button><button onclick="updateStatus('transactions', ${item.rowIndex}, 'ปฏิเสธ/สลิปไม่ถูกต้อง', '${item.txId}')" class="btn btn-sm btn-danger btn-action">ปฏิเสธ</button></div>` : '<span class="text-muted small">ดำเนินการแล้ว</span>'}
+            ${isPending ? `<div class="action-group">${actionButtons}</div>` : '<span class="text-muted small">ดำเนินการแล้ว</span>'}
           </td>
         </tr>`;
-      } 
+      }
       else if (module === 'claims') {
         const isPending = item.status === 'รอคณะกรรมการตรวจสอบ';
         tbody.innerHTML += `<tr>
@@ -383,7 +403,7 @@
               rowIndex: rowIndex,
               status: newStatus,
               id: id,
-              adminName: currentAdminData.name
+              adminUid: currentAdminData.uid // 🚨 ส่ง UID ของแอดมินไปให้ระบบหลังบ้านตรวจสอบสิทธิ์
             })
           });
           const res = await response.json();
