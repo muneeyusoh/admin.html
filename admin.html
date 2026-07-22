@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Admin Workspace | กองทุนสวัสดิการชุมชน (Secure Login)</title>
+  <title>Executive Workspace | กองทุนสวัสดิการชุมชน</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,6 +13,8 @@
   
   <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- 📈 เพิ่ม Chart.js สำหรับระบบ Analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
   <style>
     :root {
@@ -28,51 +30,28 @@
     #loginGate { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--admin-primary); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; color: white; }
     .login-box { background: var(--admin-secondary); padding: 40px; border-radius: 20px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.3); width: 90%; max-width: 400px; border-top: 5px solid var(--line-green); }
     .btn-line-login { background-color: var(--line-green); color: white; border: none; border-radius: 12px; padding: 14px; font-weight: 600; font-size: 1.1rem; width: 100%; transition: 0.3s; box-shadow: 0 10px 20px rgba(6, 199, 85, 0.2); }
-    .btn-line-login:hover { background-color: #05A346; color: white; transform: translateY(-2px); }
-
+    
     /* 📊 Admin Navbar & Layout */
     .admin-navbar { background: var(--admin-primary); color: white; padding: 15px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
     .nav-pills .nav-link { color: #94A3B8; border-radius: 10px; padding: 10px 15px; margin-bottom: 5px; font-weight: 500; transition: 0.3s; }
     .nav-pills .nav-link:hover { background: #1E293B; color: white; }
     .nav-pills .nav-link.active { background: var(--admin-accent); color: white; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3); }
     
-    /* 📦 Content Cards */
+    /* 📦 Content Cards & Chart */
     .dashboard-card { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; margin-bottom: 20px; }
     .stat-box { border-left: 4px solid var(--admin-accent); background: #F1F5F9; padding: 15px; border-radius: 0 10px 10px 0; }
+    .chart-container { position: relative; height: 350px; width: 100%; }
     
-    /* 📱 Mobile Responsive Data Tables */
-    .table-responsive { 
-      border-radius: 12px; 
-      border: 1px solid #E2E8F0; 
-      overflow-x: auto; 
-      -webkit-overflow-scrolling: touch; 
-    }
-    .table th, .table td { 
-      white-space: nowrap; 
-      vertical-align: middle; 
-      font-size: 0.9rem;
-      padding: 15px;
-    }
+    /* 📱 Data Tables */
+    .table-responsive { border-radius: 12px; border: 1px solid #E2E8F0; overflow-x: auto; }
+    .table th, .table td { white-space: nowrap; vertical-align: middle; font-size: 0.9rem; padding: 15px; }
     .table thead { background-color: var(--admin-secondary); color: white; }
     .table tbody tr:hover { background-color: #F8FAFC; }
     
     /* 🎯 Sticky Action Column */
-    .table thead th:last-child,
-    .table tbody td:last-child {
-      position: sticky;
-      right: 0;
-      background-color: white;
-      box-shadow: -4px 0 8px rgba(0,0,0,0.05);
-      z-index: 1;
-    }
-    .table thead th:last-child {
-      background-color: var(--admin-secondary);
-      color: white;
-      box-shadow: -4px 0 8px rgba(0,0,0,0.2);
-    }
-    .table tbody tr:hover td:last-child {
-      background-color: #F8FAFC;
-    }
+    .table thead th:last-child, .table tbody td:last-child { position: sticky; right: 0; background-color: white; box-shadow: -4px 0 8px rgba(0,0,0,0.05); z-index: 1; }
+    .table thead th:last-child { background-color: var(--admin-secondary); color: white; box-shadow: -4px 0 8px rgba(0,0,0,0.2); }
+    .table tbody tr:hover td:last-child { background-color: #F8FAFC; }
 
     .badge-status { padding: 6px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 600; }
     .bg-pending { background: #FEF3C7; color: #D97706; }
@@ -83,34 +62,11 @@
     
     #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 999; display: none; align-items: center; justify-content: center; flex-direction: column; }
 
-    /* 📱 Mobile Specific Adjustments */
     @media (max-width: 768px) {
-      .nav-pills {
-        display: flex;
-        flex-direction: row !important;
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        padding-bottom: 10px;
-        margin-bottom: 15px;
-      }
-      .nav-pills .nav-link {
-        white-space: nowrap;
-        margin-right: 10px;
-        margin-bottom: 0;
-      }
+      .nav-pills { display: flex; flex-direction: row !important; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 10px; margin-bottom: 15px; }
+      .nav-pills .nav-link { white-space: nowrap; margin-right: 10px; margin-bottom: 0; }
       .dashboard-card { padding: 15px; }
-      .swipe-hint {
-        display: block;
-        text-align: right;
-        font-size: 0.75rem;
-        color: #64748B;
-        margin-bottom: 8px;
-        animation: pulse 2s infinite;
-      }
     }
-    @media (min-width: 769px) { .swipe-hint { display: none; } }
-    @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
   </style>
 </head>
 <body>
@@ -120,7 +76,7 @@
   <div class="login-box">
     <div class="mb-4">
       <i class="fa-solid fa-shield-check fa-3x text-success mb-3"></i>
-      <h4 class="fw-bold">Admin Workspace</h4>
+      <h4 class="fw-bold">Executive Workspace</h4>
       <p class="text-secondary small">เข้าสู่ระบบด้วยมาตรฐาน Zero-Trust Security</p>
     </div>
     <div id="loginStatusSection">
@@ -143,8 +99,8 @@
 <div id="mainWorkspace" style="display: none;">
   <div class="admin-navbar d-flex justify-content-between align-items-center">
     <div>
-      <h6 class="mb-0 fw-bold"><i class="fa-solid fa-database me-2 text-primary"></i>ศูนย์จัดการข้อมูลกองทุน</h6>
-      <small class="text-white-50" style="font-size: 0.75rem;">ผู้ดูแลระบบ: <span id="adminNameDisplay" class="text-warning fw-bold"></span></small>
+      <h6 class="mb-0 fw-bold"><i class="fa-solid fa-chart-line me-2 text-primary"></i>ระบบจัดการกองทุนสวัสดิการชุมชน</h6>
+      <small class="text-white-50" style="font-size: 0.75rem;">บัญชีผู้ใช้: <span id="adminNameDisplay" class="text-warning fw-bold"></span></small>
     </div>
     <button onclick="logout()" class="btn btn-sm btn-outline-light rounded-circle"><i class="fa-solid fa-power-off"></i></button>
   </div>
@@ -154,54 +110,100 @@
       <!-- 🗂️ Sidebar Navigation -->
       <div class="col-lg-2 col-md-3 mb-4">
         <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
-          <button class="nav-link active text-start" data-bs-toggle="pill" data-bs-target="#view-overview" type="button" onclick="loadDashboardOverview()"><i class="fa-solid fa-chart-pie me-2"></i> ภาพรวมระบบ</button>
+          <button class="nav-link active text-start" data-bs-toggle="pill" data-bs-target="#view-overview" type="button" onclick="loadDashboardOverview()"><i class="fa-solid fa-chart-pie me-2"></i> ภาพรวมกองทุน</button>
           <button class="nav-link text-start" data-bs-toggle="pill" data-bs-target="#view-members" type="button" onclick="loadData('members')"><i class="fa-solid fa-users me-2"></i> ทะเบียนสมาชิก</button>
-          <button class="nav-link text-start" data-bs-toggle="pill" data-bs-target="#view-transactions" type="button" onclick="loadData('transactions')"><i class="fa-solid fa-money-bill-transfer me-2"></i> ระบบการเงิน <span class="badge bg-danger ms-1" id="badge-tx">0</span></button>
-          <button class="nav-link text-start" data-bs-toggle="pill" data-bs-target="#view-claims" type="button" onclick="loadData('claims')"><i class="fa-solid fa-hand-holding-medical me-2"></i> ประวัติเบิกจ่าย <span class="badge bg-danger ms-1" id="badge-claim">0</span></button>
+          <button class="nav-link text-start" data-bs-toggle="pill" data-bs-target="#view-transactions" type="button" onclick="loadData('transactions')"><i class="fa-solid fa-money-bill-transfer me-2"></i> ระบบการเงิน</button>
+          <button class="nav-link text-start" data-bs-toggle="pill" data-bs-target="#view-claims" type="button" onclick="loadData('claims')"><i class="fa-solid fa-hand-holding-medical me-2"></i> ประวัติเบิกจ่าย</button>
           <button class="nav-link text-start" data-bs-toggle="pill" data-bs-target="#view-rules" type="button" onclick="loadData('rules')"><i class="fa-solid fa-scale-balanced me-2"></i> ระเบียบสวัสดิการ</button>
+          <!-- 🛡️ ปรากฏเฉพาะ AdminMaster -->
+          <button class="nav-link text-start text-warning" id="menu-admins" data-bs-toggle="pill" data-bs-target="#view-admins" type="button" onclick="loadData('admins')" style="display: none;"><i class="fa-solid fa-user-shield me-2"></i> จัดการผู้ดูแลระบบ</button>
         </div>
       </div>
 
       <!-- 🖥️ Content Area -->
       <div class="col-lg-10 col-md-9">
         <div class="tab-content">
-          <!-- ภาพรวม -->
+          
+          <!-- 📊 แท็บภาพรวม & Analytics -->
           <div class="tab-pane fade show active" id="view-overview">
-            <h5 class="fw-bold mb-4 text-dark">ภาพรวมสถานะกองทุน</h5>
-            <div class="row g-3">
-              <div class="col-md-3 col-6"><div class="dashboard-card stat-box" style="border-left-color: #3B82F6;"><small class="text-muted d-block">สมาชิก</small><h3 class="fw-bold mb-0 text-dark" id="stat-members">--</h3></div></div>
-              <div class="col-md-3 col-6"><div class="dashboard-card stat-box" style="border-left-color: #10B981;"><small class="text-muted d-block">เงินสมทบ (บาท)</small><h3 class="fw-bold mb-0 text-dark" id="stat-income">--</h3></div></div>
-              <div class="col-md-3 col-6"><div class="dashboard-card stat-box" style="border-left-color: #F59E0B;"><small class="text-muted d-block">รอตรวจสลิป</small><h3 class="fw-bold mb-0 text-warning" id="stat-pending-tx">--</h3></div></div>
-              <div class="col-md-3 col-6"><div class="dashboard-card stat-box" style="border-left-color: #EF4444;"><small class="text-muted d-block">รออนุมัติสวัสดิการ</small><h3 class="fw-bold mb-0 text-danger" id="stat-pending-claim">--</h3></div></div>
+            <h5 class="fw-bold mb-4 text-dark">ภาพรวมสถานะกองทุนแบบ Real-time</h5>
+            
+            <!-- Summary Cards -->
+            <div class="row g-3 mb-4">
+              <div class="col-md-3 col-6"><div class="dashboard-card stat-box" style="border-left-color: #3B82F6;"><small class="text-muted d-block">สมาชิกทั้งหมด</small><h3 class="fw-bold mb-0 text-dark" id="stat-members">--</h3></div></div>
+              <div class="col-md-3 col-6"><div class="dashboard-card stat-box" style="border-left-color: #10B981;"><small class="text-muted d-block">ยอดเงินสมทบรวม</small><h3 class="fw-bold mb-0 text-dark" id="stat-income">--</h3></div></div>
+              <div class="col-md-3 col-6"><div class="dashboard-card stat-box" style="border-left-color: #F59E0B;"><small class="text-muted d-block">การเงินที่รอตรวจ</small><h3 class="fw-bold mb-0 text-warning" id="stat-pending-tx">--</h3></div></div>
+              <div class="col-md-3 col-6"><div class="dashboard-card stat-box" style="border-left-color: #EF4444;"><small class="text-muted d-block">คำขอเบิกรออนุมัติ</small><h3 class="fw-bold mb-0 text-danger" id="stat-pending-claim">--</h3></div></div>
+            </div>
+
+            <!-- 📈 Chart.js Analytics Dashboard -->
+            <div class="dashboard-card">
+              <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                <h6 class="fw-bold text-dark mb-0"><i class="fa-solid fa-chart-area text-primary me-2"></i>กราฟวิเคราะห์แนวโน้ม (BI Analytics)</h6>
+                <div class="d-flex gap-2">
+                  <select id="chartYearType" class="form-select form-select-sm shadow-sm" onchange="renderChart()" style="width: auto;">
+                    <option value="fiscal">🇹🇭 ปีงบประมาณไทย (ต.ค. - ก.ย.)</option>
+                    <option value="calendar">📅 ปีปฏิทิน (ม.ค. - ธ.ค.)</option>
+                  </select>
+                  <select id="chartViewType" class="form-select form-select-sm shadow-sm" onchange="renderChart()" style="width: auto;">
+                    <option value="month">ราย 1 เดือน</option>
+                    <option value="quarter" selected>รายไตรมาส</option>
+                    <option value="year">รายปี</option>
+                  </select>
+                </div>
+              </div>
+              <div class="chart-container">
+                <canvas id="analyticsChart"></canvas>
+              </div>
             </div>
           </div>
 
-          <!-- สมาชิก -->
+          <!-- 👥 แท็บทะเบียนสมาชิก -->
           <div class="tab-pane fade" id="view-members">
-            <div class="d-flex justify-content-between mb-2"><h5 class="fw-bold">จัดการทะเบียนสมาชิก</h5><button class="btn btn-sm btn-outline-primary" onclick="loadData('members')"><i class="fa-solid fa-rotate me-1"></i></button></div>
-            <span class="swipe-hint"><i class="fa-solid fa-angles-right"></i> เลื่อนซ้ายขวาเพื่อดูข้อมูล</span>
-            <div class="dashboard-card p-0"><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>รหัสสมาชิก</th><th>วันที่สมัคร</th><th>ชื่อ-นามสกุล</th><th>ศูนย์</th><th>แต้ม</th><th>สถานะ</th></tr></thead><tbody id="table-members"></tbody></table></div></div>
+            <div class="d-flex justify-content-between mb-2"><h5 class="fw-bold">จัดการทะเบียนสมาชิก</h5><button class="btn btn-sm btn-outline-primary" onclick="loadData('members')"><i class="fa-solid fa-rotate me-1"></i> รีเฟรช</button></div>
+            <div class="dashboard-card p-0"><div class="table-responsive"><table class="table table-hover mb-0">
+              <thead><tr><th>รหัสสมาชิก</th><th>วันที่สมัคร</th><th>ชื่อ-นามสกุล</th><th>ศูนย์</th><th>สถานะปัจจุบัน</th><th class="text-center">ปรับสถานะ</th></tr></thead>
+              <tbody id="table-members"></tbody>
+            </table></div></div>
           </div>
 
-          <!-- ธุรกรรม -->
+          <!-- 💳 แท็บธุรกรรม -->
           <div class="tab-pane fade" id="view-transactions">
-            <div class="d-flex justify-content-between mb-2"><h5 class="fw-bold">ตรวจสอบเงินสมทบ</h5><button class="btn btn-sm btn-outline-primary" onclick="loadData('transactions')"><i class="fa-solid fa-rotate me-1"></i></button></div>
-            <span class="swipe-hint"><i class="fa-solid fa-angles-right"></i> เลื่อนขวาเพื่อกดอนุมัติ</span>
-            <div class="dashboard-card p-0"><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>รหัสธุรกรรม</th><th>วันที่/เวลา</th><th>ชื่อ-นามสกุล</th><th>ยอดเงิน</th><th>ช่องทาง</th><th>หลักฐาน</th><th>สถานะ</th><th class="text-center">การตัดสินใจ</th></tr></thead><tbody id="table-transactions"></tbody></table></div></div>
+            <div class="d-flex justify-content-between mb-2"><h5 class="fw-bold">ตรวจสอบเงินสมทบ</h5><button class="btn btn-sm btn-outline-primary" onclick="loadData('transactions')"><i class="fa-solid fa-rotate me-1"></i> รีเฟรช</button></div>
+            <div class="dashboard-card p-0"><div class="table-responsive"><table class="table table-hover mb-0">
+              <thead><tr><th>รหัสธุรกรรม</th><th>วันที่/เวลา</th><th>ชื่อ-นามสกุล</th><th>ยอดเงิน</th><th>ช่องทาง</th><th>หลักฐาน</th><th>สถานะ</th><th class="text-center">การตัดสินใจ</th></tr></thead>
+              <tbody id="table-transactions"></tbody>
+            </table></div></div>
           </div>
 
-          <!-- เบิกจ่าย -->
+          <!-- 🏥 แท็บเบิกจ่าย -->
           <div class="tab-pane fade" id="view-claims">
-            <div class="d-flex justify-content-between mb-2"><h5 class="fw-bold">พิจารณาคำขอเบิก</h5><button class="btn btn-sm btn-outline-primary" onclick="loadData('claims')"><i class="fa-solid fa-rotate me-1"></i></button></div>
-            <span class="swipe-hint"><i class="fa-solid fa-angles-right"></i> เลื่อนขวาเพื่อกดอนุมัติ</span>
-            <div class="dashboard-card p-0"><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>รหัสคำขอ</th><th>วันที่ยื่น</th><th>ชื่อ-นามสกุล</th><th>ประเภท</th><th>ยอดเงิน</th><th>เอกสาร</th><th>สถานะ</th><th class="text-center">พิจารณา</th></tr></thead><tbody id="table-claims"></tbody></table></div></div>
+            <div class="d-flex justify-content-between mb-2"><h5 class="fw-bold">พิจารณาคำขอเบิกสวัสดิการ</h5><button class="btn btn-sm btn-outline-primary" onclick="loadData('claims')"><i class="fa-solid fa-rotate me-1"></i> รีเฟรช</button></div>
+            <div class="dashboard-card p-0"><div class="table-responsive"><table class="table table-hover mb-0">
+              <thead><tr><th>รหัสคำขอ</th><th>วันที่ยื่น</th><th>ชื่อ-นามสกุล</th><th>ประเภท</th><th>ยอดเงิน</th><th>เอกสาร</th><th>สถานะ</th><th class="text-center">การตัดสินใจ</th></tr></thead>
+              <tbody id="table-claims"></tbody>
+            </table></div></div>
           </div>
 
-          <!-- ระเบียบ -->
+          <!-- ⚖️ แท็บระเบียบ -->
           <div class="tab-pane fade" id="view-rules">
-            <h5 class="fw-bold mb-4">ระเบียบสวัสดิการ</h5>
-            <div class="dashboard-card p-0"><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>ประเภทสวัสดิการ</th><th>อายุสมาชิกขั้นต่ำ (วัน)</th><th>สูงสุดต่อครั้ง (฿)</th><th>สูงสุดต่อปี (฿)</th><th>สถานะ</th></tr></thead><tbody id="table-rules"></tbody></table></div></div>
+            <div class="d-flex justify-content-between mb-2"><h5 class="fw-bold">ระเบียบสวัสดิการ</h5><button class="btn btn-sm btn-outline-primary" onclick="loadData('rules')"><i class="fa-solid fa-rotate me-1"></i> รีเฟรช</button></div>
+            <div class="dashboard-card p-0"><div class="table-responsive"><table class="table table-hover mb-0">
+              <thead><tr><th>ประเภทสวัสดิการ</th><th>อายุสมาชิกขั้นต่ำ</th><th>สูงสุดต่อครั้ง</th><th>สูงสุดต่อปี</th><th>สถานะ</th><th class="text-center">การจัดการ</th></tr></thead>
+              <tbody id="table-rules"></tbody>
+            </table></div></div>
           </div>
+
+          <!-- 🛡️ แท็บจัดการผู้ดูแลระบบ (เฉพาะ AdminMaster) -->
+          <div class="tab-pane fade" id="view-admins">
+            <div class="d-flex justify-content-between mb-2"><h5 class="fw-bold text-warning">ระบบจัดการผู้ดูแลระบบ (Admin Control)</h5><button class="btn btn-sm btn-outline-primary" onclick="loadData('admins')"><i class="fa-solid fa-rotate me-1"></i> รีเฟรช</button></div>
+            <div class="alert alert-warning small"><i class="fa-solid fa-circle-info me-2"></i>หน้านี้สงวนสิทธิ์เฉพาะระดับ <strong>AdminMaster</strong> เท่านั้นในการบริหารสิทธิ์ผู้ใช้งานหลังบ้าน</div>
+            <div class="dashboard-card p-0"><div class="table-responsive"><table class="table table-hover mb-0">
+              <thead><tr><th>UID</th><th>ชื่อ</th><th>ระดับ (Role)</th><th>ศูนย์ประจำการ</th><th>สถานะ</th><th class="text-center">ปรับสถานะ</th></tr></thead>
+              <tbody id="table-admins"></tbody>
+            </table></div></div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -216,7 +218,9 @@
   const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzh4Pwae129CGg2IS0V-nL3rPh9CMTIgDYCVTmSgalGKyzASmSWraqz0PHt8G9j6saV/exec"; 
   const LIFF_ID_ADMIN = "2010764982-wudH3EsZ"; 
   
-  let currentAdminData = { uid: "", name: "", role: "" };
+  let currentAdminData = { uid: "", name: "", role: "", center: "" };
+  let globalAnalyticsData = [];
+  let myChartInstance = null;
 
   // ==========================================
   // 🔐 ZERO-TRUST AUTHENTICATION (LIFF)
@@ -240,14 +244,8 @@
     }
   }
 
-  function handleLiffLogin() {
-    if (!liff.isLoggedIn()) { liff.login(); }
-  }
-
-  function logout() {
-    liff.logout();
-    window.location.reload();
-  }
+  function handleLiffLogin() { if (!liff.isLoggedIn()) { liff.login(); } }
+  function logout() { liff.logout(); window.location.reload(); }
 
   async function verifyAdminWhitelist(uid) {
     document.getElementById('loader-text').innerText = "กำลังยืนยันสิทธิ์ผู้ดูแลระบบ...";
@@ -262,44 +260,58 @@
 
       if (res.status === 'success') {
         currentAdminData = res.adminData;
-        document.getElementById('adminNameDisplay').innerText = `${currentAdminData.name} (${currentAdminData.role})`;
+        
+        // 🛡️ ปรับ UI ตาม Role
+        let displayRole = currentAdminData.role;
+        if (currentAdminData.role === 'Admin-ศูนย์ประสานงาน') displayRole += ` (${currentAdminData.center})`;
+        document.getElementById('adminNameDisplay').innerText = `${currentAdminData.name} [${displayRole}]`;
+        
+        if (currentAdminData.role === 'AdminMaster') {
+          document.getElementById('menu-admins').style.display = 'block';
+        }
+
         document.getElementById('loginGate').style.display = 'none';
         document.getElementById('mainWorkspace').style.display = 'block';
-        loadDashboardOverview();
+        
+        loadDashboardOverview(); // โหลดภาพรวมและกราฟ
       } else {
-        Swal.fire({
-          icon: 'error', title: 'Access Denied', text: res.message, confirmButtonColor: '#3B82F6'
-        }).then(() => {
-          liff.logout(); 
-          window.location.reload();
-        });
+        Swal.fire({ icon: 'error', title: 'Access Denied', text: res.message }).then(() => { liff.logout(); window.location.reload(); });
       }
     } catch (error) {
-      showLoader(false);
-      Swal.fire('ข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้', 'error');
+      showLoader(false); Swal.fire('ข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อ API ได้', 'error');
     }
   }
 
   // ==========================================
-  // 🚀 CORE DATA & UI ENGINE
+  // 🚀 CORE DATA & RBAC UI ENGINE
   // ==========================================
   function showLoader(show) { document.getElementById('loader').style.display = show ? 'flex' : 'none'; }
 
   async function loadDashboardOverview() {
     showLoader(true);
     try {
-      const response = await fetch(GAS_API_URL, {
+      // 1. โหลดข้อมูลภาพรวม (ตัวเลข Card)
+      const resStats = await fetch(GAS_API_URL, {
         method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify({ action: "getAdminOverview", adminUid: currentAdminData.uid }) 
-      });
-      const res = await response.json();
-      if(res.status === 'success') {
-        document.getElementById('stat-members').innerText = res.data.totalMembers;
-        document.getElementById('stat-income').innerText = res.data.totalIncome;
-        document.getElementById('stat-pending-tx').innerText = res.data.pendingTx;
-        document.getElementById('stat-pending-claim').innerText = res.data.pendingClaims;
-        document.getElementById('badge-tx').innerText = res.data.pendingTx;
-        document.getElementById('badge-claim').innerText = res.data.pendingClaims;
+      }).then(r => r.json());
+
+      if(resStats.status === 'success') {
+        document.getElementById('stat-members').innerText = resStats.data.totalMembers;
+        document.getElementById('stat-income').innerText = resStats.data.totalIncome;
+        document.getElementById('stat-pending-tx').innerText = resStats.data.pendingTx;
+        document.getElementById('stat-pending-claim').innerText = resStats.data.pendingClaims;
+      }
+
+      // 2. โหลดข้อมูลกราฟ (Analytics)
+      const resGraph = await fetch(GAS_API_URL, {
+        method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "getAdminAnalytics", adminUid: currentAdminData.uid }) 
+      }).then(r => r.json());
+
+      if(resGraph.status === 'success') {
+        globalAnalyticsData = resGraph.data;
+        renderChart(); // เรียกฟังก์ชันวาดกราฟ
       }
     } catch (e) { console.error(e); }
     showLoader(false);
@@ -314,8 +326,9 @@
       });
       const res = await response.json();
       if(res.status === 'success') {
-         currentAdminData.role = res.userRole; 
          renderTable(moduleName, res.data);
+      } else {
+         Swal.fire('ข้อผิดพลาด', res.message, 'error');
       }
     } catch (error) { console.error(error); }
     showLoader(false);
@@ -328,106 +341,227 @@
       return;
     }
     tbody.innerHTML = "";
+    
     dataArray.forEach(item => {
+      // 👥 ทะเบียนสมาชิก
       if (module === 'members') {
-        tbody.innerHTML += `<tr><td><strong class="text-primary">${item.id}</strong></td><td>${item.date}</td><td>${item.name}</td><td>${item.center}</td><td><span class="badge bg-warning text-dark">${item.cwfPoints} แต้ม</span></td><td><span class="badge-status ${item.status === 'เป็นสมาชิก' ? 'bg-approved' : 'bg-pending'}">${item.status}</span></td></tr>`;
+        const selectOptions = `
+          <select class="form-select form-select-sm d-inline-block w-auto" onchange="updateStatus('${module}', ${item.rowIndex}, this.value, '${item.id}')">
+            <option value="">-- อัปเดต --</option>
+            <option value="รอชำระเงิน">รอชำระเงิน</option>
+            <option value="รออนุมัติ">รออนุมัติ</option>
+            <option value="เป็นสมาชิก">เป็นสมาชิก</option>
+            <option value="พ้นสภาพ">พ้นสภาพ</option>
+          </select>`;
+        tbody.innerHTML += `<tr><td><strong class="text-primary">${item.id}</strong></td><td>${item.date}</td><td>${item.name}</td><td>${item.center}</td><td><span class="badge-status ${item.status === 'เป็นสมาชิก' ? 'bg-approved' : 'bg-pending'}">${item.status}</span></td><td class="text-center">${selectOptions}</td></tr>`;
       } 
-      else if (module === 'transactions') {
-        const isPending = item.status === 'รอตรวจสอบ' || item.status === 'รอคณะกรรมการยืนยันรับเงินสด';
+      // 💳 ธุรกรรม & เบิกจ่าย (Maker - Checker Engine)
+      else if (module === 'transactions' || module === 'claims') {
+        const isTx = module === 'transactions';
+        const idCol = isTx ? item.txId : item.claimId;
+        const amountStr = `<span class="fw-bold ${isTx ? 'text-success' : 'text-primary'}">${item.amount} ฿</span>`;
+        const detailCol = isTx ? item.method : item.welfareName;
+        const fileBtn = isTx 
+          ? (item.slipUrl !== '-' ? `<a href="${item.slipUrl}" target="_blank" class="btn btn-sm btn-outline-secondary"><i class="fa-solid fa-receipt"></i></a>` : '-')
+          : (item.docUrl !== '-' ? `<a href="${item.docUrl}" target="_blank" class="btn btn-sm btn-outline-secondary"><i class="fa-solid fa-file"></i></a>` : '-');
         
+        const isPending = isTx ? (item.status === 'รอตรวจสอบ' || item.status === 'รอคณะกรรมการยืนยันรับเงินสด') : (item.status === 'รอคณะกรรมการตรวจสอบ');
+        
+        // 🛡️ Logic แสดงปุ่มตาม Role
         let actionButtons = '';
         if (currentAdminData.role === 'Admin-ศูนย์ประสานงาน') {
-          actionButtons = `<button onclick="updateStatus('${module}', ${item.rowIndex}, 'ตรวจสอบผ่าน', '${item.txId}')" class="btn btn-sm btn-info btn-action text-white">ตรวจสอบผ่าน</button>
-                           <button onclick="updateStatus('${module}', ${item.rowIndex}, 'ปฏิเสธ/ส่งกลับ', '${item.txId}')" class="btn btn-sm btn-danger btn-action">ปฏิเสธ</button>`;
+          actionButtons = `<button onclick="updateStatus('${module}', ${item.rowIndex}, 'ตรวจสอบผ่าน', '${idCol}')" class="btn btn-sm btn-info btn-action text-white"><i class="fa-solid fa-check"></i> ตรวจผ่าน</button>
+                           <button onclick="updateStatus('${module}', ${item.rowIndex}, 'ปฏิเสธ/ส่งกลับ', '${idCol}')" class="btn btn-sm btn-danger btn-action">ส่งกลับ</button>`;
         } else {
-          actionButtons = `<button onclick="updateStatus('${module}', ${item.rowIndex}, 'อนุมัติแล้ว', '${item.txId}')" class="btn btn-sm btn-success btn-action">อนุมัติเงิน</button>
-                           <button onclick="updateStatus('${module}', ${item.rowIndex}, 'ปฏิเสธข้อมูล', '${item.txId}')" class="btn btn-sm btn-danger btn-action">ปฏิเสธ</button>`;
+          actionButtons = `<button onclick="updateStatus('${module}', ${item.rowIndex}, 'อนุมัติแล้ว', '${idCol}')" class="btn btn-sm btn-success btn-action"><i class="fa-solid fa-check-double"></i> อนุมัติ</button>
+                           <button onclick="updateStatus('${module}', ${item.rowIndex}, 'ปฏิเสธข้อมูล', '${idCol}')" class="btn btn-sm btn-danger btn-action">ปฏิเสธ</button>`;
         }
 
         tbody.innerHTML += `<tr>
-          <td><strong class="text-dark">${item.txId}</strong></td>
-          <td>${item.date}</td>
-          <td>${item.name}</td>
-          <td class="fw-bold text-success">${item.amount} ฿</td>
-          <td><span class="badge bg-light text-dark border">${item.method}</span></td>
-          <td>${item.slipUrl !== '-' ? `<a href="${item.slipUrl}" target="_blank" class="btn btn-sm btn-outline-secondary py-0 px-2"><i class="fa-solid fa-receipt"></i> ดูสลิป</a>` : '-'}</td>
+          <td><strong class="text-dark">${idCol}</strong></td><td>${item.date}</td><td>${item.name}</td>
+          <td>${detailCol}</td><td>${amountStr}</td><td>${fileBtn}</td>
           <td><span class="badge-status ${isPending ? 'bg-pending' : 'bg-approved'}">${item.status}</span></td>
-          <td class="text-center">
-            ${isPending ? `<div class="action-group">${actionButtons}</div>` : '<span class="text-muted small">ดำเนินการแล้ว</span>'}
-          </td>
+          <td class="text-center">${isPending ? `<div class="action-group">${actionButtons}</div>` : '<span class="text-muted small">ดำเนินการแล้ว</span>'}</td>
+        </tr>`;
+      } 
+      // ⚖️ ระเบียบ
+      else if (module === 'rules') {
+        let actionBtn = `<span class="text-muted small"><i class="fa-solid fa-eye"></i> ดูได้เท่านั้น</span>`;
+        if (currentAdminData.role !== 'Admin-ศูนย์ประสานงาน') {
+          const btnClass = item.isActive ? 'btn-danger' : 'btn-success';
+          const btnText = item.isActive ? 'ระงับใช้งาน' : 'เปิดใช้งาน';
+          const sendStatus = item.isActive ? 'ระงับ' : 'ใช้งาน';
+          actionBtn = `<button onclick="updateStatus('rules', ${item.rowIndex}, '${sendStatus}', '${item.welfareName}')" class="btn btn-sm ${btnClass}">${btnText}</button>`;
+        }
+        tbody.innerHTML += `<tr>
+          <td><strong class="text-dark">${item.welfareName}</strong></td><td>${item.minDays} วัน</td>
+          <td>${item.maxPerClaim.toLocaleString()} ฿</td><td>${item.maxPerYear.toLocaleString()} ฿</td>
+          <td><span class="badge ${item.isActive ? 'bg-success' : 'bg-secondary'}">${item.isActive ? 'เปิดใช้งาน' : 'ปิดใช้งาน'}</span></td>
+          <td class="text-center">${actionBtn}</td>
         </tr>`;
       }
-      else if (module === 'claims') {
-        const isPending = item.status === 'รอคณะกรรมการตรวจสอบ';
-        
-        // 🚨 [FIXED] เพิ่มระบบเช็ก Role Maker-Checker ให้กับโมดูลเบิกจ่ายสวัสดิการแล้ว
-        let actionButtons = '';
-        if (currentAdminData.role === 'Admin-ศูนย์ประสานงาน') {
-          actionButtons = `<button onclick="updateStatus('${module}', ${item.rowIndex}, 'ตรวจสอบผ่าน', '${item.claimId}')" class="btn btn-sm btn-info btn-action text-white">ตรวจสอบผ่าน</button>
-                           <button onclick="updateStatus('${module}', ${item.rowIndex}, 'ปฏิเสธ/ส่งกลับ', '${item.claimId}')" class="btn btn-sm btn-danger btn-action">ปฏิเสธ</button>`;
-        } else {
-          actionButtons = `<button onclick="updateStatus('${module}', ${item.rowIndex}, 'อนุมัติแล้ว', '${item.claimId}')" class="btn btn-sm btn-success btn-action">อนุมัติเงิน</button>
-                           <button onclick="updateStatus('${module}', ${item.rowIndex}, 'ปฏิเสธข้อมูล', '${item.claimId}')" class="btn btn-sm btn-danger btn-action">ปฏิเสธ</button>`;
-        }
-
+      // 🛡️ จัดการแอดมิน
+      else if (module === 'admins') {
+        const selectOptions = `
+          <select class="form-select form-select-sm d-inline-block w-auto" onchange="updateStatus('${module}', ${item.rowIndex}, this.value, '${item.name}')">
+            <option value="">-- ปรับสถานะ --</option>
+            <option value="ใช้งาน">ใช้งานปกติ</option>
+            <option value="ระงับ">ระงับสิทธิ์</option>
+          </select>`;
         tbody.innerHTML += `<tr>
-          <td><strong class="text-dark">${item.claimId}</strong></td>
-          <td>${item.date}</td>
-          <td>${item.name}</td>
-          <td>${item.welfareName}</td>
-          <td class="fw-bold text-primary">${item.amount} ฿</td>
-          <td>${item.docUrl !== '-' ? `<a href="${item.docUrl}" target="_blank" class="btn btn-sm btn-outline-secondary py-0 px-2">ดูเอกสาร</a>` : '-'}</td>
-          <td><span class="badge-status ${isPending ? 'bg-pending' : 'bg-approved'}">${item.status}</span></td>
-          <td class="text-center">
-            ${isPending ? `<div class="action-group">${actionButtons}</div>` : '<span class="text-muted small">ดำเนินการแล้ว</span>'}
-          </td>
+          <td><small class="text-muted">${item.uid.substring(0,8)}...</small></td>
+          <td><strong>${item.name}</strong></td><td><span class="badge bg-primary">${item.role}</span></td>
+          <td>${item.center || '-'}</td><td><span class="badge ${item.status === 'ใช้งาน' ? 'bg-success' : 'bg-danger'}">${item.status}</span></td>
+          <td class="text-center">${selectOptions}</td>
         </tr>`;
-      } 
-      else if (module === 'rules') {
-        tbody.innerHTML += `<tr><td><strong class="text-dark">${item.welfareName}</strong></td><td>${item.minDays} วัน</td><td>${item.maxPerClaim.toLocaleString()} ฿</td><td>${item.maxPerYear.toLocaleString()} ฿</td><td><span class="badge ${item.isActive ? 'bg-success' : 'bg-secondary'}">${item.isActive ? 'เปิดใช้งาน' : 'ปิดใช้งาน'}</span></td></tr>`;
       }
     });
   }
 
   async function updateStatus(module, rowIndex, newStatus, id) {
-    const actionText = newStatus.includes('อนุมัติ') || newStatus.includes('ตรวจสอบผ่าน') ? 'พิจารณาอนุมัติรายการนี้' : 'ปฏิเสธรายการนี้';
+    if(!newStatus) return;
     Swal.fire({
-      title: 'ยืนยันการพิจารณา?',
-      text: `คุณต้องการ${actionText} (รหัส: ${id})\nทำรายการโดย: ${currentAdminData.name} (${currentAdminData.role})`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3B82F6',
-      cancelButtonColor: '#64748B',
-      confirmButtonText: 'ยืนยัน',
-      cancelButtonText: 'ยกเลิก'
+      title: 'ยืนยันการดำเนินการ?',
+      text: `ต้องการเปลี่ยนสถานะ รหัส/ชื่อ: ${id} เป็น "${newStatus}" ใช่หรือไม่?`,
+      icon: 'warning', showCancelButton: true, confirmButtonColor: '#3B82F6', confirmButtonText: 'ยืนยัน', cancelButtonText: 'ยกเลิก'
     }).then(async (result) => {
       if (result.isConfirmed) {
-        document.getElementById('loader-text').innerText = "กำลังบันทึกและตรวจสอบสิทธิ์...";
         showLoader(true);
         try {
-          const response = await fetch(GAS_API_URL, {
+          const res = await fetch(GAS_API_URL, {
             method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify({
-              action: "adminUpdateStatus",
-              module: module,
-              rowIndex: rowIndex,
-              status: newStatus,
-              id: id,
-              adminUid: currentAdminData.uid 
-            })
-          });
-          const res = await response.json();
+            body: JSON.stringify({ action: "adminUpdateStatus", module: module, rowIndex: rowIndex, status: newStatus, id: id, adminUid: currentAdminData.uid })
+          }).then(r=>r.json());
+          
           showLoader(false);
           if (res.status === 'success') {
-            Swal.fire('สำเร็จ', res.message, 'success');
+            Swal.fire({ toast:true, position: 'top', icon: 'success', title: 'อัปเดตสำเร็จ', showConfirmButton: false, timer: 1500 });
             loadData(module); 
-            loadDashboardOverview(); 
+            if(module !== 'admins' && module !== 'rules') loadDashboardOverview(); 
           } else {
             Swal.fire('ข้อผิดพลาด', res.message, 'error');
           }
-        } catch (err) {
-          showLoader(false);
-          Swal.fire('ข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์กับ Google Apps Script ได้', 'error');
+        } catch (err) { showLoader(false); Swal.fire('Error', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์', 'error'); }
+      } else {
+        // Reset select if cancelled (optional refinement)
+        if(module==='members' || module==='admins') loadData(module);
+      }
+    });
+  }
+
+  // ==========================================
+  // 📈 BUSINESS INTELLIGENCE (Chart.js Engine)
+  // ==========================================
+  const thaiMonths = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+
+  function renderChart() {
+    if(!globalAnalyticsData || globalAnalyticsData.length === 0) return;
+    
+    const yearType = document.getElementById('chartYearType').value;
+    const viewType = document.getElementById('chartViewType').value;
+    
+    // In-Memory Data Aggregation Logic
+    let aggregated = {};
+
+    globalAnalyticsData.forEach(item => {
+      const [yyyy, mm] = item.month.split('-');
+      let year = parseInt(yyyy) + 543; // แปลงเป็น พ.ศ.
+      let month = parseInt(mm);
+      let key = '';
+
+      if (yearType === 'fiscal') {
+        // ปีงบประมาณไทย (ต.ค. เริ่มปีงบใหม่)
+        let fiscalYear = year;
+        if (month >= 10) fiscalYear += 1;
+        
+        if (viewType === 'month') {
+          key = `${thaiMonths[month-1]} ${fiscalYear}`;
+        } else if (viewType === 'quarter') {
+          let q = month >= 10 ? 1 : (month <= 3 ? 2 : (month <= 6 ? 3 : 4));
+          key = `Q${q}/${fiscalYear}`;
+        } else {
+          key = `ปีงบฯ ${fiscalYear}`;
+        }
+      } else {
+        // ปีปฏิทิน (ม.ค. - ธ.ค.)
+        if (viewType === 'month') {
+          key = `${thaiMonths[month-1]} ${year}`;
+        } else if (viewType === 'quarter') {
+          let q = month <= 3 ? 1 : (month <= 6 ? 2 : (month <= 9 ? 3 : 4));
+          key = `Q${q}/${year}`;
+        } else {
+          key = `ปีปฏิทิน ${year}`;
+        }
+      }
+
+      if(!aggregated[key]) aggregated[key] = { members: 0, income: 0, expense: 0 };
+      aggregated[key].members += item.members;
+      aggregated[key].income += item.income;
+      aggregated[key].expense += item.expense;
+    });
+
+    // เรียงลำดับ key (กรณีเดือนอาจจะต้องมีตรรกะเรียงพิเศษ แต่เพื่อความเร็วใช้ตามลำดับข้อมูลที่ส่งมาซึ่ง Sort จาก Backend แล้ว)
+    const labels = Object.keys(aggregated);
+    const dataMembers = labels.map(k => aggregated[k].members);
+    const dataIncome = labels.map(k => aggregated[k].income);
+    const dataExpense = labels.map(k => aggregated[k].expense);
+
+    // วาดกราฟ
+    const ctx = document.getElementById('analyticsChart').getContext('2d');
+    if(myChartInstance) myChartInstance.destroy();
+
+    myChartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'เงินสมทบ (รับเข้า)',
+            data: dataIncome,
+            type: 'bar',
+            backgroundColor: 'rgba(16, 185, 129, 0.8)',
+            yAxisID: 'y'
+          },
+          {
+            label: 'สวัสดิการ (จ่ายออก)',
+            data: dataExpense,
+            type: 'bar',
+            backgroundColor: 'rgba(239, 68, 68, 0.8)',
+            yAxisID: 'y'
+          },
+          {
+            label: 'สมาชิกใหม่เพิ่ม (คน)',
+            data: dataMembers,
+            type: 'line',
+            borderColor: '#3B82F6',
+            backgroundColor: '#3B82F6',
+            borderWidth: 3,
+            tension: 0.3,
+            yAxisID: 'y1'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { position: 'top', labels: { font: { family: 'Prompt' } } },
+          tooltip: { titleFont: { family: 'Prompt' }, bodyFont: { family: 'Prompt' } }
+        },
+        scales: {
+          x: { ticks: { font: { family: 'Prompt' } } },
+          y: { 
+            type: 'linear', display: true, position: 'left',
+            title: { display: true, text: 'จำนวนเงิน (บาท)', font: { family: 'Prompt' } },
+            ticks: { font: { family: 'Prompt' } }
+          },
+          y1: {
+            type: 'linear', display: true, position: 'right',
+            title: { display: true, text: 'จำนวนคน', font: { family: 'Prompt' } },
+            grid: { drawOnChartArea: false },
+            ticks: { font: { family: 'Prompt' }, stepSize: 1 }
+          }
         }
       }
     });
