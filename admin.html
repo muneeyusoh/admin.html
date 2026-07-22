@@ -13,7 +13,6 @@
   
   <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <!-- 📈 เพิ่ม Chart.js สำหรับระบบ Analytics -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
   <style>
@@ -196,10 +195,12 @@
 
           <!-- 🛡️ แท็บจัดการผู้ดูแลระบบ (เฉพาะ AdminMaster) -->
           <div class="tab-pane fade" id="view-admins">
-            <div class="d-flex justify-content-between mb-2"><h5 class="fw-bold text-warning">ระบบจัดการผู้ดูแลระบบ (Admin Control)</h5><button class="btn btn-sm btn-outline-primary" onclick="loadData('admins')"><i class="fa-solid fa-rotate me-1"></i> รีเฟรช</button></div>
-            <div class="alert alert-warning small"><i class="fa-solid fa-circle-info me-2"></i>หน้านี้สงวนสิทธิ์เฉพาะระดับ <strong>AdminMaster</strong> เท่านั้นในการบริหารสิทธิ์ผู้ใช้งานหลังบ้าน</div>
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+              <h5 class="fw-bold text-warning mb-0"><i class="fa-solid fa-user-shield me-2"></i>ระบบจัดการผู้ดูแลระบบ (Identity Management)</h5>
+              <button class="btn btn-sm btn-success shadow-sm" onclick="openAddAdminModal()"><i class="fa-solid fa-user-plus me-1"></i> เพิ่มแอดมินใหม่จากสมาชิก</button>
+            </div>
             <div class="dashboard-card p-0"><div class="table-responsive"><table class="table table-hover mb-0">
-              <thead><tr><th>UID</th><th>ชื่อ</th><th>ระดับ (Role)</th><th>ศูนย์ประจำการ</th><th>สถานะ</th><th class="text-center">ปรับสถานะ</th></tr></thead>
+              <thead><tr><th>ชื่อ-นามสกุล</th><th>ระดับสิทธิ์ (Role)</th><th>ศูนย์ประจำการ</th><th>สถานะสิทธิ์</th><th class="text-center">บันทึกการเปลี่ยนแปลง</th></tr></thead>
               <tbody id="table-admins"></tbody>
             </table></div></div>
           </div>
@@ -261,7 +262,6 @@
       if (res.status === 'success') {
         currentAdminData = res.adminData;
         
-        // 🛡️ ปรับ UI ตาม Role
         let displayRole = currentAdminData.role;
         if (currentAdminData.role === 'Admin-ศูนย์ประสานงาน') displayRole += ` (${currentAdminData.center})`;
         document.getElementById('adminNameDisplay').innerText = `${currentAdminData.name} [${displayRole}]`;
@@ -273,7 +273,7 @@
         document.getElementById('loginGate').style.display = 'none';
         document.getElementById('mainWorkspace').style.display = 'block';
         
-        loadDashboardOverview(); // โหลดภาพรวมและกราฟ
+        loadDashboardOverview();
       } else {
         Swal.fire({ icon: 'error', title: 'Access Denied', text: res.message }).then(() => { liff.logout(); window.location.reload(); });
       }
@@ -290,7 +290,6 @@
   async function loadDashboardOverview() {
     showLoader(true);
     try {
-      // 1. โหลดข้อมูลภาพรวม (ตัวเลข Card)
       const resStats = await fetch(GAS_API_URL, {
         method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify({ action: "getAdminOverview", adminUid: currentAdminData.uid }) 
@@ -303,7 +302,6 @@
         document.getElementById('stat-pending-claim').innerText = resStats.data.pendingClaims;
       }
 
-      // 2. โหลดข้อมูลกราฟ (Analytics)
       const resGraph = await fetch(GAS_API_URL, {
         method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify({ action: "getAdminAnalytics", adminUid: currentAdminData.uid }) 
@@ -311,7 +309,7 @@
 
       if(resGraph.status === 'success') {
         globalAnalyticsData = resGraph.data;
-        renderChart(); // เรียกฟังก์ชันวาดกราฟ
+        renderChart();
       }
     } catch (e) { console.error(e); }
     showLoader(false);
@@ -355,7 +353,7 @@
           </select>`;
         tbody.innerHTML += `<tr><td><strong class="text-primary">${item.id}</strong></td><td>${item.date}</td><td>${item.name}</td><td>${item.center}</td><td><span class="badge-status ${item.status === 'เป็นสมาชิก' ? 'bg-approved' : 'bg-pending'}">${item.status}</span></td><td class="text-center">${selectOptions}</td></tr>`;
       } 
-      // 💳 ธุรกรรม & เบิกจ่าย (Maker - Checker Engine)
+      // 💳 ธุรกรรม & เบิกจ่าย
       else if (module === 'transactions' || module === 'claims') {
         const isTx = module === 'transactions';
         const idCol = isTx ? item.txId : item.claimId;
@@ -367,7 +365,6 @@
         
         const isPending = isTx ? (item.status === 'รอตรวจสอบ' || item.status === 'รอคณะกรรมการยืนยันรับเงินสด') : (item.status === 'รอคณะกรรมการตรวจสอบ');
         
-        // 🛡️ Logic แสดงปุ่มตาม Role
         let actionButtons = '';
         if (currentAdminData.role === 'Admin-ศูนย์ประสานงาน') {
           actionButtons = `<button onclick="updateStatus('${module}', ${item.rowIndex}, 'ตรวจสอบผ่าน', '${idCol}')" class="btn btn-sm btn-info btn-action text-white"><i class="fa-solid fa-check"></i> ตรวจผ่าน</button>
@@ -400,20 +397,143 @@
           <td class="text-center">${actionBtn}</td>
         </tr>`;
       }
-      // 🛡️ จัดการแอดมิน
+      // 🛡️ จัดการแอดมิน (AdminMaster Interface)
       else if (module === 'admins') {
-        const selectOptions = `
-          <select class="form-select form-select-sm d-inline-block w-auto" onchange="updateStatus('${module}', ${item.rowIndex}, this.value, '${item.name}')">
-            <option value="">-- ปรับสถานะ --</option>
-            <option value="ใช้งาน">ใช้งานปกติ</option>
-            <option value="ระงับ">ระงับสิทธิ์</option>
-          </select>`;
         tbody.innerHTML += `<tr>
-          <td><small class="text-muted">${item.uid.substring(0,8)}...</small></td>
-          <td><strong>${item.name}</strong></td><td><span class="badge bg-primary">${item.role}</span></td>
-          <td>${item.center || '-'}</td><td><span class="badge ${item.status === 'ใช้งาน' ? 'bg-success' : 'bg-danger'}">${item.status}</span></td>
-          <td class="text-center">${selectOptions}</td>
+          <td><strong>${item.name}</strong><br><small class="text-muted">UID: ${item.uid.substring(0,8)}...</small></td>
+          <td>
+            <select id="role_${item.rowIndex}" class="form-select form-select-sm">
+              <option value="AdminMaster" ${item.role === 'AdminMaster' ? 'selected' : ''}>AdminMaster</option>
+              <option value="Admin-กองทุน" ${item.role === 'Admin-กองทุน' ? 'selected' : ''}>Admin-กองทุน</option>
+              <option value="Admin-ศูนย์ประสานงาน" ${item.role === 'Admin-ศูนย์ประสานงาน' ? 'selected' : ''}>Admin-ศูนย์ประสานงาน</option>
+            </select>
+          </td>
+          <td><input type="text" id="center_${item.rowIndex}" class="form-control form-control-sm" value="${item.center || ''}" placeholder="ระบุศูนย์ (ถ้ามี)"></td>
+          <td>
+            <select id="status_${item.rowIndex}" class="form-select form-select-sm">
+              <option value="ใช้งาน" ${item.status === 'ใช้งาน' ? 'selected' : ''}>ใช้งานปกติ</option>
+              <option value="ระงับ" ${item.status === 'ระงับ' ? 'selected' : ''}>ระงับสิทธิ์</option>
+            </select>
+          </td>
+          <td class="text-center">
+            <button onclick="saveAdminChanges(${item.rowIndex}, '${item.uid}')" class="btn btn-sm btn-primary px-3"><i class="fa-solid fa-floppy-disk me-1"></i> บันทึก</button>
+          </td>
         </tr>`;
+      }
+    });
+  }
+
+  // ➕ ฟังก์ชันเปิดหน้าต่างเลือกสมาชิกเพื่อตั้งเป็น Admin ใหม่
+  async function openAddAdminModal() {
+    showLoader(true);
+    try {
+      const res = await fetch(GAS_API_URL, {
+        method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "getMembersForAdmin", adminUid: currentAdminData.uid })
+      }).then(r => r.json());
+      showLoader(false);
+
+      if(res.status !== 'success') { Swal.fire('Error', res.message, 'error'); return; }
+
+      let optionsHtml = '';
+      res.data.forEach(m => {
+        optionsHtml += `<option value="${m.uid}|${m.fullName}|${m.center}">${m.fullName} (ศูนย์: ${m.center || 'ส่วนกลาง'})</option>`;
+      });
+
+      Swal.fire({
+        title: 'แต่งตั้งผู้ดูแลระบบใหม่',
+        html: `
+          <div class="text-start small mb-3 text-muted">เลือกรายชื่อสมาชิกในระบบเพื่อกำหนดสิทธิ์การเป็นแอดมิน</div>
+          <div class="mb-3 text-start">
+            <label class="form-label fw-bold">เลือกสมาชิก:</label>
+            <select id="swalMemberSelect" class="form-select">${optionsHtml}</select>
+          </div>
+          <div class="mb-3 text-start">
+            <label class="form-label fw-bold">ระดับสิทธิ์ (Role):</label>
+            <select id="swalRoleSelect" class="form-select">
+              <option value="Admin-ศูนย์ประสานงาน">Admin-ศูนย์ประสานงาน</option>
+              <option value="Admin-กองทุน">Admin-กองทุน</option>
+              <option value="AdminMaster">AdminMaster (สูงสุด)</option>
+            </select>
+          </div>
+          <div class="mb-3 text-start">
+            <label class="form-label fw-bold">ศูนย์ประจำการ (ระบุเฉพาะแอดมินศูนย์):</label>
+            <input type="text" id="swalCenterInput" class="form-control" placeholder="เช่น ชุมชนปารีย์">
+          </div>
+        `,
+        showCancelButton: true, confirmButtonText: 'ยืนยันแต่งตั้ง', cancelButtonText: 'ยกเลิก', confirmButtonColor: '#3B82F6',
+        preConfirm: () => {
+          const val = document.getElementById('swalMemberSelect').value.split('|');
+          return {
+            targetUid: val[0],
+            targetName: val[1],
+            defaultCenter: val[2],
+            targetRole: document.getElementById('swalRoleSelect').value,
+            targetCenter: document.getElementById('swalCenterInput').value || val[2]
+          }
+        }
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          showLoader(true);
+          const payload = result.value;
+          payload.action = "addAdmin";
+          payload.adminUid = currentAdminData.uid;
+
+          const addRes = await fetch(GAS_API_URL, {
+            method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify(payload)
+          }).then(r => r.json());
+          showLoader(false);
+
+          if(addRes.status === 'success') {
+            Swal.fire('สำเร็จ', addRes.message, 'success');
+            loadData('admins');
+          } else {
+            Swal.fire('ข้อผิดพลาด', addRes.message, 'error');
+          }
+        }
+      });
+    } catch(e) {
+      showLoader(false); Swal.fire('Error', 'ไม่สามารถโหลดรายชื่อสมาชิกได้', 'error');
+    }
+  }
+
+  // 💾 บันทึกการเปลี่ยนแปลงสิทธิ์ Admin แบบรายบุคคล
+  async function saveAdminChanges(rowIndex, uid) {
+    const newRole = document.getElementById(`role_${rowIndex}`).value;
+    const newCenter = document.getElementById(`center_${rowIndex}`).value;
+    const newStatus = document.getElementById(`status_${rowIndex}`).value;
+
+    Swal.fire({
+      title: 'ยืนยันการบันทึกสิทธิ์?',
+      text: `ต้องการอัปเดตข้อมูลสิทธิ์ของผู้ดูแลระบบท่านนี้ใช่หรือไม่?`,
+      icon: 'question', showCancelButton: true, confirmButtonText: 'บันทึก', cancelButtonText: 'ยกเลิก'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        showLoader(true);
+        try {
+          const res = await fetch(GAS_API_URL, {
+            method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({
+              action: "updateAdminRole",
+              adminUid: currentAdminData.uid,
+              targetUid: uid,
+              newRole: newRole,
+              newCenter: newCenter,
+              newStatus: newStatus
+            })
+          }).then(r => r.json());
+
+          showLoader(false);
+          if (res.status === 'success') {
+            Swal.fire({ toast: true, position: 'top', icon: 'success', title: 'บันทึกสิทธิ์สำเร็จ', showConfirmButton: false, timer: 1500 });
+            loadData('admins');
+          } else {
+            Swal.fire('ข้อผิดพลาด', res.message, 'error');
+          }
+        } catch(e) {
+          showLoader(false); Swal.fire('Error', 'การเชื่อมต่อขัดข้อง', 'error');
+        }
       }
     });
   }
@@ -443,8 +563,7 @@
           }
         } catch (err) { showLoader(false); Swal.fire('Error', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์', 'error'); }
       } else {
-        // Reset select if cancelled (optional refinement)
-        if(module==='members' || module==='admins') loadData(module);
+        if(module==='members') loadData(module);
       }
     });
   }
@@ -459,18 +578,15 @@
     
     const yearType = document.getElementById('chartYearType').value;
     const viewType = document.getElementById('chartViewType').value;
-    
-    // In-Memory Data Aggregation Logic
     let aggregated = {};
 
     globalAnalyticsData.forEach(item => {
       const [yyyy, mm] = item.month.split('-');
-      let year = parseInt(yyyy) + 543; // แปลงเป็น พ.ศ.
+      let year = parseInt(yyyy) + 543;
       let month = parseInt(mm);
       let key = '';
 
       if (yearType === 'fiscal') {
-        // ปีงบประมาณไทย (ต.ค. เริ่มปีงบใหม่)
         let fiscalYear = year;
         if (month >= 10) fiscalYear += 1;
         
@@ -483,7 +599,6 @@
           key = `ปีงบฯ ${fiscalYear}`;
         }
       } else {
-        // ปีปฏิทิน (ม.ค. - ธ.ค.)
         if (viewType === 'month') {
           key = `${thaiMonths[month-1]} ${year}`;
         } else if (viewType === 'quarter') {
@@ -500,13 +615,11 @@
       aggregated[key].expense += item.expense;
     });
 
-    // เรียงลำดับ key (กรณีเดือนอาจจะต้องมีตรรกะเรียงพิเศษ แต่เพื่อความเร็วใช้ตามลำดับข้อมูลที่ส่งมาซึ่ง Sort จาก Backend แล้ว)
     const labels = Object.keys(aggregated);
     const dataMembers = labels.map(k => aggregated[k].members);
     const dataIncome = labels.map(k => aggregated[k].income);
     const dataExpense = labels.map(k => aggregated[k].expense);
 
-    // วาดกราฟ
     const ctx = document.getElementById('analyticsChart').getContext('2d');
     if(myChartInstance) myChartInstance.destroy();
 
@@ -515,30 +628,9 @@
       data: {
         labels: labels,
         datasets: [
-          {
-            label: 'เงินสมทบ (รับเข้า)',
-            data: dataIncome,
-            type: 'bar',
-            backgroundColor: 'rgba(16, 185, 129, 0.8)',
-            yAxisID: 'y'
-          },
-          {
-            label: 'สวัสดิการ (จ่ายออก)',
-            data: dataExpense,
-            type: 'bar',
-            backgroundColor: 'rgba(239, 68, 68, 0.8)',
-            yAxisID: 'y'
-          },
-          {
-            label: 'สมาชิกใหม่เพิ่ม (คน)',
-            data: dataMembers,
-            type: 'line',
-            borderColor: '#3B82F6',
-            backgroundColor: '#3B82F6',
-            borderWidth: 3,
-            tension: 0.3,
-            yAxisID: 'y1'
-          }
+          { label: 'เงินสมทบ (รับเข้า)', data: dataIncome, type: 'bar', backgroundColor: 'rgba(16, 185, 129, 0.8)', yAxisID: 'y' },
+          { label: 'สวัสดิการ (จ่ายออก)', data: dataExpense, type: 'bar', backgroundColor: 'rgba(239, 68, 68, 0.8)', yAxisID: 'y' },
+          { label: 'สมาชิกใหม่เพิ่ม (คน)', data: dataMembers, type: 'line', borderColor: '#3B82F6', backgroundColor: '#3B82F6', borderWidth: 3, tension: 0.3, yAxisID: 'y1' }
         ]
       },
       options: {
@@ -551,17 +643,8 @@
         },
         scales: {
           x: { ticks: { font: { family: 'Prompt' } } },
-          y: { 
-            type: 'linear', display: true, position: 'left',
-            title: { display: true, text: 'จำนวนเงิน (บาท)', font: { family: 'Prompt' } },
-            ticks: { font: { family: 'Prompt' } }
-          },
-          y1: {
-            type: 'linear', display: true, position: 'right',
-            title: { display: true, text: 'จำนวนคน', font: { family: 'Prompt' } },
-            grid: { drawOnChartArea: false },
-            ticks: { font: { family: 'Prompt' }, stepSize: 1 }
-          }
+          y: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'จำนวนเงิน (บาท)', font: { family: 'Prompt' } }, ticks: { font: { family: 'Prompt' } } },
+          y1: { type: 'linear', display: true, position: 'right', title: { display: true, text: 'จำนวนคน', font: { family: 'Prompt' } }, grid: { drawOnChartArea: false }, ticks: { font: { family: 'Prompt' }, stepSize: 1 } }
         }
       }
     });
