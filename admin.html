@@ -11,15 +11,14 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <!-- 🚨 [NEW] นำเข้า LINE LIFF SDK -->
   <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   
   <style>
     :root {
-      --admin-primary: #0F172A; /* Slate 900 */
-      --admin-secondary: #1E293B; /* Slate 800 */
-      --admin-accent: #3B82F6; /* Blue 500 */
+      --admin-primary: #0F172A;
+      --admin-secondary: #1E293B;
+      --admin-accent: #3B82F6;
       --line-green: #06C755;
       --bg-light: #F8FAFC;
     }
@@ -37,25 +36,87 @@
     .nav-pills .nav-link:hover { background: #1E293B; color: white; }
     .nav-pills .nav-link.active { background: var(--admin-accent); color: white; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3); }
     
-    /* 📦 Content Cards & Tables */
+    /* 📦 Content Cards */
     .dashboard-card { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; margin-bottom: 20px; }
     .stat-box { border-left: 4px solid var(--admin-accent); background: #F1F5F9; padding: 15px; border-radius: 0 10px 10px 0; }
-    .table-responsive { border-radius: 12px; overflow: hidden; border: 1px solid #E2E8F0; }
+    
+    /* 📱 Mobile Responsive Data Tables */
+    .table-responsive { 
+      border-radius: 12px; 
+      border: 1px solid #E2E8F0; 
+      overflow-x: auto; 
+      -webkit-overflow-scrolling: touch; /* ให้เลื่อนบนมือถือได้สมูทขึ้น */
+    }
+    .table th, .table td { 
+      white-space: nowrap; /* ห้ามข้อความตกบรรทัด */
+      vertical-align: middle; 
+      font-size: 0.9rem;
+      padding: 15px;
+    }
     .table thead { background-color: var(--admin-secondary); color: white; }
-    .table th { font-weight: 500; font-size: 0.9rem; padding: 15px; border-bottom: none; }
-    .table td { padding: 15px; vertical-align: middle; font-size: 0.9rem; border-bottom: 1px solid #F1F5F9; }
     .table tbody tr:hover { background-color: #F8FAFC; }
+    
+    /* 🎯 Sticky Action Column: ตรึงปุ่มกดไว้ขวาสุดเสมอ */
+    .table thead th:last-child,
+    .table tbody td:last-child {
+      position: sticky;
+      right: 0;
+      background-color: white;
+      box-shadow: -4px 0 8px rgba(0,0,0,0.05); /* สร้างเงาให้ดูมีมิติว่าเลื่อนได้ */
+      z-index: 1;
+    }
+    .table thead th:last-child {
+      background-color: var(--admin-secondary);
+      color: white;
+      box-shadow: -4px 0 8px rgba(0,0,0,0.2);
+    }
+    .table tbody tr:hover td:last-child {
+      background-color: #F8FAFC;
+    }
+
     .badge-status { padding: 6px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 600; }
     .bg-pending { background: #FEF3C7; color: #D97706; }
     .bg-approved { background: #DCFCE7; color: #166534; }
-    .btn-action { border-radius: 8px; padding: 6px 12px; font-size: 0.8rem; font-weight: 500; margin-right: 5px; }
+    
+    .action-group { display: flex; gap: 8px; justify-content: center; }
+    .btn-action { border-radius: 8px; padding: 6px 12px; font-size: 0.8rem; font-weight: 500; }
     
     #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 999; display: none; align-items: center; justify-content: center; flex-direction: column; }
+
+    /* 📱 Mobile Specific Adjustments */
+    @media (max-width: 768px) {
+      /* ปรับเมนูด้านซ้ายให้เป็นแนวนอนและใช้นิ้วเลื่อนได้ */
+      .nav-pills {
+        display: flex;
+        flex-direction: row !important;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+      }
+      .nav-pills .nav-link {
+        white-space: nowrap;
+        margin-right: 10px;
+        margin-bottom: 0;
+      }
+      .dashboard-card { padding: 15px; }
+      .swipe-hint {
+        display: block;
+        text-align: right;
+        font-size: 0.75rem;
+        color: #64748B;
+        margin-bottom: 8px;
+        animation: pulse 2s infinite;
+      }
+    }
+    @media (min-width: 769px) { .swipe-hint { display: none; } }
+    @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
   </style>
 </head>
 <body>
 
-<!-- 🔐 Security Gate: LINE Admin Login -->
+<!-- 🔐 Security Gate -->
 <div id="loginGate">
   <div class="login-box">
     <div class="mb-4">
@@ -63,12 +124,10 @@
       <h4 class="fw-bold">Admin Workspace</h4>
       <p class="text-secondary small">เข้าสู่ระบบด้วยมาตรฐาน Zero-Trust Security</p>
     </div>
-    
     <div id="loginStatusSection">
       <div class="spinner-border text-success mb-2" role="status"></div>
       <p class="text-white-50 small">กำลังตรวจสอบโปรไฟล์ LINE...</p>
     </div>
-
     <button id="btnLineLogin" onclick="handleLiffLogin()" class="btn-line-login" style="display: none;">
       <i class="fa-brands fa-line me-2"></i> ยืนยันตัวตนผ่าน LINE
     </button>
@@ -120,20 +179,23 @@
 
           <!-- สมาชิก -->
           <div class="tab-pane fade" id="view-members">
-            <div class="d-flex justify-content-between mb-4"><h5 class="fw-bold">จัดการทะเบียนสมาชิก</h5><button class="btn btn-sm btn-outline-primary" onclick="loadData('members')"><i class="fa-solid fa-rotate me-1"></i></button></div>
+            <div class="d-flex justify-content-between mb-2"><h5 class="fw-bold">จัดการทะเบียนสมาชิก</h5><button class="btn btn-sm btn-outline-primary" onclick="loadData('members')"><i class="fa-solid fa-rotate me-1"></i></button></div>
+            <span class="swipe-hint"><i class="fa-solid fa-angles-right"></i> เลื่อนซ้ายขวาเพื่อดูข้อมูล</span>
             <div class="dashboard-card p-0"><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>รหัสสมาชิก</th><th>วันที่สมัคร</th><th>ชื่อ-นามสกุล</th><th>ศูนย์</th><th>แต้ม</th><th>สถานะ</th></tr></thead><tbody id="table-members"></tbody></table></div></div>
           </div>
 
           <!-- ธุรกรรม -->
           <div class="tab-pane fade" id="view-transactions">
-            <div class="d-flex justify-content-between mb-4"><h5 class="fw-bold">ตรวจสอบเงินสมทบ</h5><button class="btn btn-sm btn-outline-primary" onclick="loadData('transactions')"><i class="fa-solid fa-rotate me-1"></i></button></div>
-            <div class="dashboard-card p-0"><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>รหัสธุรกรรม</th><th>วันที่/เวลา</th><th>ชื่อ-นามสกุล</th><th>ยอดเงิน</th><th>ช่องทาง</th><th>หลักฐาน</th><th>สถานะ</th><th>การตัดสินใจ</th></tr></thead><tbody id="table-transactions"></tbody></table></div></div>
+            <div class="d-flex justify-content-between mb-2"><h5 class="fw-bold">ตรวจสอบเงินสมทบ</h5><button class="btn btn-sm btn-outline-primary" onclick="loadData('transactions')"><i class="fa-solid fa-rotate me-1"></i></button></div>
+            <span class="swipe-hint"><i class="fa-solid fa-angles-right"></i> เลื่อนขวาเพื่อกดอนุมัติ</span>
+            <div class="dashboard-card p-0"><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>รหัสธุรกรรม</th><th>วันที่/เวลา</th><th>ชื่อ-นามสกุล</th><th>ยอดเงิน</th><th>ช่องทาง</th><th>หลักฐาน</th><th>สถานะ</th><th class="text-center">การตัดสินใจ</th></tr></thead><tbody id="table-transactions"></tbody></table></div></div>
           </div>
 
           <!-- เบิกจ่าย -->
           <div class="tab-pane fade" id="view-claims">
-            <div class="d-flex justify-content-between mb-4"><h5 class="fw-bold">พิจารณาคำขอเบิก</h5><button class="btn btn-sm btn-outline-primary" onclick="loadData('claims')"><i class="fa-solid fa-rotate me-1"></i></button></div>
-            <div class="dashboard-card p-0"><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>รหัสคำขอ</th><th>วันที่ยื่น</th><th>ชื่อ-นามสกุล</th><th>ประเภท</th><th>ยอดเงิน</th><th>เอกสาร</th><th>สถานะ</th><th>พิจารณา</th></tr></thead><tbody id="table-claims"></tbody></table></div></div>
+            <div class="d-flex justify-content-between mb-2"><h5 class="fw-bold">พิจารณาคำขอเบิก</h5><button class="btn btn-sm btn-outline-primary" onclick="loadData('claims')"><i class="fa-solid fa-rotate me-1"></i></button></div>
+            <span class="swipe-hint"><i class="fa-solid fa-angles-right"></i> เลื่อนขวาเพื่อกดอนุมัติ</span>
+            <div class="dashboard-card p-0"><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>รหัสคำขอ</th><th>วันที่ยื่น</th><th>ชื่อ-นามสกุล</th><th>ประเภท</th><th>ยอดเงิน</th><th>เอกสาร</th><th>สถานะ</th><th class="text-center">พิจารณา</th></tr></thead><tbody id="table-claims"></tbody></table></div></div>
           </div>
 
           <!-- ระเบียบ -->
@@ -153,8 +215,6 @@
   // ⚙️ CONFIGURATION & STATE
   // ==========================================
   const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwenEl7UjUMxAsQy4LHhZILe9-qvzWwhFNFwoZ1KJsXC3aLRKRFqfaZNAd0---xgjoP/exec"; 
-  
-  // 🚨 [IMPORTANT] ใส่รหัส LIFF ID สำหรับหน้า Admin ของคุณที่นี่
   const LIFF_ID_ADMIN = "2010764982-wudH3EsZ"; 
   
   let currentAdminData = { uid: "", name: "", role: "" };
@@ -169,12 +229,10 @@
   async function initializeLiff() {
     try {
       await liff.init({ liffId: LIFF_ID_ADMIN });
-      
       if (liff.isLoggedIn()) {
         const profile = await liff.getProfile();
         verifyAdminWhitelist(profile.userId);
       } else {
-        // กรณียังไม่ได้ล็อกอิน ให้แสดงปุ่ม LINE
         document.getElementById('loginStatusSection').style.display = 'none';
         document.getElementById('btnLineLogin').style.display = 'block';
       }
@@ -184,9 +242,7 @@
   }
 
   function handleLiffLogin() {
-    if (!liff.isLoggedIn()) {
-      liff.login();
-    }
+    if (!liff.isLoggedIn()) { liff.login(); }
   }
 
   function logout() {
@@ -197,7 +253,6 @@
   async function verifyAdminWhitelist(uid) {
     document.getElementById('loader-text').innerText = "กำลังยืนยันสิทธิ์ผู้ดูแลระบบ...";
     showLoader(true);
-
     try {
       const response = await fetch(GAS_API_URL, {
         method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -207,29 +262,16 @@
       showLoader(false);
 
       if (res.status === 'success') {
-        // อนุมัติการเข้าถึง
         currentAdminData = res.adminData;
         document.getElementById('adminNameDisplay').innerText = `${currentAdminData.name} (${currentAdminData.role})`;
         document.getElementById('loginGate').style.display = 'none';
         document.getElementById('mainWorkspace').style.display = 'block';
         loadDashboardOverview();
-        
-        Swal.fire({
-          icon: 'success',
-          title: 'เข้าสู่ระบบสำเร็จ',
-          text: `ยินดีต้อนรับคุณ ${currentAdminData.name}`,
-          timer: 1500,
-          showConfirmButton: false
-        });
       } else {
-        // ปฏิเสธการเข้าถึง (ไม่พบในชีต Admins)
         Swal.fire({
-          icon: 'error',
-          title: 'Access Denied',
-          text: res.message,
-          confirmButtonColor: '#3B82F6'
+          icon: 'error', title: 'Access Denied', text: res.message, confirmButtonColor: '#3B82F6'
         }).then(() => {
-          liff.logout(); // บังคับเตะออก
+          liff.logout(); 
           window.location.reload();
         });
       }
@@ -290,11 +332,26 @@
       } 
       else if (module === 'transactions') {
         const isPending = item.status === 'รอตรวจสอบ' || item.status === 'รอคณะกรรมการยืนยันรับเงินสด';
-        tbody.innerHTML += `<tr><td><strong class="text-dark">${item.txId}</strong></td><td>${item.date}</td><td>${item.name}</td><td class="fw-bold text-success">${item.amount} ฿</td><td><span class="badge bg-light text-dark border">${item.method}</span></td><td>${item.slipUrl !== '-' ? `<a href="${item.slipUrl}" target="_blank" class="btn btn-sm btn-outline-secondary py-0 px-2"><i class="fa-solid fa-receipt"></i> ดูสลิป</a>` : '-'}</td><td><span class="badge-status ${isPending ? 'bg-pending' : 'bg-approved'}">${item.status}</span></td><td>${isPending ? `<button onclick="updateStatus('transactions', ${item.rowIndex}, 'อนุมัติแล้ว', '${item.txId}')" class="btn btn-sm btn-success btn-action">อนุมัติ</button><button onclick="updateStatus('transactions', ${item.rowIndex}, 'ปฏิเสธ/สลิปไม่ถูกต้อง', '${item.txId}')" class="btn btn-sm btn-danger btn-action">ปฏิเสธ</button>` : '<span class="text-muted small">ดำเนินการแล้ว</span>'}</td></tr>`;
+        tbody.innerHTML += `<tr>
+          <td><strong class="text-dark">${item.txId}</strong></td><td>${item.date}</td><td>${item.name}</td><td class="fw-bold text-success">${item.amount} ฿</td>
+          <td><span class="badge bg-light text-dark border">${item.method}</span></td>
+          <td>${item.slipUrl !== '-' ? `<a href="${item.slipUrl}" target="_blank" class="btn btn-sm btn-outline-secondary py-0 px-2"><i class="fa-solid fa-receipt"></i> ดูสลิป</a>` : '-'}</td>
+          <td><span class="badge-status ${isPending ? 'bg-pending' : 'bg-approved'}">${item.status}</span></td>
+          <td class="text-center">
+            ${isPending ? `<div class="action-group"><button onclick="updateStatus('transactions', ${item.rowIndex}, 'อนุมัติแล้ว', '${item.txId}')" class="btn btn-sm btn-success btn-action">อนุมัติ</button><button onclick="updateStatus('transactions', ${item.rowIndex}, 'ปฏิเสธ/สลิปไม่ถูกต้อง', '${item.txId}')" class="btn btn-sm btn-danger btn-action">ปฏิเสธ</button></div>` : '<span class="text-muted small">ดำเนินการแล้ว</span>'}
+          </td>
+        </tr>`;
       } 
       else if (module === 'claims') {
         const isPending = item.status === 'รอคณะกรรมการตรวจสอบ';
-        tbody.innerHTML += `<tr><td><strong class="text-dark">${item.claimId}</strong></td><td>${item.date}</td><td>${item.name}</td><td>${item.welfareName}</td><td class="fw-bold text-primary">${item.amount} ฿</td><td>${item.docUrl !== '-' ? `<a href="${item.docUrl}" target="_blank" class="btn btn-sm btn-outline-secondary py-0 px-2">ดูเอกสาร</a>` : '-'}</td><td><span class="badge-status ${isPending ? 'bg-pending' : 'bg-approved'}">${item.status}</span></td><td>${isPending ? `<button onclick="updateStatus('claims', ${item.rowIndex}, 'อนุมัติแล้ว', '${item.claimId}')" class="btn btn-sm btn-success btn-action">อนุมัติ</button><button onclick="updateStatus('claims', ${item.rowIndex}, 'ปฏิเสธ/เอกสารไม่ครบ', '${item.claimId}')" class="btn btn-sm btn-danger btn-action">ปฏิเสธ</button>` : '<span class="text-muted small">ดำเนินการแล้ว</span>'}</td></tr>`;
+        tbody.innerHTML += `<tr>
+          <td><strong class="text-dark">${item.claimId}</strong></td><td>${item.date}</td><td>${item.name}</td><td>${item.welfareName}</td><td class="fw-bold text-primary">${item.amount} ฿</td>
+          <td>${item.docUrl !== '-' ? `<a href="${item.docUrl}" target="_blank" class="btn btn-sm btn-outline-secondary py-0 px-2">ดูเอกสาร</a>` : '-'}</td>
+          <td><span class="badge-status ${isPending ? 'bg-pending' : 'bg-approved'}">${item.status}</span></td>
+          <td class="text-center">
+            ${isPending ? `<div class="action-group"><button onclick="updateStatus('claims', ${item.rowIndex}, 'อนุมัติแล้ว', '${item.claimId}')" class="btn btn-sm btn-success btn-action">อนุมัติ</button><button onclick="updateStatus('claims', ${item.rowIndex}, 'ปฏิเสธ/เอกสารไม่ครบ', '${item.claimId}')" class="btn btn-sm btn-danger btn-action">ปฏิเสธ</button></div>` : '<span class="text-muted small">ดำเนินการแล้ว</span>'}
+          </td>
+        </tr>`;
       } 
       else if (module === 'rules') {
         tbody.innerHTML += `<tr><td><strong class="text-dark">${item.welfareName}</strong></td><td>${item.minDays} วัน</td><td>${item.maxPerClaim.toLocaleString()} ฿</td><td>${item.maxPerYear.toLocaleString()} ฿</td><td><span class="badge ${item.isActive ? 'bg-success' : 'bg-secondary'}">${item.isActive ? 'เปิดใช้งาน' : 'ปิดใช้งาน'}</span></td></tr>`;
@@ -315,7 +372,7 @@
       cancelButtonText: 'ยกเลิก'
     }).then(async (result) => {
       if (result.isConfirmed) {
-        document.getElementById('loader-text').innerText = "กำลังบันทึกและส่งแจ้งเตือน...";
+        document.getElementById('loader-text').innerText = "กำลังบันทึกและสร้างเอกสาร...";
         showLoader(true);
         try {
           const response = await fetch(GAS_API_URL, {
@@ -326,7 +383,7 @@
               rowIndex: rowIndex,
               status: newStatus,
               id: id,
-              adminName: currentAdminData.name // 🚨 [NEW] ส่งชื่อแอดมินไปเก็บใน Audit Trail
+              adminName: currentAdminData.name
             })
           });
           const res = await response.json();
