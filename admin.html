@@ -62,7 +62,6 @@
     .bg-approved { background: #DCFCE7; color: #166534; }
     .bg-danger-light { background: #FEE2E2; color: #B91C1C; }
     
-    /* Edit Button Inline */
     .btn-edit-inline { background: #F1F5F9; color: #475569; border: 1px solid #CBD5E1; border-radius: 8px; padding: 5px 10px; font-size: 0.8rem; font-weight: 500; transition: 0.2s; }
     .btn-edit-inline:hover { background: #E2E8F0; color: #1E293B; }
     
@@ -140,10 +139,15 @@
               <div class="eq-box" style="border-top: 4px solid var(--tier1-green); background: #DCFCE7;"><span class="text-success"><i class="fa-solid fa-user-check"></i> สมาชิกคงเหลือปัจจุบัน</span><h2 class="text-success" id="eq-active">0</h2></div>
             </div>
 
-            <!-- Tier 2: โครงสร้างทุนสวัสดิการ -->
+            <!-- Tier 2: โครงสร้างทุนสวัสดิการ + ปุ่มบันทึกทุนสถาบัน -->
             <div class="d-flex justify-content-between align-items-end mb-3">
-              <h6 class="fw-bold text-dark mb-0"><i class="fa-solid fa-coins text-warning me-2"></i>โครงสร้างทุนสวัสดิการ (Capitalization)</h6>
-              <h5 class="fw-bold text-success mb-0">ยอดรวม: <span id="cap-total">0</span> ฿</h5>
+              <div>
+                <h6 class="fw-bold text-dark mb-0"><i class="fa-solid fa-coins text-warning me-2"></i>โครงสร้างทุนสวัสดิการ (Capitalization)</h6>
+              </div>
+              <div class="d-flex align-items-center gap-3">
+                <button onclick="openInstitutionalModal()" class="btn btn-sm btn-success fw-bold px-3 shadow-sm"><i class="fa-solid fa-circle-plus me-1"></i> + บันทึกทุนสถาบัน/งบอุดหนุน</button>
+                <h5 class="fw-bold text-success mb-0">ยอดรวม: <span id="cap-total">0</span> ฿</h5>
+              </div>
             </div>
             <div class="capital-matrix mb-4">
               <div class="capital-box" style="border-color: #3B82F6;"><span>เงินสมทบสมาชิก</span><h4 id="cap-member">0</h4></div>
@@ -185,8 +189,7 @@
             </div>
           </div>
 
-          <!-- 📝 Universal CRUD Tables (สมาชิก, การเงิน, เบิกจ่าย, ระเบียบ) -->
-          <!-- 👥 แท็บทะเบียนสมาชิก -->
+          <!-- 📝 Universal CRUD Tables -->
           <div class="tab-pane fade" id="view-members">
             <div class="d-flex justify-content-between mb-2"><h5 class="fw-bold">จัดการทะเบียนสมาชิก</h5></div>
             <div class="dashboard-card p-0"><div class="table-responsive"><table class="table table-hover mb-0">
@@ -195,16 +198,14 @@
             </table></div></div>
           </div>
 
-          <!-- 💳 แท็บธุรกรรม -->
           <div class="tab-pane fade" id="view-transactions">
-            <div class="d-flex justify-content-between mb-2"><h5 class="fw-bold">ตรวจสอบเงินสมทบ</h5></div>
+            <div class="d-flex justify-content-between mb-2"><h5 class="fw-bold">ตรวจสอบเงินสมทบและทุนสถาบัน</h5></div>
             <div class="dashboard-card p-0"><div class="table-responsive"><table class="table table-hover mb-0">
-              <thead><tr><th>รหัสธุรกรรม</th><th>วันที่/เวลา</th><th>ชื่อ-นามสกุล</th><th>ยอดเงิน</th><th>ช่องทาง</th><th>หลักฐาน</th><th>สถานะ</th><th class="text-center">จัดการ (CRUD)</th></tr></thead>
+              <thead><tr><th>รหัสธุรกรรม</th><th>วันที่/เวลา</th><th>ชื่อ/หน่วยงาน</th><th>ยอดเงิน</th><th>ประเภททุน/ช่องทาง</th><th>หลักฐาน</th><th>สถานะ</th><th class="text-center">จัดการ (CRUD)</th></tr></thead>
               <tbody id="table-transactions"></tbody>
             </table></div></div>
           </div>
 
-          <!-- 🏥 แท็บเบิกจ่าย -->
           <div class="tab-pane fade" id="view-claims">
             <div class="d-flex justify-content-between mb-2"><h5 class="fw-bold">พิจารณาคำขอเบิกสวัสดิการ</h5></div>
             <div class="dashboard-card p-0"><div class="table-responsive"><table class="table table-hover mb-0">
@@ -213,7 +214,6 @@
             </table></div></div>
           </div>
 
-          <!-- ⚖️ แท็บระเบียบ -->
           <div class="tab-pane fade" id="view-rules">
             <div class="d-flex justify-content-between mb-2"><h5 class="fw-bold">ระเบียบสวัสดิการ</h5></div>
             <div class="dashboard-card p-0"><div class="table-responsive"><table class="table table-hover mb-0">
@@ -222,7 +222,6 @@
             </table></div></div>
           </div>
 
-          <!-- 🛡️ แท็บจัดการผู้ดูแลระบบ (AdminMaster) -->
           <div class="tab-pane fade" id="view-admins">
             <div class="d-flex justify-content-between mb-3">
               <h5 class="fw-bold text-warning mb-0">ระบบจัดการผู้ดูแลระบบ</h5>
@@ -242,20 +241,14 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  // ==========================================
-  // ⚙️ CONFIGURATION & API ENGINE
-  // ==========================================
   const GAS_API_URL = "https://script.google.com/macros/s/AKfycbw5qS_u0SMJXFLOWOS6ILrl50h05ECuQWJneX3kXO_pB29xHo_4S1PFJyvhegEf32HZ/exec"; 
   const LIFF_ID_ADMIN = "2010764982-wudH3EsZ"; 
   
   let currentAdminData = { uid: "", name: "", role: "", center: "" };
   let globalAnalyticsData = [];
   let myChartInstance = null;
-  let cachedData = {}; // สำหรับดึงข้อมูลไปแสดงใน Edit Modal
+  let cachedData = {}; 
 
-  // ==========================================
-  // 🔐 ZERO-TRUST AUTHENTICATION
-  // ==========================================
   document.addEventListener("DOMContentLoaded", () => { initializeLiff(); });
 
   async function initializeLiff() {
@@ -288,34 +281,28 @@
     if(show) document.getElementById('loader-text').innerText = text;
   }
 
-  // ==========================================
-  // 🚀 CQRS DASHBOARD ENGINE (Fast Load)
-  // ==========================================
   async function loadDashboardOverview() {
-    showLoader(true, "กำลังดึงข้อมูลภาพรวม (Snapshot)...");
+    showLoader(true, "กำลังดึงข้อมูลภาพรวม...");
     try {
-      // 1. ดึงข้อมูล Snapshot ตัวเลข
       const resStats = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "getAdminOverview", adminUid: currentAdminData.uid }) }).then(r => r.json());
       if(resStats.status === 'success' && resStats.data) {
         const d = resStats.data;
-        // Tier 1
         document.getElementById('eq-total').innerText = d.equation.total.toLocaleString();
         document.getElementById('eq-resigned').innerText = d.equation.resigned.toLocaleString();
         document.getElementById('eq-dead').innerText = d.equation.dead.toLocaleString();
         document.getElementById('eq-active').innerText = d.equation.active.toLocaleString();
-        // Tier 2
+        
         document.getElementById('cap-total').innerText = d.capital.total.toLocaleString();
         document.getElementById('cap-member').innerText = `฿${d.capital.member.toLocaleString()}`;
         document.getElementById('cap-gov').innerText = `฿${d.capital.gov.toLocaleString()}`;
         document.getElementById('cap-local').innerText = `฿${d.capital.local.toLocaleString()}`;
         document.getElementById('cap-donate').innerText = `฿${d.capital.donate.toLocaleString()}`;
         document.getElementById('cap-other').innerText = `฿${(d.capital.interest + d.capital.other).toLocaleString()}`;
-        // Tier 3
+        
         document.getElementById('task-tx').innerText = d.tasks.pendingTx;
         document.getElementById('task-claim').innerText = d.tasks.pendingClaims;
       }
 
-      // 2. ดึงข้อมูลกราฟ Time Series
       const resGraph = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "getAdminAnalytics", adminUid: currentAdminData.uid }) }).then(r => r.json());
       if(resGraph.status === 'success') { globalAnalyticsData = resGraph.data; renderChart(); }
     } catch (e) { console.error(e); }
@@ -323,14 +310,83 @@
   }
 
   async function manualSnapshotRefresh() {
-    showLoader(true, "กำลังสั่งให้ระบบสร้าง Snapshot ใหม่...");
-    await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "manualTriggerSnapshot" }) });
-    setTimeout(() => { loadDashboardOverview(); }, 2000); // รอให้ Sheet คำนวณเสร็จ
+    showLoader(true, "กำลังรีเฟรชฐานข้อมูล...");
+    setTimeout(() => { loadDashboardOverview(); showLoader(false); }, 1500);
   }
 
-  // ==========================================
-  // 📝 UNIVERSAL CRUD (Data Tables & Modals)
-  // ==========================================
+  // 🏛️ ฟังก์ชันเปิด Modal สำหรับบันทึกทุนสถาบัน
+  function openInstitutionalModal() {
+    if (currentAdminData.role === 'Admin-ศูนย์ประสานงาน') {
+      return Swal.fire('สิทธิ์ไม่เพียงพอ', 'ศูนย์ประสานงานไม่มีสิทธิ์บันทึกงบประมาณสถาบัน', 'warning');
+    }
+
+    Swal.fire({
+      title: '🏛️ บันทึกทุนสถาบัน / งบอุดหนุน',
+      html: `
+        <div class="text-start">
+          <label class="form-label fw-bold small text-muted">ประเภททุนสถาบัน:</label>
+          <select id="instType" class="form-select mb-3">
+            <option value="พอช. (รัฐสมทบ)">สถาบันองค์กรชุมชน (พอช.)</option>
+            <option value="ท้องถิ่น (เทศบาล)">องค์กรปกครองส่วนท้องถิ่น (เทศบาล)</option>
+            <option value="เงินบริจาค">เงินบริจาคสนับสนุนกองทุน</option>
+            <option value="ดอกเบี้ยและรายได้อื่นๆ">ดอกเบี้ยธนาคาร / รายได้อื่นๆ</option>
+          </select>
+
+          <label class="form-label fw-bold small text-muted">ชื่อหน่วยงาน / แหล่งที่มา:</label>
+          <input id="instSource" class="form-control mb-3" placeholder="เช่น เทศบาลตำบลสุคิริน, สำนักงาน พอช.">
+
+          <label class="form-label fw-bold small text-muted">จำนวนเงิน (บาท):</label>
+          <input id="instAmount" type="number" class="form-control mb-3" placeholder="0.00">
+
+          <label class="form-label fw-bold small text-muted">หมายเหตุ / อ้างอิงเอกสาร:</label>
+          <input id="instNote" class="form-control" placeholder="เช่น ตามฎีกาเบิกจ่ายเลขที่...">
+        </div>
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'บันทึกเข้าระบบ',
+      cancelButtonText: 'ยกเลิก',
+      confirmButtonColor: '#10B981',
+      preConfirm: () => {
+        const capitalType = document.getElementById('instType').value;
+        const sourceName = document.getElementById('instSource').value;
+        const amount = document.getElementById('instAmount').value;
+        const note = document.getElementById('instNote').value;
+
+        if (!sourceName || !amount) {
+          Swal.showValidationMessage('กรุณากรอกชื่อแหล่งที่มาและจำนวนเงินให้ครบถ้วน');
+          return false;
+        }
+
+        return {
+          action: 'processInstitutionalContribution',
+          adminUid: currentAdminData.uid,
+          capitalType: capitalType,
+          sourceName: sourceName,
+          amount: amount,
+          note: note
+        };
+      }
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        showLoader(true, "กำลังบันทึกทุนสถาบัน...");
+        try {
+          const res = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify(result.value) }).then(r => r.json());
+          showLoader(false);
+          if (res.status === 'success') {
+            Swal.fire('สำเร็จ', 'บันทึกทุนสถาบันเรียบร้อยแล้ว', 'success');
+            loadDashboardOverview(); // รีเฟรชยอดรวมทันที
+          } else {
+            Swal.fire('ข้อผิดพลาด', res.message, 'error');
+          }
+        } catch (e) {
+          showLoader(false);
+          Swal.fire('Error', 'ไม่สามารถเชื่อมต่อ Server ได้', 'error');
+        }
+      }
+    });
+  }
+
+  // 📝 Universal CRUD Tables
   async function loadData(moduleName) {
     showLoader(true, `กำลังดึงข้อมูล ${moduleName}...`);
     try {
@@ -343,32 +399,28 @@
 
   function renderTable(module, dataArray) {
     const tbody = document.getElementById(`table-${module}`);
-    cachedData[module] = dataArray; // เก็บ Cache ไว้สำหรับเปิด Modal
+    cachedData[module] = dataArray; 
     tbody.innerHTML = dataArray.length === 0 ? `<tr><td colspan="8" class="text-center text-muted">ไม่พบข้อมูล</td></tr>` : "";
     
     dataArray.forEach((item, index) => {
-      // 👥 ทะเบียนสมาชิก
       if (module === 'members') {
         const badgeClass = item.status === 'เป็นสมาชิก' ? 'bg-approved' : (item.status.includes('พ้นสภาพ') || item.status==='เสียชีวิต' ? 'bg-danger-light' : 'bg-pending');
         tbody.innerHTML += `<tr><td><strong class="text-primary">${item.id}</strong></td><td>${item.date}</td><td>${item.name}</td><td>${item.center}</td><td><span class="badge-status ${badgeClass}">${item.status}</span></td>
         <td class="text-center"><button class="btn-edit-inline" onclick="openEditModal('${module}', ${index})"><i class="fa-solid fa-pen-to-square"></i> จัดการ</button></td></tr>`;
       } 
-      // 💳 ธุรกรรม & 🏥 เบิกจ่าย
       else if (module === 'transactions' || module === 'claims') {
         const isTx = module === 'transactions';
         const idCol = isTx ? item.txId : item.claimId;
         const fileBtn = isTx ? (item.slipUrl !== '-' ? `<a href="${item.slipUrl}" target="_blank" class="btn btn-sm btn-outline-secondary"><i class="fa-solid fa-link"></i></a>` : '-') : (item.docUrl !== '-' ? `<a href="${item.docUrl}" target="_blank" class="btn btn-sm btn-outline-secondary"><i class="fa-solid fa-link"></i></a>` : '-');
         const badgeClass = item.status.includes('อนุมัติ') || item.status.includes('ยืนยัน') ? 'bg-approved' : (item.status.includes('ปฏิเสธ') ? 'bg-danger-light' : 'bg-pending');
         
-        tbody.innerHTML += `<tr><td><strong>${idCol}</strong></td><td>${item.date}</td><td>${item.name}</td><td>${isTx ? item.method : item.welfareName}</td><td><span class="fw-bold ${isTx?'text-success':'text-primary'}">${item.amount} ฿</span></td><td>${fileBtn}</td><td><span class="badge-status ${badgeClass}">${item.status}</span></td>
-        <td class="text-center"><button class="btn-edit-inline" onclick="openEditModal('${module}', ${index})"><i class="fa-solid fa-sliders"></i> พิจารณา/แก้ไข</button></td></tr>`;
+        tbody.innerHTML += `<tr><td><strong>${idCol}</strong></td><td>${item.date}</td><td>${item.name}</td><td><span class="fw-bold ${isTx?'text-success':'text-primary'}">${item.amount} ฿</span></td><td>${isTx ? item.method : item.welfareName}</td><td>${fileBtn}</td><td><span class="badge-status ${badgeClass}">${item.status}</span></td>
+        <td class="text-center"><button class="btn-edit-inline" onclick="openEditModal('${module}', ${index})"><i class="fa-solid fa-sliders"></i> พิจารณา</button></td></tr>`;
       } 
-      // ⚖️ ระเบียบสวัสดิการ
       else if (module === 'rules') {
         tbody.innerHTML += `<tr><td><strong>${item.welfareName}</strong></td><td>${item.minDays} วัน</td><td>${item.maxPerClaim.toLocaleString()} ฿</td><td>${item.maxPerYear.toLocaleString()} ฿</td><td><span class="badge ${item.isActive ? 'bg-success' : 'bg-secondary'}">${item.isActive ? 'ใช้งาน' : 'ระงับ'}</span></td>
         <td class="text-center"><button class="btn-edit-inline" onclick="openEditModal('${module}', ${index})"><i class="fa-solid fa-pen-to-square"></i> แก้ไข</button></td></tr>`;
       }
-      // 🛡️ แอดมิน (ใช้โค้ดเดิมแบบ Inline Dropdown เพราะรวดเร็วกว่า)
       else if (module === 'admins') {
         tbody.innerHTML += `<tr><td><strong>${item.name}</strong></td>
           <td><select id="role_${item.rowIndex}" class="form-select form-select-sm"><option value="AdminMaster" ${item.role==='AdminMaster'?'selected':''}>AdminMaster</option><option value="Admin-กองทุน" ${item.role==='Admin-กองทุน'?'selected':''}>Admin-กองทุน</option><option value="Admin-ศูนย์ประสานงาน" ${item.role==='Admin-ศูนย์ประสานงาน'?'selected':''}>Admin-ศูนย์ประสานงาน</option></select></td>
@@ -379,120 +431,58 @@
     });
   }
 
-  // ✏️ Smart Modal (SweetAlert2 Custom HTML)
   function openEditModal(module, dataIndex) {
     const item = cachedData[module][dataIndex];
     let htmlForm = '';
-    let confirmBtn = 'บันทึกการเปลี่ยนแปลง';
+    let confirmBtn = 'บันทึก';
 
-    if (module === 'members') {
-      htmlForm = `
-        <div class="text-start">
-          <label class="form-label fw-bold small text-muted">ชื่อ-นามสกุล (แก้ไขได้หากสะกดผิด):</label>
-          <input id="swalName" class="form-control mb-3" value="${item.name}">
-          <label class="form-label fw-bold small text-muted">อัปเดตสถานะ (PDPA Soft-Delete):</label>
-          <select id="swalStatus" class="form-select">
-            <option value="รอชำระเงิน" ${item.status==='รอชำระเงิน'?'selected':''}>รอชำระเงิน</option>
-            <option value="เป็นสมาชิก" ${item.status==='เป็นสมาชิก'?'selected':''}>เป็นสมาชิก (Active)</option>
-            <option value="พ้นสภาพ(ลาออก)" ${item.status==='พ้นสภาพ(ลาออก)'?'selected':''}>พ้นสภาพ(ลาออก)</option>
-            <option value="เสียชีวิต" ${item.status==='เสียชีวิต'?'selected':''}>เสียชีวิต</option>
-          </select>
-        </div>`;
-    } 
-    else if (module === 'transactions' || module === 'claims') {
+    if (module === 'transactions' || module === 'claims') {
       const isTx = module === 'transactions';
-      const docLabel = isTx ? 'จำนวนเงินสมทบ (บาท):' : 'จำนวนเงินที่อนุมัติเบิก (บาท):';
-      const statusOptions = isTx 
-        ? `<option value="รอตรวจสอบ" ${item.status==='รอตรวจสอบ'?'selected':''}>รอตรวจสอบ</option>
-           <option value="อนุมัติแล้ว" ${item.status==='อนุมัติแล้ว'?'selected':''}>อนุมัติรับเงิน</option>
-           <option value="ปฏิเสธ/ส่งกลับ" ${item.status.includes('ปฏิเสธ')?'selected':''}>ปฏิเสธ/ส่งกลับ</option>`
-        : `<option value="รอคณะกรรมการตรวจสอบ" ${item.status==='รอคณะกรรมการตรวจสอบ'?'selected':''}>รอคณะกรรมการตรวจสอบ</option>
-           <option value="อนุมัติแล้ว" ${item.status==='อนุมัติแล้ว'?'selected':''}>อนุมัติจ่ายสวัสดิการ</option>
-           <option value="ปฏิเสธข้อมูล" ${item.status.includes('ปฏิเสธ')?'selected':''}>ปฏิเสธคำขอ</option>`;
-
       htmlForm = `
         <div class="text-start">
           <div class="alert alert-info py-2 small mb-3">รหัส: <strong>${isTx ? item.txId : item.claimId}</strong> | ${item.name}</div>
-          <label class="form-label fw-bold small text-muted">${docLabel}</label>
+          <label class="form-label fw-bold small text-muted">จำนวนเงิน (บาท):</label>
           <input id="swalAmount" type="number" class="form-control mb-3" value="${item.amount}">
-          <label class="form-label fw-bold small text-muted">พิจารณาสถานะ:</label>
-          <select id="swalStatus" class="form-select">${statusOptions}</select>
+          <label class="form-label fw-bold small text-muted">สถานะ:</label>
+          <input id="swalStatus" class="form-control" value="${item.status}">
         </div>`;
-      confirmBtn = 'ยืนยันการพิจารณา';
-    } 
-    else if (module === 'rules') {
-      htmlForm = `
-        <div class="text-start">
-          <h6 class="text-primary fw-bold mb-3">${item.welfareName}</h6>
-          <label class="form-label fw-bold small text-muted">เพดานสูงสุดต่อครั้ง (บาท):</label>
-          <input id="swalMaxClaim" type="number" class="form-control mb-3" value="${item.maxPerClaim}">
-          <label class="form-label fw-bold small text-muted">เพดานสูงสุดต่อปี (บาท):</label>
-          <input id="swalMaxYear" type="number" class="form-control mb-3" value="${item.maxPerYear}">
-          <label class="form-label fw-bold small text-muted">สถานะระเบียบ:</label>
-          <select id="swalStatus" class="form-select">
-            <option value="ใช้งาน" ${item.isActive?'selected':''}>เปิดใช้งาน</option>
-            <option value="ระงับ" ${!item.isActive?'selected':''}>ระงับการใช้งาน</option>
-          </select>
-        </div>`;
+      confirmBtn = 'บันทึกการแก้ไข';
     }
 
     Swal.fire({
-      title: 'จัดการข้อมูล (Edit)',
+      title: 'จัดการข้อมูล',
       html: htmlForm,
-      showCancelButton: true, confirmButtonText: confirmBtn, cancelButtonText: 'ยกเลิก', confirmButtonColor: '#3B82F6',
+      showCancelButton: true, confirmButtonText: confirmBtn, cancelButtonText: 'ยกเลิก',
       preConfirm: () => {
-        let updateData = {};
-        if (module === 'members') updateData = { name: document.getElementById('swalName').value };
-        if (module === 'transactions' || module === 'claims') updateData = { amount: document.getElementById('swalAmount').value };
-        if (module === 'rules') updateData = { maxPerClaim: document.getElementById('swalMaxClaim').value, maxPerYear: document.getElementById('swalMaxYear').value };
-        
         return {
           action: "adminUpdateStatus", module: module, adminUid: currentAdminData.uid,
-          rowIndex: item.rowIndex, 
-          id: module==='members'?item.id : (module==='rules'?item.welfareName : (module==='transactions'?item.txId:item.claimId)),
+          rowIndex: item.rowIndex, id: isTx ? item.txId : item.claimId,
           status: document.getElementById('swalStatus').value,
-          updateData: updateData
+          updateData: { amount: document.getElementById('swalAmount').value }
         };
       }
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        showLoader(true, "กำลังบันทึกและส่งแจ้งเตือน...");
-        const res = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify(result.value) }).then(r=>r.json());
+    }).then(async (res) => {
+      if (res.isConfirmed) {
+        showLoader(true, "กำลังอัปเดต...");
+        await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify(res.value) });
         showLoader(false);
-        if (res.status === 'success') {
-          Swal.fire({ toast:true, position: 'top', icon: 'success', title: 'อัปเดตสำเร็จ', showConfirmButton: false, timer: 1500 });
-          loadData(module); // Optimistic Refresh หน้าต่างตาราง
-        } else Swal.fire('ข้อผิดพลาด', res.message, 'error');
+        loadData(module);
       }
     });
   }
 
-  // ==========================================
-  // 📈 BI ANALYTICS (Client-Side Filtering)
-  // ==========================================
+  // 📈 BI Analytics
   const thaiMonths = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
-  
   function renderChart() {
     if(!globalAnalyticsData || globalAnalyticsData.length === 0) return;
-    
     const filterVal = document.getElementById('chartTimeFilter').value;
-    let dataToRender = globalAnalyticsData; // ข้อมูลเรียงตามเดือน 'YYYY-MM'
-    
-    // Client-Side Data Slicing (ไวมาก ไม่ต้องง้อ API)
-    if(filterVal !== 'all') {
-      const sliceCount = parseInt(filterVal);
-      dataToRender = globalAnalyticsData.slice(-sliceCount); // ดึง N เดือนล่าสุด
-    }
+    let dataToRender = filterVal === 'all' ? globalAnalyticsData : globalAnalyticsData.slice(-parseInt(filterVal));
 
     const labels = dataToRender.map(d => {
       const [yyyy, mm] = d.month.split('-');
       return `${thaiMonths[parseInt(mm)-1]} ${parseInt(yyyy)+543}`;
     });
     
-    const dataIncome = dataToRender.map(d => d.income);
-    const dataExpense = dataToRender.map(d => d.expense);
-    const dataMembers = dataToRender.map(d => d.members);
-
     const ctx = document.getElementById('analyticsChart').getContext('2d');
     if(myChartInstance) myChartInstance.destroy();
 
@@ -501,26 +491,21 @@
       data: {
         labels: labels,
         datasets: [
-          { label: 'เงินรับเข้า (บาท)', data: dataIncome, type: 'bar', backgroundColor: 'rgba(16, 185, 129, 0.9)', yAxisID: 'y' },
-          { label: 'เบิกจ่าย (บาท)', data: dataExpense, type: 'bar', backgroundColor: 'rgba(239, 68, 68, 0.9)', yAxisID: 'y' },
-          { label: 'สมาชิกใหม่ (คน)', data: dataMembers, type: 'line', borderColor: '#3B82F6', backgroundColor: '#3B82F6', borderWidth: 3, tension: 0.4, yAxisID: 'y1' }
+          { label: 'เงินรับเข้า (บาท)', data: dataToRender.map(d => d.income), type: 'bar', backgroundColor: 'rgba(16, 185, 129, 0.9)', yAxisID: 'y' },
+          { label: 'เบิกจ่าย (บาท)', data: dataToRender.map(d => d.expense), type: 'bar', backgroundColor: 'rgba(239, 68, 68, 0.9)', yAxisID: 'y' },
+          { label: 'สมาชิกใหม่ (คน)', data: dataToRender.map(d => d.members), type: 'line', borderColor: '#3B82F6', backgroundColor: '#3B82F6', borderWidth: 3, tension: 0.4, yAxisID: 'y1' }
         ]
       },
       options: {
         responsive: true, maintainAspectRatio: false,
         interaction: { mode: 'index', intersect: false },
-        plugins: { legend: { position: 'top', labels: { font: { family: 'Prompt' } } }, tooltip: { titleFont: { family: 'Prompt' }, bodyFont: { family: 'Prompt' } } },
         scales: {
-          x: { ticks: { font: { family: 'Prompt' } } },
-          y: { type: 'linear', display: true, position: 'left', ticks: { font: { family: 'Prompt' } } },
-          y1: { type: 'linear', display: true, position: 'right', grid: { drawOnChartArea: false }, ticks: { font: { family: 'Prompt' }, stepSize: 1 } }
+          y: { type: 'linear', display: true, position: 'left' },
+          y1: { type: 'linear', display: true, position: 'right', grid: { drawOnChartArea: false }, ticks: { stepSize: 1 } }
         }
       }
     });
   }
-
-  // Admin Master Add/Save Functions (เหมือนเดิม)
-  // ... [ข้ามโค้ด openAddAdminModal() และ saveAdminChanges() ที่เหมือนกับเวอร์ชันก่อนหน้าเพื่อความกระชับ] ...
 </script>
 </body>
 </html>
