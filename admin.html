@@ -24,22 +24,42 @@
     .btn-line-login { background-color: var(--line-green); color: white; border: none; border-radius: 12px; padding: 14px; font-weight: 600; font-size: 1.1rem; width: 100%; }
     
     .admin-navbar { background: var(--admin-primary); color: white; padding: 15px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
-    .nav-pills .nav-link { color: #94A3B8; border-radius: 10px; padding: 10px 15px; margin-bottom: 5px; font-weight: 500; transition: 0.3s; }
-    .nav-pills .nav-link.active { background: var(--admin-accent); color: white; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3); }
     
+    /* 🚀 Horizontal Scrollable Menu */
+    .horizontal-menu-container { background: white; padding: 10px 20px 0; border-bottom: 1px solid #E2E8F0; margin-bottom: 20px; position: sticky; top: 60px; z-index: 999; }
+    .nav-pills.horizontal-scroll { display: flex; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+    .nav-pills.horizontal-scroll::-webkit-scrollbar { display: none; }
+    .nav-pills.horizontal-scroll .nav-link { white-space: nowrap; margin-right: 8px; color: #64748B; border-radius: 20px; padding: 8px 16px; font-weight: 500; border: 1px solid transparent; transition: 0.2s; }
+    .nav-pills.horizontal-scroll .nav-link:hover { background: #F1F5F9; }
+    .nav-pills.horizontal-scroll .nav-link.active { background: var(--admin-accent); color: white; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3); }
+
     .dashboard-card { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; margin-bottom: 20px; }
-    .equation-container { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; background: #fff; padding: 20px; border-radius: 16px; border: 1px solid #E2E8F0; }
-    .eq-box { flex: 1; min-width: 120px; text-align: center; padding: 15px; border-radius: 12px; background: #F8FAFC; }
-    .eq-box h2 { margin: 0; font-weight: 700; font-size: 2rem; }
-    .eq-box span { font-size: 0.85rem; font-weight: 600; color: #64748B; }
-    .eq-symbol { font-size: 2rem; font-weight: bold; color: #CBD5E1; }
     
-    .capital-matrix { display: flex; gap: 15px; flex-wrap: wrap; }
-    .capital-box { flex: 1; min-width: 140px; border-left: 4px solid; padding: 15px; background: #F8FAFC; border-radius: 0 12px 12px 0; }
-    .capital-box h4 { margin: 5px 0 0; font-weight: 700; font-size: 1.25rem; color: #1E293B; }
+    /* 🎯 1. Member Status Hierarchy Re-design */
+    .member-hero-card { background: #DCFCE7; border: 2px solid #22C55E; border-radius: 20px; padding: 30px; text-align: center; box-shadow: 0 10px 25px rgba(34, 197, 94, 0.15); margin-bottom: 20px; }
+    .member-hero-card h1 { font-size: 4.5rem; font-weight: 700; color: #166534; margin: 0; line-height: 1; }
+    .member-hero-card span { font-size: 1.1rem; font-weight: 600; color: #15803D; }
     
-    .pending-alert { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.2s; }
-    .pending-alert:hover { transform: translateY(-2px); }
+    .member-sub-stats { display: flex; gap: 15px; flex-wrap: wrap; }
+    .sub-stat-box { flex: 1; min-width: 100px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 15px; text-align: center; }
+    .sub-stat-box h3 { font-size: 1.5rem; font-weight: 700; margin: 5px 0 0 0; }
+    .sub-stat-box span { font-size: 0.8rem; color: #64748B; font-weight: 500; }
+
+    /* 💰 2. Capital Structure Hierarchy */
+    .cap-main-tier { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 15px; }
+    .cap-main-box { flex: 1; min-width: 200px; padding: 20px; border-radius: 16px; background: white; border-top: 5px solid; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-left: 1px solid #E2E8F0; border-right: 1px solid #E2E8F0; border-bottom: 1px solid #E2E8F0; }
+    .cap-main-box span { font-size: 0.95rem; font-weight: 600; color: #64748B; }
+    .cap-main-box h2 { font-size: 2.2rem; font-weight: 700; margin: 5px 0 0 0; letter-spacing: -0.5px; }
+    
+    .cap-sub-tier { display: flex; gap: 15px; flex-wrap: wrap; }
+    .cap-sub-box { flex: 1; min-width: 140px; padding: 15px; border-radius: 12px; background: #F1F5F9; border-left: 3px solid; }
+    .cap-sub-box span { font-size: 0.8rem; font-weight: 500; color: #64748B; }
+    .cap-sub-box h5 { font-size: 1.2rem; font-weight: 700; margin: 5px 0 0 0; }
+
+    /* 📋 3. Pending Tasks (Action Section) */
+    .action-board { background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 16px; padding: 20px; }
+    .pending-alert { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.02); margin-bottom: 10px; }
+    .pending-alert:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
     
     .table-responsive { border-radius: 12px; border: 1px solid #E2E8F0; overflow-x: auto; }
     .table th, .table td { white-space: nowrap; vertical-align: middle; font-size: 0.9rem; padding: 12px 15px; }
@@ -48,14 +68,10 @@
     .bg-pending { background: #FEF3C7; color: #D97706; }
     .bg-approved { background: #DCFCE7; color: #166534; }
     .bg-danger-light { background: #FEE2E2; color: #B91C1C; }
-    
     .btn-edit-inline { background: #F1F5F9; color: #475569; border: 1px solid #CBD5E1; border-radius: 8px; padding: 5px 10px; font-size: 0.8rem; font-weight: 500; transition: 0.2s; }
     .btn-edit-inline:hover { background: #E2E8F0; color: #1E293B; }
-    
     #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 999; display: none; align-items: center; justify-content: center; flex-direction: column; }
-    .chart-container { position: relative; height: 320px; width: 100%; }
-    
-    /* Toolbar for Tables */
+    .chart-container { position: relative; height: 350px; width: 100%; }
     .table-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
     .search-box { position: relative; width: 250px; }
     .search-box input { padding-left: 35px; border-radius: 20px; border: 1px solid #CBD5E1; }
@@ -85,10 +101,11 @@
 </div>
 
 <div id="mainWorkspace" style="display: none;">
+  <!-- Navbar -->
   <div class="admin-navbar d-flex justify-content-between align-items-center">
     <div>
-      <h6 class="mb-0 fw-bold"><i class="fa-solid fa-chart-pie me-2 text-primary"></i>ระบบจัดการกองทุนสวัสดิการชุมชน</h6>
-      <small class="text-white-50" style="font-size: 0.75rem;">บัญชีผู้ใช้: <span id="adminNameDisplay" class="text-warning fw-bold"></span></small>
+      <h6 class="mb-0 fw-bold"><i class="fa-solid fa-chart-pie me-2 text-primary"></i>CWF Enterprise Admin</h6>
+      <small class="text-white-50" style="font-size: 0.75rem;">ผู้ใช้: <span id="adminNameDisplay" class="text-warning fw-bold"></span></small>
     </div>
     <div class="d-flex gap-2">
       <button onclick="manualSnapshotRefresh()" class="btn btn-sm btn-primary rounded-circle" title="รีเฟรชข้อมูล"><i class="fa-solid fa-rotate"></i></button>
@@ -96,73 +113,130 @@
     </div>
   </div>
 
-  <div class="container-fluid py-4">
-    <div class="row">
-      <div class="col-lg-2 col-md-3 mb-4">
-        <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
-          <button class="nav-link active text-start" data-bs-toggle="pill" data-bs-target="#view-overview" type="button" onclick="loadDashboardOverview()"><i class="fa-solid fa-chart-line me-2"></i> ภาพรวมกองทุน</button>
-          <button class="nav-link text-start" data-bs-toggle="pill" data-bs-target="#view-members" type="button" onclick="loadData('members')"><i class="fa-solid fa-users me-2"></i> ทะเบียนสมาชิก</button>
-          <button class="nav-link text-start" data-bs-toggle="pill" data-bs-target="#view-transactions" type="button" onclick="loadData('transactions')"><i class="fa-solid fa-money-bill-transfer me-2"></i> ระบบการเงิน</button>
-          <button class="nav-link text-start" data-bs-toggle="pill" data-bs-target="#view-claims" type="button" onclick="loadData('claims')"><i class="fa-solid fa-hand-holding-medical me-2"></i> ประวัติเบิกจ่าย</button>
-          <button class="nav-link text-start" data-bs-toggle="pill" data-bs-target="#view-rules" type="button" onclick="loadData('rules')"><i class="fa-solid fa-scale-balanced me-2"></i> ระเบียบสวัสดิการ</button>
-          <button class="nav-link text-start text-warning" id="menu-admins" data-bs-toggle="pill" data-bs-target="#view-admins" type="button" onclick="loadData('admins')" style="display: none;"><i class="fa-solid fa-user-shield me-2"></i> จัดการผู้ดูแลระบบ</button>
-        </div>
-      </div>
+  <!-- 🚀 Horizontal Swipeable Menu -->
+  <div class="horizontal-menu-container">
+    <div class="nav nav-pills horizontal-scroll" id="v-pills-tab" role="tablist">
+      <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#view-overview" type="button" onclick="loadDashboardOverview()"><i class="fa-solid fa-chart-line me-2"></i> ภาพรวมกองทุน</button>
+      <button class="nav-link" data-bs-toggle="pill" data-bs-target="#view-members" type="button" onclick="loadData('members')"><i class="fa-solid fa-users me-2"></i> ทะเบียนสมาชิก</button>
+      <button class="nav-link" data-bs-toggle="pill" data-bs-target="#view-transactions" type="button" onclick="loadData('transactions')"><i class="fa-solid fa-money-bill-transfer me-2"></i> ระบบการเงิน</button>
+      <button class="nav-link" data-bs-toggle="pill" data-bs-target="#view-claims" type="button" onclick="loadData('claims')"><i class="fa-solid fa-hand-holding-medical me-2"></i> ประวัติเบิกจ่าย</button>
+      <button class="nav-link" data-bs-toggle="pill" data-bs-target="#view-rules" type="button" onclick="loadData('rules')"><i class="fa-solid fa-scale-balanced me-2"></i> ระเบียบสวัสดิการ</button>
+      <button class="nav-link text-warning" id="menu-admins" data-bs-toggle="pill" data-bs-target="#view-admins" type="button" onclick="loadData('admins')" style="display: none;"><i class="fa-solid fa-user-shield me-2"></i> ผู้ดูแลระบบ</button>
+    </div>
+  </div>
 
-      <div class="col-lg-10 col-md-9">
+  <div class="container-fluid pb-5">
+    <div class="row">
+      <!-- 🖥️ Full Width Content Area -->
+      <div class="col-12">
         <div class="tab-content">
           
-          <!-- 📊 ภาพรวมกองทุน -->
+          <!-- 📊 ภาพรวมกองทุน (Executive Dashboard) -->
           <div class="tab-pane fade show active" id="view-overview">
-            <h6 class="fw-bold text-dark mb-3"><i class="fa-solid fa-users-rays text-primary me-2"></i>สมการสถานภาพสมาชิก</h6>
-            <div class="equation-container mb-4">
-              <div class="eq-box" style="border-top: 4px solid var(--tier1-blue);"><span class="text-primary"><i class="fa-solid fa-users"></i> สมาชิกสะสมทั้งหมด</span><h2 class="text-primary" id="eq-total">0</h2></div>
-              <div class="eq-symbol">-</div>
-              <div class="eq-box" style="border-top: 4px solid var(--tier1-gray);"><span><i class="fa-solid fa-user-minus"></i> ลาออก/พ้นสภาพ</span><h2 class="text-secondary" id="eq-resigned">0</h2></div>
-              <div class="eq-symbol">-</div>
-              <div class="eq-box" style="border-top: 4px solid var(--tier1-red);"><span><i class="fa-solid fa-book-skull"></i> เสียชีวิต</span><h2 class="text-danger" id="eq-dead">0</h2></div>
-              <div class="eq-symbol">=</div>
-              <div class="eq-box" style="border-top: 4px solid var(--tier1-green); background: #DCFCE7;"><span class="text-success"><i class="fa-solid fa-user-check"></i> สมาชิกคงเหลือปัจจุบัน</span><h2 class="text-success" id="eq-active">0</h2></div>
-            </div>
-
-            <div class="d-flex justify-content-between align-items-end mb-3">
-              <h6 class="fw-bold text-dark mb-0"><i class="fa-solid fa-coins text-warning me-2"></i>โครงสร้างทุนสวัสดิการ</h6>
-              <h5 class="fw-bold text-success mb-0">ยอดรวม: <span id="cap-total">0</span> ฿</h5>
-            </div>
-            <div class="capital-matrix mb-4">
-              <div class="capital-box" style="border-color: #3B82F6;"><span>เงินสมทบสมาชิก</span><h4 id="cap-member">0</h4></div>
-              <div class="capital-box" style="border-color: #F59E0B;"><span>รัฐสมทบ (พอช.)</span><h4 id="cap-gov">0</h4></div>
-              <div class="capital-box" style="border-color: #10B981;"><span>ท้องถิ่น (เทศบาล)</span><h4 id="cap-local">0</h4></div>
-              <div class="capital-box" style="border-color: #8B5CF6;"><span>เงินบริจาค</span><h4 id="cap-donate">0</h4></div>
-              <div class="capital-box" style="border-color: #EC4899;"><span>ดอกเบี้ย/อื่นๆ</span><h4 id="cap-other">0</h4></div>
-            </div>
-
+            
             <div class="row">
-              <div class="col-lg-4 mb-4">
-                <h6 class="fw-bold text-dark mb-3"><i class="fa-solid fa-list-check text-danger me-2"></i>งานที่ต้องดำเนินการ</h6>
-                <div class="pending-alert bg-warning bg-opacity-25 text-dark mb-3 border border-warning" onclick="document.querySelector('[data-bs-target=\'#view-transactions\']').click()">
-                  <div><i class="fa-solid fa-file-invoice-dollar me-2 text-warning"></i> การเงินรอตรวจสอบ</div>
-                  <span class="badge bg-warning text-dark fs-6 rounded-pill px-3" id="task-tx">0</span>
+              <!-- 🎯 Member Hierarchy -->
+              <div class="col-lg-5 mb-4">
+                <h6 class="fw-bold text-dark mb-3"><i class="fa-solid fa-users-rays text-primary me-2"></i>สถานภาพสมาชิก</h6>
+                
+                <!-- Hero Metric: สมาชิกคงเหลือ เด่นที่สุด -->
+                <div class="member-hero-card">
+                  <span><i class="fa-solid fa-user-check me-2"></i>สมาชิกคงเหลือปัจจุบัน (คน)</span>
+                  <h1 id="eq-active">0</h1>
                 </div>
-                <div class="pending-alert bg-danger bg-opacity-25 text-dark border border-danger" onclick="document.querySelector('[data-bs-target=\'#view-claims\']').click()">
-                  <div><i class="fa-solid fa-hand-holding-medical me-2 text-danger"></i> คำขอเบิกรออนุมัติ</div>
-                  <span class="badge bg-danger fs-6 rounded-pill px-3" id="task-claim">0</span>
+                
+                <!-- Sub Metrics: สะสม, ลาออก, เสียชีวิต เล็กลงและอยู่ด้านล่าง -->
+                <div class="member-sub-stats">
+                  <div class="sub-stat-box border-bottom border-primary border-3">
+                    <span><i class="fa-solid fa-users"></i> สมาชิกสะสม</span>
+                    <h3 class="text-primary" id="eq-total">0</h3>
+                  </div>
+                  <div class="sub-stat-box border-bottom border-secondary border-3">
+                    <span><i class="fa-solid fa-user-minus"></i> ลาออก</span>
+                    <h3 class="text-secondary" id="eq-resigned">0</h3>
+                  </div>
+                  <div class="sub-stat-box border-bottom border-danger border-3">
+                    <span><i class="fa-solid fa-book-skull"></i> เสียชีวิต</span>
+                    <h3 class="text-danger" id="eq-dead">0</h3>
+                  </div>
                 </div>
               </div>
-              <div class="col-lg-8 mb-4">
-                <div class="dashboard-card h-100 mb-0">
-                  <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h6 class="fw-bold text-dark mb-0"><i class="fa-solid fa-chart-area text-primary me-2"></i>แนวโน้มการเติบโต</h6>
-                    <select id="chartTimeFilter" class="form-select form-select-sm shadow-sm" onchange="renderChart()" style="width: 140px;">
-                      <option value="6" selected>ย้อนหลัง 6 เดือน</option>
-                      <option value="12">รายปี (12 เดือน)</option>
-                      <option value="all">ทั้งหมด</option>
-                    </select>
+
+              <!-- 💰 Capital Hierarchy -->
+              <div class="col-lg-7 mb-4">
+                <div class="d-flex justify-content-between align-items-end mb-3">
+                  <h6 class="fw-bold text-dark mb-0"><i class="fa-solid fa-coins text-warning me-2"></i>โครงสร้างทุนสวัสดิการ</h6>
+                  <h5 class="fw-bold text-success mb-0">ยอดรวม: <span id="cap-total">0</span> ฿</h5>
+                </div>
+                
+                <!-- Big 3 Capital: ตัวเลขใหญ่กว่าข้อความ -->
+                <div class="cap-main-tier">
+                  <div class="cap-main-box" style="border-top-color: #3B82F6;">
+                    <span><i class="fa-solid fa-users text-primary"></i> สมาชิกสมทบ</span>
+                    <h2 class="text-primary" id="cap-member">0</h2>
                   </div>
-                  <div class="chart-container"><canvas id="analyticsChart"></canvas></div>
+                  <div class="cap-main-box" style="border-top-color: #F59E0B;">
+                    <span><i class="fa-solid fa-building text-warning"></i> รัฐสมทบ (พอช.)</span>
+                    <h2 class="text-warning" id="cap-gov">0</h2>
+                  </div>
+                  <div class="cap-main-box" style="border-top-color: #10B981;">
+                    <span><i class="fa-solid fa-tree-city text-success"></i> ท้องถิ่นสมทบ</span>
+                    <h2 class="text-success" id="cap-local">0</h2>
+                  </div>
+                </div>
+
+                <!-- Minor Capital: บริจาค และ ดอกเบี้ย ขนาดเล็กลง -->
+                <div class="cap-sub-tier">
+                  <div class="cap-sub-box" style="border-left-color: #8B5CF6;">
+                    <span>เงินบริจาค</span>
+                    <h5 id="cap-donate">0</h5>
+                  </div>
+                  <div class="cap-sub-box" style="border-left-color: #EC4899;">
+                    <span>ดอกเบี้ย / อื่นๆ</span>
+                    <h5 id="cap-other">0</h5>
+                  </div>
                 </div>
               </div>
             </div>
+
+            <!-- 📈 Financial Chart & Filters (รองรับปีงบประมาณ) -->
+            <div class="dashboard-card mb-4">
+              <div class="row align-items-center mb-4">
+                <div class="col-md-4 mb-2 mb-md-0">
+                  <h6 class="fw-bold text-dark mb-0"><i class="fa-solid fa-chart-area text-primary me-2"></i>รายงานสรุปการเงินและสวัสดิการ</h6>
+                </div>
+                <div class="col-md-8 d-flex gap-2 justify-content-md-end">
+                  <select id="chartTypeFilter" class="form-select form-select-sm shadow-sm" style="width: auto;" onchange="updateChartFilterUI()">
+                    <option value="fiscal">รูปแบบ: ปีงบประมาณ (ต.ค. - ก.ย.)</option>
+                    <option value="calendar" selected>รูปแบบ: ปีปฏิทิน (ม.ค. - ธ.ค.)</option>
+                  </select>
+                  <select id="chartPeriodFilter" class="form-select form-select-sm shadow-sm border-primary" style="width: auto; background-color: #F0F9FF;" onchange="renderChart()">
+                    <!-- ตัวเลือกจะถูกสร้างอัตโนมัติด้วย JavaScript -->
+                  </select>
+                </div>
+              </div>
+              <div class="chart-container"><canvas id="analyticsChart"></canvas></div>
+            </div>
+
+            <!-- 📋 งานที่ต้องดำเนินการ (วางหลังระบบการเงิน/กราฟ) -->
+            <div class="action-board">
+              <h6 class="fw-bold text-dark mb-3"><i class="fa-solid fa-list-check text-danger me-2"></i>งานที่ต้องดำเนินการ (Action Required)</h6>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="pending-alert border border-warning" onclick="document.querySelector('[data-bs-target=\'#view-transactions\']').click()">
+                    <div class="text-dark"><i class="fa-solid fa-file-invoice-dollar me-2 text-warning fs-5"></i> ธุรกรรมการเงินรอตรวจสอบ</div>
+                    <span class="badge bg-warning text-dark fs-6 rounded-pill px-3" id="task-tx">0</span>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="pending-alert border border-danger" onclick="document.querySelector('[data-bs-target=\'#view-claims\']').click()">
+                    <div class="text-dark"><i class="fa-solid fa-hand-holding-medical me-2 text-danger fs-5"></i> คำขอเบิกสวัสดิการรออนุมัติ</div>
+                    <span class="badge bg-danger fs-6 rounded-pill px-3" id="task-claim">0</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
 
           <!-- 👥 ทะเบียนสมาชิก -->
@@ -246,7 +320,10 @@
   let myChartInstance = null;
   let cachedData = {}; 
 
-  document.addEventListener("DOMContentLoaded", () => { initializeLiff(); });
+  document.addEventListener("DOMContentLoaded", () => { 
+    initializeLiff(); 
+    updateChartFilterUI(); // Initialize Chart dropdown options
+  });
 
   async function initializeLiff() {
     try {
@@ -284,17 +361,20 @@
       const resStats = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "getAdminOverview", adminUid: currentAdminData.uid }) }).then(r => r.json());
       if(resStats.status === 'success' && resStats.data) {
         const d = resStats.data;
+        // Member Hierarchy Updates
+        document.getElementById('eq-active').innerText = (d.equation?.active || 0).toLocaleString();
         document.getElementById('eq-total').innerText = (d.equation?.total || 0).toLocaleString();
         document.getElementById('eq-resigned').innerText = (d.equation?.resigned || 0).toLocaleString();
         document.getElementById('eq-dead').innerText = (d.equation?.dead || 0).toLocaleString();
-        document.getElementById('eq-active').innerText = (d.equation?.active || 0).toLocaleString();
         
+        // Capital Hierarchy Updates
         document.getElementById('cap-total').innerText = (d.capital?.total || 0).toLocaleString();
-        document.getElementById('cap-member').innerText = `฿${(d.capital?.member || 0).toLocaleString()}`;
-        document.getElementById('cap-gov').innerText = `฿${(d.capital?.gov || 0).toLocaleString()}`;
-        document.getElementById('cap-local').innerText = `฿${(d.capital?.local || 0).toLocaleString()}`;
-        document.getElementById('cap-donate').innerText = `฿${(d.capital?.donate || 0).toLocaleString()}`;
-        document.getElementById('cap-other').innerText = `฿${((d.capital?.interest || 0) + (d.capital?.other || 0)).toLocaleString()}`;
+        document.getElementById('cap-member').innerText = (d.capital?.member || 0).toLocaleString();
+        document.getElementById('cap-gov').innerText = (d.capital?.gov || 0).toLocaleString();
+        document.getElementById('cap-local').innerText = (d.capital?.local || 0).toLocaleString();
+        
+        document.getElementById('cap-donate').innerText = `฿ ${(d.capital?.donate || 0).toLocaleString()}`;
+        document.getElementById('cap-other').innerText = `฿ ${((d.capital?.interest || 0) + (d.capital?.other || 0)).toLocaleString()}`;
         
         document.getElementById('task-tx').innerText = d.tasks?.pendingTx || 0;
         document.getElementById('task-claim').innerText = d.tasks?.pendingClaims || 0;
@@ -311,6 +391,108 @@
     setTimeout(() => { loadDashboardOverview(); }, 2000); 
   }
 
+  // -----------------------------------------------------------
+  // 📈 Smart Chart Filtering (Fiscal & Calendar)
+  // -----------------------------------------------------------
+  function updateChartFilterUI() {
+    const type = document.getElementById('chartTypeFilter').value;
+    const periodSelect = document.getElementById('chartPeriodFilter');
+    periodSelect.innerHTML = '';
+    
+    if (type === 'calendar') {
+      periodSelect.innerHTML = `
+        <option value="1">รายเดือน (1 เดือนล่าสุด)</option>
+        <option value="3">ราย 3 เดือนล่าสุด</option>
+        <option value="6" selected>ราย 6 เดือนล่าสุด</option>
+        <option value="12">ราย 1 ปีล่าสุด</option>
+        <option value="all">ข้อมูลทั้งหมด</option>
+      `;
+    } else if (type === 'fiscal') {
+      periodSelect.innerHTML = `
+        <option value="fy_all" selected>ทั้งปีงบประมาณ</option>
+        <option value="fy_q1">ไตรมาส 1 (ต.ค. - ธ.ค.)</option>
+        <option value="fy_q2">ไตรมาส 2 (ม.ค. - มี.ค.)</option>
+        <option value="fy_q3">ไตรมาส 3 (เม.ย. - มิ.ย.)</option>
+        <option value="fy_q4">ไตรมาส 4 (ก.ค. - ก.ย.)</option>
+      `;
+    }
+    renderChart();
+  }
+
+  const thaiMonths = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+  
+  function renderChart() {
+    if(!globalAnalyticsData || globalAnalyticsData.length === 0) return;
+    
+    const type = document.getElementById('chartTypeFilter').value;
+    const period = document.getElementById('chartPeriodFilter').value;
+    let dataToRender = [];
+
+    if (type === 'calendar') {
+      dataToRender = period === 'all' ? globalAnalyticsData : globalAnalyticsData.slice(-parseInt(period));
+    } 
+    else if (type === 'fiscal') {
+      // หาปีล่าสุดในฐานข้อมูลเพื่อตั้งเป็น "ปีงบประมาณปัจจุบัน"
+      const lastData = globalAnalyticsData[globalAnalyticsData.length - 1];
+      const lastYear = parseInt(lastData.month.split('-')[0]);
+      const lastMonth = parseInt(lastData.month.split('-')[1]);
+      const currentFY = lastMonth >= 10 ? lastYear + 1 : lastYear;
+
+      dataToRender = globalAnalyticsData.filter(d => {
+        const y = parseInt(d.month.split('-')[0]);
+        const m = parseInt(d.month.split('-')[1]);
+        const fy = m >= 10 ? y + 1 : y; // ปีงบเริ่ม ต.ค. (เดือน 10) ของปีก่อนหน้า
+        
+        if (period === 'fy_all') return fy === currentFY;
+        if (period === 'fy_q1') return fy === currentFY && (m >= 10 && m <= 12);
+        if (period === 'fy_q2') return fy === currentFY && (m >= 1 && m <= 3);
+        if (period === 'fy_q3') return fy === currentFY && (m >= 4 && m <= 6);
+        if (period === 'fy_q4') return fy === currentFY && (m >= 7 && m <= 9);
+        return false;
+      });
+    }
+
+    const labels = dataToRender.map(d => { 
+      const [yyyy, mm] = d.month.split('-'); 
+      return `${thaiMonths[parseInt(mm)-1]} ${parseInt(yyyy)+543}`; 
+    });
+
+    const ctx = document.getElementById('analyticsChart').getContext('2d');
+    if(myChartInstance) myChartInstance.destroy();
+    
+    // หากเลือกฟิลเตอร์แล้วไม่มีข้อมูลในไตรมาสนั้น
+    if(dataToRender.length === 0) {
+      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+      ctx.font = "16px Prompt";
+      ctx.fillStyle = "#94A3B8";
+      ctx.textAlign = "center";
+      ctx.fillText("ไม่พบข้อมูลสถิติในช่วงเวลาที่เลือก", ctx.canvas.width/2, ctx.canvas.height/2);
+      return;
+    }
+
+    myChartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: { labels: labels, datasets: [
+          { label: 'เงินรับเข้า (฿)', data: dataToRender.map(d => d.income), type: 'bar', backgroundColor: 'rgba(16, 185, 129, 0.9)', yAxisID: 'y', borderRadius: 4 },
+          { label: 'เบิกจ่าย (฿)', data: dataToRender.map(d => d.expense), type: 'bar', backgroundColor: 'rgba(239, 68, 68, 0.9)', yAxisID: 'y', borderRadius: 4 },
+          { label: 'สมาชิกใหม่ (คน)', data: dataToRender.map(d => d.members), type: 'line', borderColor: '#3B82F6', backgroundColor: '#3B82F6', borderWidth: 3, tension: 0.4, yAxisID: 'y1' }
+        ]
+      },
+      options: { 
+        responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+        plugins: { legend: { position: 'top', labels:{font:{family:'Prompt'}} }, tooltip: { titleFont:{family:'Prompt'}, bodyFont:{family:'Prompt'} } },
+        scales: { 
+          x: { ticks:{font:{family:'Prompt'}}, grid: { display: false } }, 
+          y: { type: 'linear', display: true, position: 'left', ticks:{font:{family:'Prompt'}} }, 
+          y1: { type: 'linear', display: true, position: 'right', grid: { drawOnChartArea: false }, ticks: { font:{family:'Prompt'}, stepSize: 1 } } 
+        }
+      }
+    });
+  }
+
+  // -----------------------------------------------------------
+  // CRUD & Table Processing (เหมือนเดิม)
+  // -----------------------------------------------------------
   async function loadData(moduleName) {
     showLoader(true, `กำลังดึงข้อมูล ${moduleName}...`);
     try {
@@ -331,7 +513,7 @@
 
   function exportTableCSV(module) {
     if(!cachedData[module] || cachedData[module].length === 0) return Swal.fire('แจ้งเตือน', 'ไม่มีข้อมูลให้ Export', 'info');
-    let csv = '\uFEFF'; // BOM support Thai
+    let csv = '\uFEFF'; 
     const keys = Object.keys(cachedData[module][0]);
     csv += keys.join(',') + '\n';
     cachedData[module].forEach(row => { csv += keys.map(k => `"${String(row[k] || '').replace(/"/g, '""')}"`).join(',') + '\n'; });
@@ -344,7 +526,7 @@
   function renderTable(module, dataArray) {
     const tbody = document.getElementById(`table-${module}`);
     cachedData[module] = dataArray; 
-    tbody.innerHTML = dataArray.length === 0 ? `<tr><td colspan="8" class="text-center text-muted">ไม่พบข้อมูล</td></tr>` : "";
+    tbody.innerHTML = dataArray.length === 0 ? `<tr><td colspan="8" class="text-center text-muted py-4">ไม่พบข้อมูล</td></tr>` : "";
     
     dataArray.forEach((item, index) => {
       if (module === 'members') {
@@ -386,7 +568,7 @@
     }
 
     Swal.fire({
-      title: 'จัดการข้อมูล (Edit)', html: htmlForm, showCancelButton: true, confirmButtonText: confirmBtn, cancelButtonText: 'ยกเลิก', confirmButtonColor: '#3B82F6',
+      title: 'จัดการข้อมูล', html: htmlForm, showCancelButton: true, confirmButtonText: confirmBtn, cancelButtonText: 'ยกเลิก', confirmButtonColor: '#3B82F6',
       preConfirm: () => {
         let updateData = {};
         if (module === 'members') updateData = { name: document.getElementById('swalName').value };
@@ -401,30 +583,6 @@
         showLoader(false);
         if (res.status === 'success') { Swal.fire({ toast:true, position: 'top', icon: 'success', title: 'อัปเดตสำเร็จ', showConfirmButton: false, timer: 1500 }); loadData(module); } 
         else Swal.fire('ข้อผิดพลาด', res.message, 'error');
-      }
-    });
-  }
-
-  const thaiMonths = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
-  function renderChart() {
-    if(!globalAnalyticsData || globalAnalyticsData.length === 0) return;
-    const filterVal = document.getElementById('chartTimeFilter').value;
-    let dataToRender = filterVal !== 'all' ? globalAnalyticsData.slice(-parseInt(filterVal)) : globalAnalyticsData;
-    
-    const labels = dataToRender.map(d => { const [yyyy, mm] = d.month.split('-'); return `${thaiMonths[parseInt(mm)-1]} ${parseInt(yyyy)+543}`; });
-    const ctx = document.getElementById('analyticsChart').getContext('2d');
-    if(myChartInstance) myChartInstance.destroy();
-    myChartInstance = new Chart(ctx, {
-      type: 'bar',
-      data: { labels: labels, datasets: [
-          { label: 'เงินรับเข้า (บาท)', data: dataToRender.map(d => d.income), type: 'bar', backgroundColor: 'rgba(16, 185, 129, 0.9)', yAxisID: 'y' },
-          { label: 'เบิกจ่าย (บาท)', data: dataToRender.map(d => d.expense), type: 'bar', backgroundColor: 'rgba(239, 68, 68, 0.9)', yAxisID: 'y' },
-          { label: 'สมาชิกใหม่ (คน)', data: dataToRender.map(d => d.members), type: 'line', borderColor: '#3B82F6', backgroundColor: '#3B82F6', borderWidth: 3, tension: 0.4, yAxisID: 'y1' }
-        ]
-      },
-      options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
-        plugins: { legend: { position: 'top', labels:{font:{family:'Prompt'}} }, tooltip: { titleFont:{family:'Prompt'}, bodyFont:{family:'Prompt'} } },
-        scales: { x: { ticks:{font:{family:'Prompt'}} }, y: { type: 'linear', display: true, position: 'left', ticks:{font:{family:'Prompt'}} }, y1: { type: 'linear', display: true, position: 'right', grid: { drawOnChartArea: false }, ticks: { font:{family:'Prompt'}, stepSize: 1 } } }
       }
     });
   }
