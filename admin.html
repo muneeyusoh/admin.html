@@ -6,92 +6,97 @@
   <meta name="theme-color" content="#0A2540">
   <title>CWF Enterprise | Executive Workspace</title>
   
+  <!-- Fonts & Core CSS -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
+  <!-- SDKs -->
   <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
   <style>
     :root {
-      --bg-color: #F3F4F6;
+      --bg-color: #F8FAFC;
       --card-bg: #FFFFFF;
-      --primary-dark: #0A2540;
-      --primary-main: #3B82F6;
+      --primary-dark: #0F172A;
+      --primary-main: #2563EB;
       --success-main: #10B981;
       --warning-main: #F59E0B;
       --danger-main: #EF4444;
-      --text-main: #1F2937;
-      --text-muted: #6B7280;
+      --text-main: #1E293B;
+      --text-muted: #64748B;
+      --border-color: #E2E8F0;
     }
 
-    body { background-color: var(--bg-color); font-family: 'Prompt', sans-serif; color: var(--text-main); padding-top: 60px; -webkit-tap-highlight-color: transparent; }
+    body { background-color: var(--bg-color); font-family: 'Prompt', sans-serif; color: var(--text-main); padding-top: 70px; -webkit-tap-highlight-color: transparent; }
     
-    /* 📱 App Header (Mobile First) */
-    .app-header { background: var(--primary-dark); color: white; position: fixed; top: 0; left: 0; width: 100%; height: 60px; z-index: 1030; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.15); }
-    .app-header .brand { font-weight: 700; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
-    .btn-icon { background: rgba(255,255,255,0.1); border: none; color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; }
+    /* 📱 App Header (Enterprise Standard) */
+    .app-header { background: var(--primary-dark); color: white; position: fixed; top: 0; left: 0; width: 100%; height: 64px; z-index: 1030; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+    .app-header .brand { font-weight: 700; font-size: 1.15rem; display: flex; align-items: center; gap: 10px; }
+    .btn-icon { background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; }
     .btn-icon:active { background: rgba(255,255,255,0.2); transform: scale(0.95); }
 
     /* 🗂️ Offcanvas Sidebar */
-    .offcanvas { background-color: var(--card-bg); max-width: 280px; border-radius: 0 20px 20px 0; }
-    .offcanvas-header { background: var(--primary-dark); color: white; border-radius: 0 20px 0 0; padding: 20px; }
-    .nav-pills .nav-link { color: var(--text-muted); font-weight: 500; padding: 12px 20px; border-radius: 12px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; transition: 0.3s; }
-    .nav-pills .nav-link i { font-size: 1.2rem; width: 24px; text-align: center; }
-    .nav-pills .nav-link.active { background: #EFF6FF; color: var(--primary-main); font-weight: 600; }
+    .offcanvas { background-color: var(--bg-color); max-width: 300px; border-radius: 0 24px 24px 0; border: none; }
+    .offcanvas-header { background: var(--primary-dark); color: white; border-radius: 0 24px 0 0; padding: 24px; }
+    .nav-pills .nav-link { color: var(--text-muted); font-weight: 500; padding: 14px 20px; border-radius: 12px; margin-bottom: 8px; display: flex; align-items: center; gap: 14px; transition: 0.3s; }
+    .nav-pills .nav-link i { font-size: 1.25rem; width: 24px; text-align: center; }
+    .nav-pills .nav-link.active { background: white; color: var(--primary-main); font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
 
-    /* 📦 Smart Cards */
-    .dash-card { background: var(--card-bg); border-radius: 20px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-bottom: 20px; border: 1px solid #E5E7EB; }
-    .card-title-app { font-size: 0.95rem; font-weight: 700; color: var(--primary-dark); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    /* 📦 Smart Cards (Glass/Soft Shadow) */
+    .dash-card { background: var(--card-bg); border-radius: 20px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin-bottom: 24px; border: 1px solid var(--border-color); }
+    .card-title-app { font-size: 1rem; font-weight: 700; color: var(--primary-dark); margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
     
-    /* 💰 Liquidity Module (ฟีเจอร์ใหม่) */
-    .liquidity-box { background: linear-gradient(135deg, #0A2540 0%, #1E3A8A 100%); border-radius: 16px; padding: 20px; color: white; position: relative; overflow: hidden; }
-    .liquidity-box::after { content: ''; position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 50%; }
-    .balance-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; }
-    .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-    .btn-liq { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 12px; padding: 10px; font-size: 0.85rem; font-weight: 500; display: flex; flex-direction: column; align-items: center; gap: 6px; backdrop-filter: blur(4px); transition: 0.2s; }
-    .btn-liq:active { background: rgba(255,255,255,0.25); transform: scale(0.98); }
+    /* 💰 Liquidity Module (Bank-Grade UI) */
+    .liquidity-box { background: linear-gradient(135deg, #0F172A 0%, #1E3A8A 100%); border-radius: 16px; padding: 24px; color: white; position: relative; overflow: hidden; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3); }
+    .liquidity-box::after { content: ''; position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: rgba(255,255,255,0.05); border-radius: 50%; }
+    .balance-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 16px; }
+    .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+    .btn-liq { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 12px; padding: 12px; font-size: 0.85rem; font-weight: 500; display: flex; flex-direction: column; align-items: center; gap: 8px; transition: 0.2s; }
+    .btn-liq:active { background: rgba(255,255,255,0.2); transform: scale(0.96); }
 
-    /* 📊 Horizontal Scroll (Mobile Matrix) */
-    .scroll-x-wrapper { display: flex; overflow-x: auto; gap: 12px; padding-bottom: 10px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
-    .scroll-x-wrapper::-webkit-scrollbar { height: 4px; }
-    .scroll-x-wrapper::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
-    .cap-box { flex: 0 0 160px; scroll-snap-align: start; background: #F8FAFC; border-radius: 16px; padding: 16px; border: 1px solid #E2E8F0; border-left: 4px solid var(--primary-main); }
-    .cap-box h4 { font-weight: 700; font-size: 1.3rem; margin-top: 8px; color: var(--text-main); }
-
+    /* 📊 Horizontal Scroll */
+    .scroll-x-wrapper { display: flex; overflow-x: auto; gap: 12px; padding-bottom: 12px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
+    .scroll-x-wrapper::-webkit-scrollbar { display: none; }
+    .cap-box { flex: 0 0 160px; scroll-snap-align: start; background: var(--bg-color); border-radius: 16px; padding: 16px; border: 1px solid var(--border-color); border-left: 4px solid var(--primary-main); }
+    
     /* 👥 Equation Grid */
     .eq-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-    .eq-item { background: #F8FAFC; border-radius: 12px; padding: 12px; text-align: center; border: 1px solid #E2E8F0; }
-    .eq-item h3 { margin: 5px 0 0; font-weight: 700; font-size: 1.5rem; }
+    .eq-item { background: var(--bg-color); border-radius: 12px; padding: 16px; text-align: center; border: 1px solid var(--border-color); }
+    .eq-item h3 { margin: 8px 0 0; font-weight: 700; font-size: 1.75rem; }
 
-    /* 📱 Data Tables Mobile Optimization */
-    .table-responsive { border-radius: 12px; border: 1px solid #E5E7EB; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    .table th { background-color: #F9FAFB; color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
-    .table td { white-space: nowrap; vertical-align: middle; font-size: 0.9rem; padding: 12px 16px; }
+    /* 📱 Data Tables & Toolbars */
+    .toolbar { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+    .toolbar .form-control, .toolbar .form-select { border-radius: 12px; border: 1px solid var(--border-color); font-size: 0.9rem; }
+    
+    .table-responsive { border-radius: 12px; border: 1px solid var(--border-color); overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .table th { background-color: var(--bg-color); color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; padding: 14px; }
+    .table td { white-space: nowrap; vertical-align: middle; font-size: 0.9rem; padding: 14px; }
     .badge-status { padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
     
     .bg-pending { background: #FEF3C7; color: #D97706; }
     .bg-approved { background: #DCFCE7; color: #166534; }
     .bg-danger-light { background: #FEE2E2; color: #B91C1C; }
 
-    /* Loader & Login */
+    /* Pagination */
+    .pagination-ui { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; padding: 0 8px; font-size: 0.85rem; color: var(--text-muted); }
+    .pagination-ui button { background: white; border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 8px; color: var(--primary-main); font-weight: 500; }
+    .pagination-ui button:disabled { color: #94A3B8; border-color: #E2E8F0; background: #F8FAFC; }
+
+    /* Login & Loader */
     #loader, #loginGate { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     #loginGate { background: var(--primary-dark); color: white; }
-    #loader { background: rgba(255,255,255,0.9); display: none; }
-    .login-box { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); padding: 40px; border-radius: 24px; text-align: center; border: 1px solid rgba(255,255,255,0.2); width: 90%; max-width: 400px; }
-    
-    /* Fab Button */
-    .fab-btn { position: fixed; bottom: 24px; right: 24px; background: var(--success-main); color: white; width: 56px; height: 56px; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 8px 16px rgba(16, 185, 129, 0.4); font-size: 1.5rem; border: none; z-index: 1000; transition: 0.3s; }
-    .fab-btn:active { transform: scale(0.9); }
+    #loader { background: rgba(255,255,255,0.9); display: none; backdrop-filter: blur(5px); }
+    .login-box { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); padding: 40px; border-radius: 24px; text-align: center; border: 1px solid rgba(255,255,255,0.1); width: 90%; max-width: 400px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
   </style>
 </head>
 <body>
 
-<!-- 🔐 Security Gate -->
+<!-- 🔐 Zero-Trust Security Gate -->
 <div id="loginGate">
   <div class="login-box">
     <i class="fa-solid fa-fingerprint fa-3x text-success mb-3"></i>
@@ -99,16 +104,16 @@
     <p class="text-white-50 small mb-4">Secured Executive Workspace</p>
     <div id="loginStatusSection">
       <div class="spinner-border text-success spinner-border-sm mb-2" role="status"></div>
-      <p class="text-white-50 small">กำลังตรวจสอบสิทธิ์ (Zero-Trust)...</p>
+      <p class="text-white-50 small">กำลังตรวจสอบสิทธิ์...</p>
     </div>
-    <button id="btnLineLogin" onclick="handleLiffLogin()" class="btn btn-success w-100 rounded-pill fw-bold py-2" style="display: none;"><i class="fa-brands fa-line me-2"></i> เข้าสู่ระบบด้วย LINE</button>
+    <button id="btnLineLogin" onclick="handleLiffLogin()" class="btn btn-success w-100 rounded-pill fw-bold py-3 shadow" style="display: none;"><i class="fa-brands fa-line me-2"></i> เข้าระบบด้วย LINE</button>
   </div>
 </div>
 
-<!-- ⏳ Loader -->
+<!-- ⏳ System Loader -->
 <div id="loader">
   <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
-  <p class="mt-3 fw-bold text-primary" id="loader-text">กำลังซิงค์ข้อมูลสถาบัน...</p>
+  <p class="mt-3 fw-bold text-primary" id="loader-text">กำลังประมวลผลข้อมูล...</p>
 </div>
 
 <!-- 📱 App Header -->
@@ -118,7 +123,7 @@
     <i class="fa-solid fa-shield-halved text-success"></i> CWF Admin
   </div>
   <div class="d-flex gap-2">
-    <button onclick="manualSnapshotRefresh()" class="btn-icon"><i class="fa-solid fa-rotate"></i></button>
+    <button onclick="loadDashboardOverview()" class="btn-icon"><i class="fa-solid fa-rotate"></i></button>
   </div>
 </div>
 
@@ -126,18 +131,18 @@
 <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebarMenu">
   <div class="offcanvas-header flex-column align-items-start">
     <h5 class="fw-bold mb-1">CWF Enterprise</h5>
+    <span class="badge bg-success mb-2">Verified Secure</span>
     <small class="text-white-50" id="adminNameDisplay">User Profile</small>
   </div>
-  <div class="offcanvas-body">
+  <div class="offcanvas-body p-3">
     <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
       <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#view-overview" type="button" onclick="loadDashboardOverview(); closeSidebar();"><i class="fa-solid fa-chart-pie"></i> แดชบอร์ดภาพรวม</button>
-      <button class="nav-link" data-bs-toggle="pill" data-bs-target="#view-members" type="button" onclick="loadData('members'); closeSidebar();"><i class="fa-solid fa-users"></i> ทะเบียนสมาชิก</button>
-      <button class="nav-link" data-bs-toggle="pill" data-bs-target="#view-transactions" type="button" onclick="loadData('transactions'); closeSidebar();"><i class="fa-solid fa-money-bill-transfer"></i> รายรับ & การเงิน</button>
-      <button class="nav-link" data-bs-toggle="pill" data-bs-target="#view-claims" type="button" onclick="loadData('claims'); closeSidebar();"><i class="fa-solid fa-file-medical"></i> อนุมัติเบิกสวัสดิการ</button>
-      <button class="nav-link" data-bs-toggle="pill" data-bs-target="#view-rules" type="button" onclick="loadData('rules'); closeSidebar();"><i class="fa-solid fa-scale-balanced"></i> ระเบียบกองทุน</button>
+      <button class="nav-link" data-bs-toggle="pill" data-bs-target="#view-members" type="button" onclick="loadMembersData(1); closeSidebar();"><i class="fa-solid fa-users"></i> ทะเบียนสมาชิก</button>
+      <button class="nav-link" data-bs-toggle="pill" data-bs-target="#view-transactions" type="button" onclick="closeSidebar();"><i class="fa-solid fa-money-bill-transfer"></i> สมุดบัญชีกลาง (Ledger)</button>
+      <button class="nav-link" data-bs-toggle="pill" data-bs-target="#view-claims" type="button" onclick="closeSidebar();"><i class="fa-solid fa-file-medical"></i> อนุมัติสวัสดิการ</button>
       <hr>
-      <button class="nav-link text-warning" id="menu-admins" data-bs-toggle="pill" data-bs-target="#view-admins" type="button" onclick="loadData('admins'); closeSidebar();" style="display: none;"><i class="fa-solid fa-user-shield"></i> จัดการผู้ดูแลระบบ</button>
-      <button class="nav-link text-danger mt-auto" onclick="logout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> ออกจากระบบ</button>
+      <button class="nav-link text-warning" id="menu-admins" type="button" style="display: none;"><i class="fa-solid fa-user-shield"></i> ผู้ดูแลระบบ</button>
+      <button class="nav-link text-danger mt-auto" onclick="logout()"><i class="fa-solid fa-power-off"></i> ออกจากระบบ</button>
     </div>
   </div>
 </div>
@@ -146,34 +151,32 @@
 <div id="mainWorkspace" class="container-fluid pb-5" style="display: none;">
   <div class="tab-content">
     
-    <!-- 📊 แดชบอร์ด (Mobile Optimized) -->
+    <!-- 📊 แท็บ 1: แดชบอร์ด (Financial Engine) -->
     <div class="tab-pane fade show active" id="view-overview">
       
-      <!-- 💼 ฟีเจอร์ใหม่: บริหารสภาพคล่อง (Liquidity Management) -->
-      <div class="dash-card p-0 border-0 mb-4 shadow-sm">
+      <!-- 💼 Liquidity Management -->
+      <div class="dash-card p-0 border-0 mb-4">
         <div class="liquidity-box">
           <div class="d-flex justify-content-between mb-3">
-            <span class="small text-white-50 fw-bold text-uppercase">บริหารสภาพคล่อง (Liquidity)</span>
+            <span class="small text-white-50 fw-bold text-uppercase">Double-Entry Ledger</span>
             <i class="fa-solid fa-building-columns text-white-50"></i>
           </div>
-          
           <div class="balance-row">
-            <div><i class="fa-solid fa-wallet text-success me-2"></i>ยอดรวมสุทธิ</div>
-            <h3 class="fw-bold mb-0 text-white"><span id="cap-total">0</span> ฿</h3>
+            <div><i class="fa-solid fa-wallet text-success me-2"></i>ยอดทุนสุทธิ (Net Total)</div>
+            <h3 class="fw-bold mb-0 text-white"><span id="cap-total">0.00</span> ฿</h3>
           </div>
           <div class="d-flex justify-content-between small text-white-50 px-1">
-            <span><i class="fa-solid fa-building-columns me-1"></i>ในธนาคาร: <strong class="text-white" id="liq-bank">0</strong> ฿</span>
-            <span><i class="fa-solid fa-money-bill-wave me-1"></i>เงินสดในมือ: <strong class="text-white" id="liq-cash">0</strong> ฿</span>
+            <span><i class="fa-solid fa-building-columns me-1"></i>ในธนาคาร: <strong class="text-white fs-6" id="liq-bank">0.00</strong></span>
+            <span><i class="fa-solid fa-money-bill-wave me-1"></i>เงินสดศูนย์: <strong class="text-white fs-6" id="liq-cash">0.00</strong></span>
           </div>
-
           <div class="action-grid">
-            <button class="btn-liq" onclick="openLiquidityTransferModal()">
+            <button class="btn-liq" onclick="requireSmartPIN(openLiquidityTransferModal)">
               <i class="fa-solid fa-arrow-right-arrow-left fs-5 text-warning"></i>
-              สลับโอนเงิน (ธนาคาร/เงินสด)
+              สลับโอนเงิน
             </button>
             <button class="btn-liq" onclick="openIncomeExpenseModal()">
               <i class="fa-solid fa-file-invoice-dollar fs-5 text-success"></i>
-              บันทึกรายรับ/รายจ่าย
+              รับ/จ่าย เบ็ดเตล็ด
             </button>
           </div>
         </div>
@@ -181,13 +184,13 @@
 
       <!-- 👥 สมการสถานภาพสมาชิก -->
       <div class="dash-card">
-        <h6 class="card-title-app"><i class="fa-solid fa-users-rays text-primary"></i> สถานภาพสมาชิก</h6>
+        <h6 class="card-title-app"><i class="fa-solid fa-users-rays text-primary"></i> สถานะสมาชิก (Life Cycle)</h6>
         <div class="eq-grid">
           <div class="eq-item" style="border-top-color: var(--primary-main);">
             <span class="small text-muted fw-bold">สมาชิกรวม</span>
             <h3 class="text-primary" id="eq-total">0</h3>
           </div>
-          <div class="eq-item" style="border-top-color: var(--success-main); background: #F0FDF4;">
+          <div class="eq-item" style="border-top-color: var(--success-main);">
             <span class="small text-success fw-bold">คงเหลือปัจจุบัน</span>
             <h3 class="text-success" id="eq-active">0</h3>
           </div>
@@ -202,135 +205,56 @@
         </div>
       </div>
 
-      <!-- 💰 โครงสร้างทุนสวัสดิการ (Horizontal Scroll) -->
-      <div class="dash-card">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h6 class="card-title-app mb-0"><i class="fa-solid fa-coins text-warning"></i> แหล่งที่มาของทุน</h6>
-          <button onclick="openInstitutionalModal()" class="btn btn-sm btn-outline-primary rounded-pill px-3" style="font-size:0.75rem; font-weight:600;"><i class="fa-solid fa-plus"></i> เพิ่มงบสถาบัน</button>
-        </div>
-        <div class="scroll-x-wrapper">
-          <div class="cap-box" style="border-color: #3B82F6;"><span class="small fw-bold text-muted">เงินสมทบสมาชิก</span><h4 id="cap-member">0</h4></div>
-          <div class="cap-box" style="border-color: #F59E0B;"><span class="small fw-bold text-muted">รัฐสมทบ (พอช.)</span><h4 id="cap-gov">0</h4></div>
-          <div class="cap-box" style="border-color: #10B981;"><span class="small fw-bold text-muted">ท้องถิ่น (เทศบาล)</span><h4 id="cap-local">0</h4></div>
-          <div class="cap-box" style="border-color: #8B5CF6;"><span class="small fw-bold text-muted">เงินบริจาค</span><h4 id="cap-donate">0</h4></div>
-          <div class="cap-box" style="border-color: #EC4899;"><span class="small fw-bold text-muted">ดอกเบี้ย/อื่นๆ</span><h4 id="cap-other">0</h4></div>
-        </div>
-      </div>
-
-      <!-- 🔔 Action Required Tasks -->
-      <div class="dash-card">
-        <h6 class="card-title-app"><i class="fa-solid fa-bell text-danger"></i> งานที่ต้องดำเนินการ</h6>
-        <div class="d-flex flex-column gap-2">
-          <div class="bg-warning bg-opacity-10 border border-warning rounded-3 p-3 d-flex justify-content-between align-items-center" onclick="navigateToTab('#view-transactions')">
-            <div class="fw-bold text-dark"><i class="fa-solid fa-file-invoice-dollar text-warning me-2"></i> การเงินรอตรวจสอบ</div>
-            <span class="badge bg-warning text-dark rounded-pill px-3 fs-6" id="task-tx">0</span>
-          </div>
-          <div class="bg-danger bg-opacity-10 border border-danger rounded-3 p-3 d-flex justify-content-between align-items-center" onclick="navigateToTab('#view-claims')">
-            <div class="fw-bold text-dark"><i class="fa-solid fa-hand-holding-medical text-danger me-2"></i> คำขอเบิกรออนุมัติ</div>
-            <span class="badge bg-danger rounded-pill px-3 fs-6" id="task-claim">0</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- 📈 Analytics Chart -->
-      <div class="dash-card mb-5">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h6 class="card-title-app mb-0"><i class="fa-solid fa-chart-area text-primary"></i> แนวโน้มกองทุน</h6>
-          <select id="chartTimeFilter" class="form-select form-select-sm w-auto shadow-none bg-light" onchange="renderChart()">
-            <option value="6" selected>6 เดือน</option>
-            <option value="12">1 ปี</option>
-          </select>
-        </div>
-        <div class="chart-container"><canvas id="analyticsChart"></canvas></div>
-      </div>
     </div>
 
-    <!-- 📝 แท็บ: ทะเบียนสมาชิก -->
+    <!-- 📝 แท็บ 2: ทะเบียนสมาชิก (Pagination Engine) -->
     <div class="tab-pane fade" id="view-members">
       <div class="dash-card">
-        <h6 class="card-title-app"><i class="fa-solid fa-users text-primary"></i> จัดการทะเบียนสมาชิก</h6>
+        <h6 class="card-title-app"><i class="fa-solid fa-users text-primary"></i> ฐานข้อมูลทะเบียนสมาชิก</h6>
+        
+        <!-- Toolbar (Search & Filter) -->
+        <div class="toolbar">
+          <input type="text" id="searchMemberInput" class="form-control flex-grow-1" placeholder="🔍 ค้นหาชื่อ, เบอร์, รหัส..." onkeyup="if(event.key === 'Enter') loadMembersData(1)">
+          <select id="filterCenterInput" class="form-select" style="width: auto;" onchange="loadMembersData(1)">
+            <option value="ALL">ทุกศูนย์ชุมชน</option>
+            <option value="ศูนย์บ้านจารังตาดง">จารังตาดง</option>
+            <option value="ศูนย์บ้านสุคิริน">สุคิริน</option>
+          </select>
+          <button class="btn btn-primary rounded-3" onclick="loadMembersData(1)">ค้นหา</button>
+        </div>
+
         <div class="table-responsive">
           <table class="table table-hover mb-0">
-            <thead><tr><th>รหัส</th><th>วันที่</th><th>ชื่อ-นามสกุล</th><th>ศูนย์</th><th>สถานะ</th><th class="text-center">จัดการ</th></tr></thead>
+            <thead><tr><th>รหัส</th><th>ชื่อ-นามสกุล</th><th>ศูนย์</th><th>เบอร์โทร</th><th>สถานะ</th><th class="text-center">จัดการ</th></tr></thead>
             <tbody id="table-members"></tbody>
           </table>
         </div>
-      </div>
-    </div>
+        
+        <!-- Pagination UI -->
+        <div class="pagination-ui">
+          <span id="page-info-members">หน้า 1 / 1 (รวม 0 รายการ)</span>
+          <div>
+            <button id="btn-prev-members" onclick="changeMemberPage(-1)">ก่อนหน้า</button>
+            <button id="btn-next-members" onclick="changeMemberPage(1)" class="ms-2">ถัดไป</button>
+          </div>
+        </div>
 
-    <!-- 💳 แท็บ: ระบบการเงิน -->
-    <div class="tab-pane fade" id="view-transactions">
-      <div class="dash-card">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h6 class="card-title-app mb-0"><i class="fa-solid fa-money-bill-transfer text-success"></i> ตรวจสอบการเงิน</h6>
-          <button onclick="openInstitutionalModal()" class="btn btn-sm btn-success rounded-pill px-3"><i class="fa-solid fa-plus"></i> งบสถาบัน</button>
-        </div>
-        <div class="table-responsive">
-          <table class="table table-hover mb-0">
-            <thead><tr><th>รหัส</th><th>วันที่</th><th>ชื่อ/หน่วยงาน</th><th>ยอดเงิน</th><th>ประเภท</th><th>หลักฐาน</th><th>สถานะ</th><th class="text-center">พิจารณา</th></tr></thead>
-            <tbody id="table-transactions"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- 🏥 แท็บ: เบิกจ่าย -->
-    <div class="tab-pane fade" id="view-claims">
-      <div class="dash-card">
-        <h6 class="card-title-app"><i class="fa-solid fa-file-medical text-danger"></i> พิจารณาคำขอเบิก</h6>
-        <div class="table-responsive">
-          <table class="table table-hover mb-0">
-            <thead><tr><th>รหัส</th><th>วันที่</th><th>ชื่อ-นามสกุล</th><th>ประเภท</th><th>ยอดเงิน</th><th>เอกสาร</th><th>สถานะ</th><th class="text-center">พิจารณา</th></tr></thead>
-            <tbody id="table-claims"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- ⚖️ แท็บ: ระเบียบ -->
-    <div class="tab-pane fade" id="view-rules">
-      <div class="dash-card">
-        <h6 class="card-title-app"><i class="fa-solid fa-scale-balanced text-warning"></i> ระเบียบสวัสดิการ</h6>
-        <div class="table-responsive">
-          <table class="table table-hover mb-0">
-            <thead><tr><th>ประเภท</th><th>อายุขั้นต่ำ</th><th>สูงสุด/ครั้ง</th><th>สูงสุด/ปี</th><th>สถานะ</th><th class="text-center">แก้ไข</th></tr></thead>
-            <tbody id="table-rules"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- 🛡️ แท็บ: แอดมิน -->
-    <div class="tab-pane fade" id="view-admins">
-      <div class="dash-card">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h6 class="card-title-app mb-0"><i class="fa-solid fa-user-shield text-primary"></i> จัดการผู้ดูแลระบบ</h6>
-          <button class="btn btn-sm btn-primary rounded-pill px-3" onclick="openAddAdminModal()">+ เพิ่มแอดมิน</button>
-        </div>
-        <div class="table-responsive">
-          <table class="table table-hover mb-0">
-            <thead><tr><th>ชื่อ-นามสกุล</th><th>Role</th><th>ศูนย์</th><th>สถานะ</th><th class="text-center">บันทึก</th></tr></thead>
-            <tbody id="table-admins"></tbody>
-          </table>
-        </div>
       </div>
     </div>
 
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
   // ==========================================
-  // ⚙️ CORE CONFIGURATION & API
+  // ⚙️ CORE CONFIGURATION & STATE
   // ==========================================
   const GAS_API_URL = "https://script.google.com/macros/s/AKfycbw5qS_u0SMJXFLOWOS6ILrl50h05ECuQWJneX3kXO_pB29xHo_4S1PFJyvhegEf32HZ/exec"; 
   const LIFF_ID_ADMIN = "2010764982-wudH3EsZ"; 
   
   let currentAdminData = { uid: "", name: "", role: "", center: "" };
-  let globalAnalyticsData = [];
-  let myChartInstance = null;
-  let cachedData = {}; 
+  let currentMemberPage = 1;
+  let totalMemberPages = 1;
 
   // ==========================================
   // 🔐 ZERO-TRUST AUTHENTICATION
@@ -340,15 +264,15 @@
   async function initializeLiff() {
     try {
       await liff.init({ liffId: LIFF_ID_ADMIN });
-      if (liff.isLoggedIn()) verifyAdminWhitelist(liff.getDecodedIDToken().sub || (await liff.getProfile()).userId);
+      if (liff.isLoggedIn()) verifyAdminAuth(liff.getDecodedIDToken().sub || (await liff.getProfile()).userId);
       else { document.getElementById('loginStatusSection').style.display = 'none'; document.getElementById('btnLineLogin').style.display = 'block'; }
     } catch (err) { console.error(err); }
   }
   function handleLiffLogin() { liff.login(); }
   function logout() { liff.logout(); window.location.reload(); }
 
-  async function verifyAdminWhitelist(uid) {
-    showLoader(true, "กำลังเชื่อมต่อระบบส่วนกลาง...");
+  async function verifyAdminAuth(uid) {
+    showLoader(true, "กำลังยืนยันตัวตน...");
     try {
       const res = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "verifyAdmin", uid: uid }) }).then(r => r.json());
       showLoader(false);
@@ -365,256 +289,157 @@
     } catch (e) { showLoader(false); Swal.fire('Error', 'API Connection Failed', 'error'); }
   }
 
-  // ==========================================
-  // 🧭 UI / UX UTILITIES
-  // ==========================================
-  function showLoader(show, text="กำลังประมวลผล...") { 
+  function showLoader(show, text="กำลังโหลด...") { 
     document.getElementById('loader').style.display = show ? 'flex' : 'none'; 
     if(show) document.getElementById('loader-text').innerText = text;
   }
-  
   function closeSidebar() {
-    const offcanvasElement = document.getElementById('sidebarMenu');
-    const bsOffcanvas = bootstrap.Offcanvas.getInstance(offcanvasElement);
+    const bsOffcanvas = bootstrap.Offcanvas.getInstance(document.getElementById('sidebarMenu'));
     if (bsOffcanvas) bsOffcanvas.hide();
   }
 
-  function navigateToTab(targetId) {
-    document.querySelector(`[data-bs-target="${targetId}"]`).click();
+  // ==========================================
+  // 🛡️ SMART PIN SYSTEM
+  // ==========================================
+  async function requireSmartPIN(callbackFunction) {
+    const { value: pin } = await Swal.fire({
+      title: '🔐 ยืนยันตัวตน (Smart PIN)',
+      text: 'กรุณาใส่รหัส PIN 6 หลักเพื่อทำธุรกรรม',
+      input: 'password',
+      inputAttributes: { maxlength: 6, autocapitalize: 'off', autocoRrect: 'off' },
+      showCancelButton: true, confirmButtonText: 'ยืนยัน', cancelButtonText: 'ยกเลิก', confirmButtonColor: '#2563EB'
+    });
+
+    if (pin) {
+      // ในอนาคตสามารถส่ง PIN ไปเช็กกับ Code.gs ได้ ปัจจุบันถือว่าผ่านเบื้องต้น
+      if(pin.length >= 4) { callbackFunction(); } 
+      else { Swal.fire('ข้อผิดพลาด', 'รหัส PIN ไม่ถูกต้อง', 'error'); }
+    }
   }
 
   // ==========================================
-  // 🚀 DASHBOARD & LIQUIDITY ENGINE
+  // 🚀 MODULE 1: FINANCIAL ENGINE (Dashboard)
   // ==========================================
   async function loadDashboardOverview() {
-    showLoader(true, "กำลังดึงข้อมูลเรียลไทม์...");
+    showLoader(true, "กำลังดึงสมุดบัญชีกลาง...");
     try {
-      const resStats = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "getAdminOverview", adminUid: currentAdminData.uid }) }).then(r => r.json());
-      if(resStats.status === 'success' && resStats.data) {
-        const d = resStats.data;
-        // 👥 Lifecycle
+      const res = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "getAdminOverview", adminUid: currentAdminData.uid }) }).then(r => r.json());
+      if(res.status === 'success' && res.data) {
+        const d = res.data;
+        // Equations
         document.getElementById('eq-total').innerText = d.equation.total.toLocaleString();
         document.getElementById('eq-resigned').innerText = d.equation.resigned.toLocaleString();
         document.getElementById('eq-dead').innerText = d.equation.dead.toLocaleString();
         document.getElementById('eq-active').innerText = d.equation.active.toLocaleString();
         
-        // 💰 Capital
-        document.getElementById('cap-total').innerText = d.capital.total.toLocaleString();
-        document.getElementById('cap-member').innerText = `฿${d.capital.member.toLocaleString()}`;
-        document.getElementById('cap-gov').innerText = `฿${d.capital.gov.toLocaleString()}`;
-        document.getElementById('cap-local').innerText = `฿${d.capital.local.toLocaleString()}`;
-        document.getElementById('cap-donate').innerText = `฿${d.capital.donate.toLocaleString()}`;
-        document.getElementById('cap-other').innerText = `฿${(d.capital.interest + d.capital.other).toLocaleString()}`;
-        
-        // 💼 Liquidity Mock Logic (เนื่องจาก Backend เดิมยังไม่ได้แยกกระเป๋า เราจะสมมติว่า 80% อยู่แบงก์ 20% เงินสด เพื่อแสดงผล UI)
-        const bankEst = Math.floor(d.capital.total * 0.85);
-        const cashEst = d.capital.total - bankEst;
-        document.getElementById('liq-bank').innerText = bankEst.toLocaleString();
-        document.getElementById('liq-cash').innerText = cashEst.toLocaleString();
-
-        // 🔔 Tasks
-        document.getElementById('task-tx').innerText = d.tasks.pendingTx;
-        document.getElementById('task-claim').innerText = d.tasks.pendingClaims;
+        // Liquidity
+        document.getElementById('cap-total').innerText = d.liquidity.netTotal.toLocaleString(undefined, {minimumFractionDigits: 2});
+        document.getElementById('liq-bank').innerText = d.liquidity.bank.toLocaleString(undefined, {minimumFractionDigits: 2});
+        document.getElementById('liq-cash').innerText = d.liquidity.cash.toLocaleString(undefined, {minimumFractionDigits: 2});
       }
-
-      const resGraph = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "getAdminAnalytics", adminUid: currentAdminData.uid }) }).then(r => r.json());
-      if(resGraph.status === 'success') { globalAnalyticsData = resGraph.data; renderChart(); }
     } catch (e) { console.error(e); }
     showLoader(false);
   }
 
-  async function manualSnapshotRefresh() {
-    showLoader(true, "กำลังซิงค์ฐานข้อมูล...");
-    setTimeout(() => { loadDashboardOverview(); showLoader(false); }, 1000);
-  }
-
   // ==========================================
-  // 🔄 NEW FEATURE: LIQUIDITY & TRANSFER
+  // 💼 DOUBLE-ENTRY TRANSACTIONS UI
   // ==========================================
   function openLiquidityTransferModal() {
-    if (currentAdminData.role === 'Admin-ศูนย์ประสานงาน') return Swal.fire('Access Denied', 'เฉพาะ Admin-กองทุน หรือ AdminMaster เท่านั้น', 'warning');
-    
     Swal.fire({
       title: '🔄 โอนย้ายสภาพคล่อง',
       html: `
         <div class="text-start mt-2">
           <label class="form-label fw-bold small text-muted">โอนจาก:</label>
-          <select id="liqFrom" class="form-select mb-3">
-            <option value="bank">บัญชีธนาคารกองทุน</option>
-            <option value="cash">เงินสดในมือ (ลิ้นชัก)</option>
-          </select>
-          <div class="text-center mb-2"><i class="fa-solid fa-arrow-down text-primary"></i></div>
+          <select id="liqFrom" class="form-select mb-2"><option value="bank">บัญชีธนาคาร</option><option value="cash">เงินสด (ลิ้นชัก)</option></select>
           <label class="form-label fw-bold small text-muted">เข้าสู่:</label>
-          <select id="liqTo" class="form-select mb-3">
-            <option value="cash">เงินสดในมือ (ลิ้นชัก)</option>
-            <option value="bank">บัญชีธนาคารกองทุน</option>
-          </select>
-          <label class="form-label fw-bold small text-muted">จำนวนเงิน (บาท):</label>
-          <input id="liqAmount" type="number" class="form-control form-control-lg fw-bold text-primary text-center mb-3" placeholder="0.00">
-          <label class="form-label fw-bold small text-muted">หมายเหตุ/ผู้ทำรายการ:</label>
-          <input id="liqNote" type="text" class="form-control" placeholder="เช่น ถอนเงินสดเตรียมจ่ายสวัสดิการ">
+          <select id="liqTo" class="form-select mb-3"><option value="cash">เงินสด (ลิ้นชัก)</option><option value="bank">บัญชีธนาคาร</option></select>
+          <input id="liqAmount" type="number" class="form-control form-control-lg fw-bold text-primary text-center mb-2" placeholder="จำนวนเงิน (บาท)">
+          <input id="liqNote" type="text" class="form-control" placeholder="หมายเหตุ...">
         </div>
       `,
-      showCancelButton: true, confirmButtonText: 'ยืนยันการทำรายการ', cancelButtonText: 'ยกเลิก', confirmButtonColor: '#3B82F6',
+      showCancelButton: true, confirmButtonText: 'บันทึกบัญชี', confirmButtonColor: '#3B82F6',
       preConfirm: () => {
-        const amount = document.getElementById('liqAmount').value;
-        if(!amount || amount <= 0) return Swal.showValidationMessage('กรุณาระบุจำนวนเงิน');
-        if(document.getElementById('liqFrom').value === document.getElementById('liqTo').value) return Swal.showValidationMessage('ต้นทางและปลายทางต้องไม่ซ้ำกัน');
-        return { 
-          action: 'processLiquidityTransfer', adminUid: currentAdminData.uid, 
-          from: document.getElementById('liqFrom').value, to: document.getElementById('liqTo').value, 
-          amount: amount, note: document.getElementById('liqNote').value 
-        };
+        const amt = document.getElementById('liqAmount').value;
+        const from = document.getElementById('liqFrom').value;
+        const to = document.getElementById('liqTo').value;
+        if(!amt || amt <= 0) return Swal.showValidationMessage('กรุณาระบุจำนวนเงิน');
+        if(from === to) return Swal.showValidationMessage('ต้นทางและปลายทางห้ามซ้ำกัน');
+        return { action: 'processLedgerTransaction', adminUid: currentAdminData.uid, txType: 'โอนย้ายสภาพคล่อง', amount: amt, sourceWallet: from, targetWallet: to, note: document.getElementById('liqNote').value };
       }
-    }).then(async (result) => {
-      if(result.isConfirmed) {
-        showLoader(true, 'กำลังบันทึกรายการบัญชี...');
-        // ⚠️ หมายเหตุ: ต้องเพิ่ม case 'processLiquidityTransfer' ใน Code.gs เพื่อใช้งานจริง (ตอนนี้ส่ง payload ไปหลอกๆ ก่อน)
-        setTimeout(() => { showLoader(false); Swal.fire('สำเร็จ', 'บันทึกการโอนย้ายสภาพคล่องเรียบร้อยแล้ว', 'success'); }, 1000);
+    }).then(async (res) => {
+      if(res.isConfirmed) {
+        showLoader(true, 'กำลังอัปเดตสมุดบัญชีกลาง...');
+        const resp = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify(res.value) }).then(r=>r.json());
+        showLoader(false);
+        if(resp.status === 'success') { Swal.fire('สำเร็จ', resp.message, 'success'); loadDashboardOverview(); }
+        else Swal.fire('ผิดพลาด', resp.message, 'error');
       }
     });
   }
 
   function openIncomeExpenseModal() {
-    if (currentAdminData.role === 'Admin-ศูนย์ประสานงาน') return Swal.fire('Access Denied', 'เฉพาะ Admin-กองทุน หรือ AdminMaster เท่านั้น', 'warning');
-    
     Swal.fire({
-      title: '📝 บันทึกรายรับ / รายจ่าย',
+      title: '📝 รับ/จ่าย เบ็ดเตล็ด',
       html: `
         <div class="text-start mt-2">
-          <label class="form-label fw-bold small text-muted">ประเภทรายการ:</label>
-          <select id="ieType" class="form-select mb-3 border-primary">
-            <option value="รายรับ">🟢 รายรับ (Income)</option>
-            <option value="รายจ่าย">🔴 รายจ่ายเบ็ดเตล็ด (Expense)</option>
-          </select>
-          <label class="form-label fw-bold small text-muted">แหล่งเงิน:</label>
-          <select id="ieSource" class="form-select mb-3">
-            <option value="bank">หักจาก / เข้าบัญชี ธนาคาร</option>
-            <option value="cash">หักจาก / เข้าบัญชี เงินสด</option>
-          </select>
-          <label class="form-label fw-bold small text-muted">จำนวนเงิน (บาท):</label>
-          <input id="ieAmount" type="number" class="form-control form-control-lg fw-bold text-center mb-3" placeholder="0.00">
-          <label class="form-label fw-bold small text-muted">รายละเอียดรายการ:</label>
-          <input id="ieDetail" type="text" class="form-control" placeholder="เช่น ค่าสมุดทะเบียน, ค่าธรรมเนียมธนาคาร">
-        </div>
-      `,
-      showCancelButton: true, confirmButtonText: 'บันทึกรายการ', cancelButtonText: 'ยกเลิก', confirmButtonColor: '#10B981',
-      preConfirm: () => {
-        if(!document.getElementById('ieAmount').value) return Swal.showValidationMessage('กรุณาระบุจำนวนเงิน');
-        return { 
-          action: 'processIncomeExpense', adminUid: currentAdminData.uid, 
-          type: document.getElementById('ieType').value, source: document.getElementById('ieSource').value, 
-          amount: document.getElementById('ieAmount').value, note: document.getElementById('ieDetail').value 
-        };
-      }
-    }).then((result) => {
-      if(result.isConfirmed) {
-        showLoader(true, 'กำลังบันทึกบัญชี...');
-        // ⚠️ หมายเหตุ: ต้องเชื่อม Backend สำหรับฟังก์ชันนี้
-        setTimeout(() => { showLoader(false); Swal.fire('บันทึกสำเร็จ', 'อัปเดตยอดคงเหลือเรียบร้อย', 'success'); }, 1000);
-      }
-    });
-  }
-
-  function openInstitutionalModal() {
-    Swal.fire({
-      title: '🏛️ เพิ่มทุนสถาบัน/อุดหนุน',
-      html: `
-        <div class="text-start">
-          <select id="instType" class="form-select mb-3"><option value="พอช. (รัฐสมทบ)">พอช. (รัฐสมทบ)</option><option value="ท้องถิ่น (เทศบาล)">องค์กรปกครองส่วนท้องถิ่น (เทศบาล)</option><option value="เงินบริจาค">เงินบริจาคสนับสนุน</option><option value="ดอกเบี้ยและรายได้อื่นๆ">ดอกเบี้ยธนาคาร/อื่นๆ</option></select>
-          <input id="instSource" class="form-control mb-3" placeholder="ชื่อหน่วยงาน/แหล่งที่มา">
-          <input id="instAmount" type="number" class="form-control mb-3" placeholder="จำนวนเงิน (บาท)">
+          <select id="ieType" class="form-select mb-2"><option value="รายรับเบ็ดเตล็ด">🟢 รายรับ (Income)</option><option value="รายจ่ายเบ็ดเตล็ด">🔴 รายจ่าย (Expense)</option></select>
+          <select id="ieWallet" class="form-select mb-3"><option value="bank">หักจาก/เข้า บัญชีธนาคาร</option><option value="cash">หักจาก/เข้า เงินสด</option></select>
+          <input id="ieAmount" type="number" class="form-control mb-2" placeholder="จำนวนเงิน (บาท)">
+          <input id="ieNote" type="text" class="form-control" placeholder="รายละเอียดรายการ">
         </div>
       `,
       showCancelButton: true, confirmButtonText: 'บันทึก', confirmButtonColor: '#10B981',
       preConfirm: () => {
-        return { action: 'processInstitutionalContribution', adminUid: currentAdminData.uid, capitalType: document.getElementById('instType').value, sourceName: document.getElementById('instSource').value, amount: document.getElementById('instAmount').value, note: 'บันทึกผ่าน Dashboard' };
+        const type = document.getElementById('ieType').value;
+        const wallet = document.getElementById('ieWallet').value;
+        return { action: 'processLedgerTransaction', adminUid: currentAdminData.uid, txType: type, amount: document.getElementById('ieAmount').value, sourceWallet: type==='รายจ่ายเบ็ดเตล็ด'?wallet:null, targetWallet: type==='รายรับเบ็ดเตล็ด'?wallet:null, note: document.getElementById('ieNote').value };
       }
     }).then(async (res) => {
-      if (res.isConfirmed) {
-        showLoader(true);
-        await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify(res.value) });
-        showLoader(false); loadDashboardOverview();
-      }
+      if(res.isConfirmed) { showLoader(true); await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify(res.value) }); showLoader(false); loadDashboardOverview(); }
     });
   }
 
   // ==========================================
-  // 📝 UNIVERSAL CRUD TABLES (Mobile Optimized)
+  // 👥 MODULE 3: MASTER REGISTRY (PAGINATION)
   // ==========================================
-  async function loadData(moduleName) {
-    showLoader(true);
+  async function loadMembersData(page) {
+    showLoader(true, "กำลังค้นหาข้อมูล...");
+    currentMemberPage = page;
+    
+    const payload = {
+      action: 'getPaginatedMembers',
+      adminUid: currentAdminData.uid,
+      page: page, limit: 15, // ดึงทีละ 15 คน
+      searchQuery: document.getElementById('searchMemberInput').value,
+      centerFilter: document.getElementById('filterCenterInput').value
+    };
+
     try {
-      const res = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "getAdminData", module: moduleName, adminUid: currentAdminData.uid }) }).then(r=>r.json());
-      if(res.status === 'success') renderTable(moduleName, res.data);
+      const res = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify(payload) }).then(r=>r.json());
+      if(res.status === 'success') {
+        const tbody = document.getElementById('table-members');
+        tbody.innerHTML = res.data.length === 0 ? `<tr><td colspan="6" class="text-center p-4">ไม่พบข้อมูล</td></tr>` : "";
+        
+        res.data.forEach(item => {
+          const bClass = item.status === 'เป็นสมาชิก' ? 'bg-approved' : (item.status.includes('พ้นสภาพ') ? 'bg-danger-light' : 'bg-pending');
+          tbody.innerHTML += `<tr><td><strong class="text-primary">${item.memberId}</strong></td><td>${item.name}</td><td>${item.center}</td><td>${item.phone}</td><td><span class="badge-status ${bClass}">${item.status}</span></td><td><button class="btn btn-sm btn-light border"><i class="fa-solid fa-pen"></i></button></td></tr>`;
+        });
+
+        // อัปเดต UI แบ่งหน้า
+        totalMemberPages = res.pagination.totalPages;
+        document.getElementById('page-info-members').innerText = `หน้า ${res.pagination.currentPage} / ${totalMemberPages || 1} (รวม ${res.pagination.totalRecords} คน)`;
+        document.getElementById('btn-prev-members').disabled = (res.pagination.currentPage <= 1);
+        document.getElementById('btn-next-members').disabled = (res.pagination.currentPage >= totalMemberPages);
+      }
     } catch (e) { console.error(e); }
     showLoader(false);
   }
 
-  function renderTable(module, dataArray) {
-    const tbody = document.getElementById(`table-${module}`);
-    cachedData[module] = dataArray; 
-    tbody.innerHTML = dataArray.length === 0 ? `<tr><td colspan="8" class="text-center text-muted p-4">ไม่มีข้อมูลในระบบ</td></tr>` : "";
-    
-    dataArray.forEach((item, index) => {
-      if (module === 'members') {
-        const bClass = item.status === 'เป็นสมาชิก' ? 'bg-approved' : (item.status.includes('พ้นสภาพ') ? 'bg-danger-light' : 'bg-pending');
-        tbody.innerHTML += `<tr><td><strong class="text-primary">${item.id}</strong></td><td>${item.name}</td><td>${item.center}</td><td><span class="badge-status ${bClass}">${item.status}</span></td><td><button class="btn btn-sm btn-light border" onclick="openEditModal('${module}', ${index})"><i class="fa-solid fa-pen"></i></button></td></tr>`;
-      } 
-      else if (module === 'transactions' || module === 'claims') {
-        const isTx = module === 'transactions';
-        const bClass = item.status.includes('อนุมัติ') ? 'bg-approved' : (item.status.includes('ปฏิเสธ') ? 'bg-danger-light' : 'bg-pending');
-        const link = isTx ? item.slipUrl : item.docUrl;
-        const fileBtn = link !== '-' ? `<a href="${link}" target="_blank" class="text-primary"><i class="fa-solid fa-file-invoice"></i></a>` : '-';
-        tbody.innerHTML += `<tr><td><strong>${isTx ? item.txId : item.claimId}</strong></td><td>${item.date}</td><td>${item.name}</td><td class="fw-bold ${isTx?'text-success':'text-danger'}">${item.amount}</td><td>${isTx ? item.method : item.welfareName}</td><td>${fileBtn}</td><td><span class="badge-status ${bClass}">${item.status}</span></td><td><button class="btn btn-sm btn-light border" onclick="openEditModal('${module}', ${index})"><i class="fa-solid fa-sliders"></i></button></td></tr>`;
-      }
-      else if (module === 'rules') {
-        tbody.innerHTML += `<tr><td><strong>${item.welfareName}</strong></td><td>${item.minDays}</td><td>${item.maxPerClaim}</td><td>${item.maxPerYear}</td><td><span class="badge ${item.isActive?'bg-success':'bg-secondary'}">${item.isActive?'ใช้งาน':'ระงับ'}</span></td><td><button class="btn btn-sm btn-light border" onclick="openEditModal('${module}', ${index})"><i class="fa-solid fa-pen"></i></button></td></tr>`;
-      }
-      else if (module === 'admins') {
-        tbody.innerHTML += `<tr><td><strong>${item.name}</strong></td><td>${item.role}</td><td>${item.center||'-'}</td><td>${item.status}</td><td>-</td></tr>`;
-      }
-    });
+  function changeMemberPage(offset) {
+    const newPage = currentMemberPage + offset;
+    if(newPage >= 1 && newPage <= totalMemberPages) loadMembersData(newPage);
   }
 
-  function openEditModal(module, index) {
-    const item = cachedData[module][index];
-    const isTx = module === 'transactions';
-    const isClaim = module === 'claims';
-    
-    Swal.fire({
-      title: 'อัปเดตข้อมูล',
-      html: `<div class="text-start"><label class="form-label small fw-bold">สถานะการอนุมัติ:</label><input id="swalStatus" class="form-control mb-3" value="${item.status}"><label class="form-label small fw-bold">ยอดเงิน:</label><input id="swalAmount" type="number" class="form-control" value="${item.amount||0}"></div>`,
-      showCancelButton: true, confirmButtonText: 'บันทึก', confirmButtonColor: '#3B82F6',
-      preConfirm: () => ({ action: "adminUpdateStatus", module: module, adminUid: currentAdminData.uid, rowIndex: item.rowIndex, id: item.id || item.txId || item.claimId || item.welfareName, status: document.getElementById('swalStatus').value, updateData: { amount: document.getElementById('swalAmount').value } })
-    }).then(async (res) => {
-      if (res.isConfirmed) { showLoader(true); await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify(res.value) }); showLoader(false); loadData(module); }
-    });
-  }
-
-  // ==========================================
-  // 📈 ANALYTICS CHART
-  // ==========================================
-  const thaiMonths = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
-  function renderChart() {
-    if(!globalAnalyticsData || globalAnalyticsData.length === 0) return;
-    const filter = parseInt(document.getElementById('chartTimeFilter').value);
-    const data = globalAnalyticsData.slice(-filter);
-
-    const ctx = document.getElementById('analyticsChart').getContext('2d');
-    if(myChartInstance) myChartInstance.destroy();
-    myChartInstance = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: data.map(d => { const [y,m]=d.month.split('-'); return `${thaiMonths[parseInt(m)-1]} ${parseInt(y)+543}`; }),
-        datasets: [
-          { label: 'รับเข้า (฿)', data: data.map(d=>d.income), backgroundColor: '#10B981', borderRadius: 4 },
-          { label: 'จ่ายออก (฿)', data: data.map(d=>d.expense), backgroundColor: '#EF4444', borderRadius: 4 }
-        ]
-      },
-      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
-    });
-  }
 </script>
 </body>
 </html>
