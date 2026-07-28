@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#0F172A">
-  <title>กองทุนสวัสดิการชุมชนเทศบาลตำบลสุคิริน | Executive Workspace</title>
+  <title>กองทุนสวัสดิการชุมชน | Executive Workspace</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,38 +24,50 @@
     }
     body { background-color: var(--bg-color); font-family: 'Prompt', sans-serif; color: var(--text-main); padding-top: 70px; -webkit-tap-highlight-color: transparent; }
     
-    .app-header { background: var(--primary-dark); color: white; position: fixed; top: 0; left: 0; width: 100%; height: 64px; z-index: 1030; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+    /* 📱 Header & Navigation */
+    .app-header { background: var(--primary-dark); color: white; position: fixed; top: 0; left: 0; width: 100%; height: 64px; z-index: 1030; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
     .btn-icon { background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; }
+    .btn-icon:active { transform: scale(0.9); }
     
-    .offcanvas { background-color: var(--bg-color); max-width: 300px; border-radius: 0 24px 24px 0; border: none; }
+    .offcanvas { background-color: var(--bg-color); max-width: 280px; border-radius: 0 24px 24px 0; border: none; }
     .offcanvas-header { background: var(--primary-dark); color: white; border-radius: 0 24px 0 0; padding: 24px; }
-    .nav-pills .nav-link { color: var(--text-muted); font-weight: 500; padding: 14px 20px; border-radius: 12px; margin-bottom: 8px; display: flex; align-items: center; gap: 14px; }
-    .nav-pills .nav-link.active { background: white; color: var(--primary-main); font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .nav-pills .nav-link { color: var(--text-muted); font-weight: 600; padding: 14px 20px; border-radius: 12px; margin-bottom: 8px; display: flex; align-items: center; gap: 14px; transition: 0.3s; }
+    .nav-pills .nav-link:hover { background: #E2E8F0; }
+    .nav-pills .nav-link.active { background: var(--primary-main); color: white; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3); }
 
-    .dash-card { background: var(--card-bg); border-radius: 20px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin-bottom: 24px; border: 1px solid var(--border-color); }
-    .card-title-app { font-size: 1rem; font-weight: 700; color: var(--primary-dark); margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+    /* 📊 Cards & Dashboard Layout */
+    .dash-card { background: var(--card-bg); border-radius: 20px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); margin-bottom: 24px; border: 1px solid var(--border-color); }
+    .card-title-app { font-size: 1.1rem; font-weight: 700; color: var(--primary-dark); margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
     
-    .liquidity-box { background: linear-gradient(135deg, #0F172A 0%, #1E3A8A 100%); border-radius: 16px; padding: 24px; color: white; position: relative; overflow: hidden; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3); }
+    /* 💰 Financial UI */
+    .liquidity-box { background: linear-gradient(135deg, #0F172A 0%, #1E3A8A 100%); border-radius: 20px; padding: 24px; color: white; position: relative; overflow: hidden; box-shadow: 0 10px 25px rgba(30, 58, 138, 0.4); }
     .liquidity-box::after { content: ''; position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: rgba(255,255,255,0.05); border-radius: 50%; }
     .balance-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 16px; }
-    .btn-liq { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 12px; padding: 12px; font-size: 0.85rem; font-weight: 500; display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; border-style: none; }
+    .btn-liq { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 14px; padding: 12px; font-size: 0.85rem; font-weight: 600; display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; transition: 0.2s; }
+    .btn-liq:active { background: rgba(255,255,255,0.25); transform: scale(0.98); }
     
-    .scroll-x-wrapper { display: flex; overflow-x: auto; gap: 12px; padding-bottom: 12px; scroll-snap-type: x mandatory; }
-    .scroll-x-wrapper::-webkit-scrollbar { display: none; }
-    .cap-box { flex: 0 0 160px; scroll-snap-align: start; background: var(--bg-color); border-radius: 16px; padding: 16px; border: 1px solid var(--border-color); border-left: 4px solid var(--primary-main); }
+    /* 👥 Equation Grid */
+    .eq-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .eq-item { background: var(--bg-color); border-radius: 16px; padding: 20px 16px; text-align: center; border: 1px solid var(--border-color); box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+    .eq-item h3 { font-weight: 700; margin-top: 8px; margin-bottom: 0; }
     
-    .eq-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-    .eq-item { background: var(--bg-color); border-radius: 12px; padding: 16px; text-align: center; border: 1px solid var(--border-color); }
+    /* 📈 Capital Grid */
+    .cap-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .cap-box { background: var(--bg-color); border-radius: 14px; padding: 16px; border: 1px solid var(--border-color); border-left: 4px solid var(--primary-main); }
     
-    .table-responsive { border-radius: 12px; border: 1px solid var(--border-color); overflow-x: auto; }
-    .table th { background-color: var(--bg-color); color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; white-space: nowrap; padding: 14px; }
-    .table td { white-space: nowrap; vertical-align: middle; font-size: 0.9rem; padding: 14px; }
-    .badge-status { padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; display: inline-flex; align-items: center; }
+    /* 📋 Tables */
+    .table-responsive { border-radius: 16px; border: 1px solid var(--border-color); overflow-x: auto; background: white; }
+    .table th { background-color: #F1F5F9; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; white-space: nowrap; padding: 16px; border-bottom: 2px solid #E2E8F0; }
+    .table td { white-space: nowrap; vertical-align: middle; font-size: 0.95rem; padding: 16px; border-bottom: 1px solid #F1F5F9; font-weight: 500; }
+    .badge-status { padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; display: inline-flex; align-items: center; }
     
+    /* ⚙️ Utilities */
     #loader, #loginGate { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     #loginGate { background: var(--primary-dark); color: white; }
-    #loader { background: rgba(255,255,255,0.9); display: none; backdrop-filter: blur(5px); }
-    .login-box { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); padding: 40px; border-radius: 24px; text-align: center; border: 1px solid rgba(255,255,255,0.1); width: 90%; max-width: 400px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+    #loader { background: rgba(255,255,255,0.95); display: none; backdrop-filter: blur(5px); }
+    .login-box { background: rgba(255,255,255,0.05); backdrop-filter: blur(15px); padding: 40px; border-radius: 24px; text-align: center; border: 1px solid rgba(255,255,255,0.1); width: 90%; max-width: 400px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+    .form-control, .form-select { border-radius: 12px; padding: 12px 16px; border-color: #CBD5E1; background-color: #F8FAFC; }
+    .form-control:focus, .form-select:focus { border-color: var(--primary-main); box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
   </style>
 </head>
 <body>
@@ -64,8 +76,8 @@
 <div id="loginGate">
   <div class="login-box">
     <i class="fa-solid fa-fingerprint fa-3x text-success mb-3"></i>
-    <h5 class="fw-bold">กองทุนสวัสดิการชุมชน<br>เทศบาลตำบลสุคิริน</h5>
-    <p class="text-white-50 small mb-4">Secured Executive Workspace</p>
+    <h5 class="fw-bold">ระบบจัดการกองทุนสวัสดิการ</h5>
+    <p class="text-white-50 small mb-4">Executive Workspace</p>
     <div id="loginStatusSection">
       <div class="spinner-border text-success spinner-border-sm mb-2" role="status"></div>
       <p class="text-white-50 small">ตรวจสอบสิทธิ์...</p>
@@ -75,29 +87,29 @@
 </div>
 
 <!-- ⏳ Loader -->
-<div id="loader"><div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div><p class="mt-3 fw-bold text-primary" id="loader-text">กำลังโหลด...</p></div>
+<div id="loader"><div class="spinner-border text-primary" style="width: 3.5rem; height: 3.5rem;" role="status"></div><h6 class="mt-4 fw-bold text-primary" id="loader-text">กำลังโหลดข้อมูล...</h6></div>
 
 <!-- 📱 App Header -->
 <div class="app-header" id="appHeader" style="display: none;">
-  <div class="brand"><button class="btn-icon me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu"><i class="fa-solid fa-bars"></i></button> Admin Workspace</div>
+  <div class="fw-bold fs-5 d-flex align-items-center"><button class="btn-icon me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu"><i class="fa-solid fa-bars"></i></button> Admin Panel</div>
   <button onclick="loadDashboardOverview()" class="btn-icon"><i class="fa-solid fa-rotate"></i></button>
 </div>
 
 <!-- 🗂️ Sidebar -->
 <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebarMenu">
   <div class="offcanvas-header flex-column align-items-start">
-    <h5 class="fw-bold mb-1">CWF Enterprise</h5>
-    <small class="text-white-50" id="adminNameDisplay">User Profile</small>
+    <h5 class="fw-bold mb-1 text-white">CWF Executive</h5>
+    <small class="text-success fw-bold" id="adminNameDisplay">User Profile</small>
   </div>
   <div class="offcanvas-body p-3">
     <div class="nav flex-column nav-pills">
-      <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#view-overview" onclick="loadDashboardOverview(); closeSidebar();"><i class="fa-solid fa-chart-pie"></i> แดชบอร์ดภาพรวม</button>
-      <button class="nav-link" data-bs-toggle="pill" data-bs-target="#view-members" onclick="loadMembersData(1); closeSidebar();"><i class="fa-solid fa-users"></i> ทะเบียนสมาชิก</button>
-      <button class="nav-link" data-bs-toggle="pill" data-bs-target="#view-ledger" onclick="loadUniversalData('transactions'); closeSidebar();"><i class="fa-solid fa-money-bill-transfer"></i> สมุดบัญชีกลาง</button>
-      <button class="nav-link" data-bs-toggle="pill" data-bs-target="#view-claims" onclick="loadUniversalData('claims'); closeSidebar();"><i class="fa-solid fa-file-medical"></i> อนุมัติสวัสดิการ</button>
-      <button class="nav-link" data-bs-toggle="pill" data-bs-target="#view-rules" onclick="loadUniversalData('rules'); closeSidebar();"><i class="fa-solid fa-scale-balanced"></i> ระเบียบกองทุน</button>
-      <hr>
-      <button class="nav-link text-danger mt-auto" onclick="liff.logout(); window.location.reload();"><i class="fa-solid fa-power-off"></i> ออกจากระบบ</button>
+      <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#view-overview" onclick="loadDashboardOverview(); closeSidebar();"><i class="fa-solid fa-chart-pie me-2"></i> แดชบอร์ดภาพรวม</button>
+      <button class="nav-link" data-bs-toggle="pill" data-bs-target="#view-members" onclick="loadMembersData(1); closeSidebar();"><i class="fa-solid fa-users me-2"></i> ทะเบียนสมาชิก</button>
+      <button class="nav-link" data-bs-toggle="pill" data-bs-target="#view-ledger" onclick="loadUniversalData('transactions'); closeSidebar();"><i class="fa-solid fa-money-bill-transfer me-2"></i> สมุดบัญชีกลาง</button>
+      <button class="nav-link" data-bs-toggle="pill" data-bs-target="#view-claims" onclick="loadUniversalData('claims'); closeSidebar();"><i class="fa-solid fa-file-medical me-2"></i> อนุมัติสวัสดิการ</button>
+      <button class="nav-link" data-bs-toggle="pill" data-bs-target="#view-rules" onclick="loadUniversalData('rules'); closeSidebar();"><i class="fa-solid fa-scale-balanced me-2"></i> ระเบียบกองทุน</button>
+      <hr class="my-4">
+      <button class="nav-link text-danger mt-auto" onclick="liff.logout(); window.location.reload();"><i class="fa-solid fa-power-off me-2"></i> ออกจากระบบ</button>
     </div>
   </div>
 </div>
@@ -106,18 +118,20 @@
 <div id="mainWorkspace" class="container-fluid pb-5" style="display: none;">
   <div class="tab-content">
     
-    <!-- 📊 Dashboard -->
+    <!-- 📊 1. แดชบอร์ดภาพรวม -->
     <div class="tab-pane fade show active" id="view-overview">
+      
+      <!-- การเงินรวม -->
       <div class="dash-card p-0 border-0 mb-4">
         <div class="liquidity-box">
           <div class="d-flex justify-content-between mb-3"><span class="small text-white-50 fw-bold">สมุดบัญชีกลาง (Unified Ledger)</span><i class="fa-solid fa-building-columns text-white-50"></i></div>
           <div class="balance-row">
             <div><i class="fa-solid fa-wallet text-success me-2"></i>ยอดทุนสุทธิ</div>
-            <h3 class="fw-bold mb-0 text-white"><span id="cap-total">0</span> ฿</h3>
+            <h2 class="fw-bold mb-0 text-white"><span id="cap-total">0</span> ฿</h2>
           </div>
-          <div class="d-flex justify-content-between small text-white-50 px-1 mb-3">
-            <span>ธนาคาร: <strong class="text-white" id="liq-bank">0</strong></span>
-            <span>เงินสด: <strong class="text-white" id="liq-cash">0</strong></span>
+          <div class="d-flex justify-content-between small px-1 mb-4">
+            <span class="text-white-50">ธนาคาร: <strong class="text-white fs-6 ms-1" id="liq-bank">0</strong></span>
+            <span class="text-white-50">เงินสด: <strong class="text-white fs-6 ms-1" id="liq-cash">0</strong></span>
           </div>
           <div class="d-flex gap-2">
             <button class="btn-liq" onclick="requireSmartPIN(openLiquidityTransferModal)"><i class="fa-solid fa-arrow-right-arrow-left text-warning fs-5"></i> สลับโอนเงิน</button>
@@ -126,70 +140,97 @@
         </div>
       </div>
 
+      <!-- สัดส่วนสมาชิก -->
       <div class="dash-card">
-        <h6 class="card-title-app"><i class="fa-solid fa-users-rays text-primary"></i> สถานะสมาชิก</h6>
+        <h6 class="card-title-app"><div class="d-flex align-items-center"><i class="fa-solid fa-users-rays text-primary me-2"></i> สัดส่วนสมาชิก</div></h6>
         <div class="eq-grid">
-          <div class="eq-item" style="border-top-color: var(--primary-main);"><span class="small text-muted fw-bold">สมาชิกรวม</span><h3 class="text-primary" id="eq-total">0</h3></div>
-          <div class="eq-item" style="border-top-color: var(--success-main);"><span class="small text-success fw-bold">ปัจจุบัน</span><h3 class="text-success" id="eq-active">0</h3></div>
-          <div class="eq-item" style="border-top-color: var(--text-muted);"><span class="small text-muted fw-bold">พ้นสภาพ</span><h3 class="text-secondary" id="eq-resigned">0</h3></div>
-          <div class="eq-item" style="border-top-color: var(--danger-main);"><span class="small text-danger fw-bold">เสียชีวิต</span><h3 class="text-danger" id="eq-dead">0</h3></div>
+          <div class="eq-item" style="border-top: 4px solid var(--primary-main);"><span class="small text-muted fw-bold">สมาชิกรวม</span><h3 class="text-primary" id="eq-total">0</h3></div>
+          <div class="eq-item" style="border-top: 4px solid var(--success-main);"><span class="small text-success fw-bold">ใช้งานปกติ</span><h3 class="text-success" id="eq-active">0</h3></div>
+          <div class="eq-item" style="border-top: 4px solid var(--text-muted);"><span class="small text-muted fw-bold">พ้นสภาพ</span><h3 class="text-secondary" id="eq-resigned">0</h3></div>
+          <div class="eq-item" style="border-top: 4px solid var(--danger-main);"><span class="small text-danger fw-bold">เสียชีวิต</span><h3 class="text-danger" id="eq-dead">0</h3></div>
         </div>
       </div>
 
+      <!-- โครงสร้างทุน -->
       <div class="dash-card">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h6 class="card-title-app mb-0"><i class="fa-solid fa-coins text-warning"></i> โครงสร้างทุน</h6>
-          <button onclick="openInstitutionalModal()" class="btn btn-sm btn-outline-primary rounded-pill fw-bold"><i class="fa-solid fa-plus"></i> งบสถาบัน</button>
+        <div class="card-title-app">
+          <div class="d-flex align-items-center"><i class="fa-solid fa-coins text-warning me-2"></i> โครงสร้างทุน</div>
+          <button onclick="openInstitutionalModal()" class="btn btn-sm btn-primary rounded-pill fw-bold px-3"><i class="fa-solid fa-plus"></i> งบสถาบัน</button>
         </div>
-        <div class="scroll-x-wrapper">
-          <div class="cap-box" style="border-color: #3B82F6;"><span class="small fw-bold text-muted">สมทบสมาชิก</span><h5 id="cap-member" class="mt-2 fw-bold">0</h5></div>
-          <div class="cap-box" style="border-color: #F59E0B;"><span class="small fw-bold text-muted">พอช./รัฐสมทบ</span><h5 id="cap-gov" class="mt-2 fw-bold">0</h5></div>
-          <div class="cap-box" style="border-color: #10B981;"><span class="small fw-bold text-muted">เทศบาล</span><h5 id="cap-local" class="mt-2 fw-bold">0</h5></div>
-          <div class="cap-box" style="border-color: #8B5CF6;"><span class="small fw-bold text-muted">เงินบริจาค</span><h5 id="cap-donate" class="mt-2 fw-bold">0</h5></div>
+        <div class="cap-grid">
+          <div class="cap-box" style="border-color: #3B82F6;"><span class="small fw-bold text-muted">สมทบสมาชิก</span><h5 id="cap-member" class="mt-2 fw-bold mb-0">0</h5></div>
+          <div class="cap-box" style="border-color: #F59E0B;"><span class="small fw-bold text-muted">พอช./รัฐสมทบ</span><h5 id="cap-gov" class="mt-2 fw-bold mb-0">0</h5></div>
+          <div class="cap-box" style="border-color: #10B981;"><span class="small fw-bold text-muted">เทศบาล</span><h5 id="cap-local" class="mt-2 fw-bold mb-0">0</h5></div>
+          <div class="cap-box" style="border-color: #8B5CF6;"><span class="small fw-bold text-muted">เงินบริจาค</span><h5 id="cap-donate" class="mt-2 fw-bold mb-0">0</h5></div>
         </div>
       </div>
       
+      <!-- กราฟแนวโน้ม -->
       <div class="dash-card mb-5">
-        <h6 class="card-title-app"><i class="fa-solid fa-chart-area text-primary"></i> แนวโน้มกองทุน</h6>
+        <h6 class="card-title-app"><div class="d-flex align-items-center"><i class="fa-solid fa-chart-area text-primary me-2"></i> แนวโน้มกองทุน</div></h6>
         <div class="chart-container" style="height: 250px;"><canvas id="analyticsChart"></canvas></div>
       </div>
     </div>
 
-    <!-- 👥 Members -->
+    <!-- 👥 2. ทะเบียนสมาชิก -->
     <div class="tab-pane fade" id="view-members">
-      <div class="dash-card">
-        <h6 class="card-title-app"><i class="fa-solid fa-users text-primary"></i> ทะเบียนสมาชิก</h6>
-        <div class="d-flex gap-2 mb-3">
-          <input type="text" id="searchMemberInput" class="form-control" placeholder="ค้นหาชื่อ, รหัส..." onkeyup="if(event.key==='Enter') loadMembersData(1)">
-          <select id="filterCenterInput" class="form-select" style="width:140px;" onchange="loadMembersData(1)">
-            <option value="ALL">ทุกศูนย์</option>
-            <option value="ศูนย์บ้านจารังตาดง">บ้านจารังตาดง</option>
-            <option value="ศูนย์บ้านสุคิริน">บ้านสุคิริน</option>
-          </select>
+      <div class="dash-card p-3">
+        <div class="card-title-app px-2">
+          <div class="d-flex align-items-center"><i class="fa-solid fa-users text-primary me-2"></i> ทะเบียนสมาชิก</div>
+          <button onclick="openAddMemberModal()" class="btn btn-sm btn-primary rounded-pill fw-bold px-3"><i class="fa-solid fa-user-plus me-1"></i> เพิ่มสมาชิก</button>
         </div>
-        <div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>รหัส</th><th>ชื่อ</th><th>ศูนย์</th><th>สถานะ</th></tr></thead><tbody id="table-members"></tbody></table></div>
-        <div class="d-flex justify-content-between mt-3 small">
-          <span id="page-info-members" class="text-muted">หน้า 1/1</span>
-          <div><button class="btn btn-sm btn-light border" onclick="changeMemberPage(-1)">กลับ</button> <button class="btn btn-sm btn-light border" onclick="changeMemberPage(1)">ถัดไป</button></div>
+        <div class="row g-2 mb-3 px-2">
+          <div class="col-7"><input type="text" id="searchMemberInput" class="form-control" placeholder="ค้นหาชื่อ, รหัส, เบอร์โทร..." onkeyup="if(event.key==='Enter') loadMembersData(1)"></div>
+          <div class="col-5">
+            <select id="filterCenterInput" class="form-select" onchange="loadMembersData(1)">
+              <option value="ALL">ทุกศูนย์ชุมชน</option>
+              <option value="ศูนย์ชุมชนปารีย์">ศูนย์ชุมชนปารีย์</option><option value="ศูนย์ชุมชนเกียร์">ศูนย์ชุมชนเกียร์</option><option value="ศูนย์ชุมชนราษฎร์สามัคคี">ศูนย์ชุมชนราษฎร์สามัคคี</option><option value="ศูนย์ชุมชนกลันตัน">ศูนย์ชุมชนกลันตัน</option><option value="ศูนย์ชุมชนมาโมง">ศูนย์ชุมชนมาโมง</option><option value="ศูนย์ชุมชนสุคิริน">ศูนย์ชุมชนสุคิริน</option>
+            </select>
+          </div>
+        </div>
+        <div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>รหัส</th><th>ชื่อ-นามสกุล</th><th>เบอร์โทรศัพท์</th><th>ศูนย์</th><th>สถานะ</th></tr></thead><tbody id="table-members"></tbody></table></div>
+        <div class="d-flex justify-content-between mt-3 px-2 align-items-center">
+          <span id="page-info-members" class="small fw-bold text-muted">หน้า 1/1</span>
+          <div><button class="btn btn-sm btn-outline-secondary rounded-pill px-3 me-1" onclick="changeMemberPage(-1)">กลับ</button> <button class="btn btn-sm btn-outline-primary rounded-pill px-3" onclick="changeMemberPage(1)">ถัดไป</button></div>
         </div>
       </div>
     </div>
     
-    <!-- 💳 Ledger -->
-    <div class="tab-pane fade" id="view-ledger"><div class="dash-card"><h6 class="card-title-app"><i class="fa-solid fa-money-bill-transfer text-success"></i> สมุดบัญชีกลาง</h6><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>วันที่</th><th>รายการ</th><th>ยอดเงิน</th><th>สถานะ</th></tr></thead><tbody id="table-transactions"></tbody></table></div></div></div>
+    <!-- 💳 3. สมุดบัญชีกลาง -->
+    <div class="tab-pane fade" id="view-ledger">
+      <div class="dash-card p-3">
+        <h6 class="card-title-app px-2"><div class="d-flex align-items-center"><i class="fa-solid fa-money-bill-transfer text-success me-2"></i> สมุดบัญชีกลาง</div></h6>
+        <div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>วันที่</th><th>รายการ</th><th>ยอดเงิน</th><th>สถานะ</th></tr></thead><tbody id="table-transactions"></tbody></table></div>
+      </div>
+    </div>
     
-    <!-- 🏥 Claims -->
-    <div class="tab-pane fade" id="view-claims"><div class="dash-card"><h6 class="card-title-app"><i class="fa-solid fa-file-medical text-danger"></i> พิจารณาสวัสดิการ</h6><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>ผู้เบิก</th><th>ประเภท</th><th>ยอดขอ</th><th>สถานะ</th><th>จัดการ</th></tr></thead><tbody id="table-claims"></tbody></table></div></div></div>
+    <!-- 🏥 4. อนุมัติสวัสดิการ -->
+    <div class="tab-pane fade" id="view-claims">
+      <div class="dash-card p-3">
+        <div class="card-title-app px-2">
+          <div class="d-flex align-items-center"><i class="fa-solid fa-file-medical text-danger me-2"></i> พิจารณาสวัสดิการ</div>
+        </div>
+        <div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>ผู้เบิก</th><th>ประเภท</th><th>ยอดขอ</th><th>สถานะ</th><th>จัดการ</th></tr></thead><tbody id="table-claims"></tbody></table></div>
+      </div>
+    </div>
 
-    <!-- ⚖️ Rules -->
-    <div class="tab-pane fade" id="view-rules"><div class="dash-card"><h6 class="card-title-app"><i class="fa-solid fa-scale-balanced text-warning"></i> ระเบียบกองทุน</h6><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>ประเภท</th><th>อายุขั้นต่ำ</th><th>จ่ายสูงสุด/ปี</th></tr></thead><tbody id="table-rules"></tbody></table></div></div></div>
+    <!-- ⚖️ 5. ระเบียบกองทุน -->
+    <div class="tab-pane fade" id="view-rules">
+      <div class="dash-card p-3">
+        <div class="card-title-app px-2">
+          <div class="d-flex align-items-center"><i class="fa-solid fa-scale-balanced text-warning me-2"></i> ระเบียบกองทุน</div>
+          <button onclick="openAddRuleModal()" class="btn btn-sm btn-primary rounded-pill fw-bold px-3"><i class="fa-solid fa-plus me-1"></i> เพิ่มสวัสดิการ</button>
+        </div>
+        <div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>ประเภทสวัสดิการ</th><th>อายุขั้นต่ำ</th><th>จ่ายสูงสุด/ปี</th></tr></thead><tbody id="table-rules"></tbody></table></div>
+      </div>
+    </div>
 
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  // ⚠️ เปลี่ยนเป็น URL ของ Google Apps Script ของอาแบหลังจากกด Deploy
+  // ⚠️ เปลี่ยนเป็น URL ของ Google Apps Script ของคุณ
   const GAS_API_URL = "https://script.google.com/macros/s/AKfycbw8ohbEXMSqCKzwTHeCem8pxpM_NcSA_twE3r4QU1HvsNZjtlEydGMoV6ffP1yBUOk/exec"; 
   const LIFF_ID_ADMIN = "2010764982-wudH3EsZ"; 
   
@@ -223,9 +264,8 @@
 
   // 🛡️ Smart PIN Security
   async function requireSmartPIN(callback) {
-    const { value: pin } = await Swal.fire({ title: 'ยืนยันตัวตน', text: 'กรอกรหัส PIN 6 หลัก', input: 'password', inputAttributes: { maxlength: 6 }, showCancelButton: true });
-    if (pin && pin.length >= 4) callback();
-    else if(pin) Swal.fire('ผิดพลาด', 'รหัส PIN ไม่ถูกต้อง', 'error');
+    const { value: pin } = await Swal.fire({ title: 'ยืนยันตัวตน', text: 'กรอกรหัส PIN ผู้ดูแลระบบ', input: 'password', inputAttributes: { maxlength: 6 }, showCancelButton: true, confirmButtonColor: '#2563EB' });
+    if (pin && pin.length >= 4) callback(); else if(pin) Swal.fire('ผิดพลาด', 'รหัส PIN ไม่ถูกต้อง', 'error');
   }
 
   // 📊 Dashboard Engine
@@ -250,14 +290,51 @@
 
   // 💼 Transaction Modals
   function openLiquidityTransferModal() {
-    Swal.fire({ title: 'โอนย้ายสภาพคล่อง', html: `<select id="liqFrom" class="form-select mb-2"><option value="bank">ธนาคาร</option><option value="cash">เงินสด</option></select><select id="liqTo" class="form-select mb-3"><option value="cash">เงินสด</option><option value="bank">ธนาคาร</option></select><input id="liqAmt" type="number" class="form-control" placeholder="จำนวนเงิน">`, showCancelButton: true, preConfirm: () => ({ action: 'processLedgerTransaction', adminUid: currentAdminData.uid, txType: 'โอนย้ายสภาพคล่อง', amount: document.getElementById('liqAmt').value, sourceWallet: document.getElementById('liqFrom').value, targetWallet: document.getElementById('liqTo').value }) }).then(handleTransactionResponse);
+    Swal.fire({ title: 'โอนย้ายสภาพคล่อง', html: `<select id="liqFrom" class="form-select mb-3"><option value="bank">ธนาคาร</option><option value="cash">เงินสด</option></select><select id="liqTo" class="form-select mb-3"><option value="cash">เงินสด</option><option value="bank">ธนาคาร</option></select><input id="liqAmt" type="number" class="form-control" placeholder="จำนวนเงิน">`, showCancelButton: true, confirmButtonColor: '#2563EB', preConfirm: () => ({ action: 'processLedgerTransaction', adminUid: currentAdminData.uid, txType: 'โอนย้ายสภาพคล่อง', amount: document.getElementById('liqAmt').value, sourceWallet: document.getElementById('liqFrom').value, targetWallet: document.getElementById('liqTo').value }) }).then(handleTransactionResponse);
   }
   function openIncomeExpenseModal() {
-    Swal.fire({ title: 'รับ/จ่าย เบ็ดเตล็ด', html: `<select id="ieType" class="form-select mb-2"><option value="รายรับเบ็ดเตล็ด">รายรับ</option><option value="รายจ่ายเบ็ดเตล็ด">รายจ่าย</option></select><select id="ieWallet" class="form-select mb-3"><option value="bank">ธนาคาร</option><option value="cash">เงินสด</option></select><input id="ieAmt" type="number" class="form-control mb-2" placeholder="จำนวนเงิน"><input id="ieNote" class="form-control" placeholder="รายละเอียด">`, showCancelButton: true, preConfirm: () => { const t = document.getElementById('ieType').value; const w = document.getElementById('ieWallet').value; return { action: 'processLedgerTransaction', adminUid: currentAdminData.uid, txType: t, amount: document.getElementById('ieAmt').value, sourceWallet: t==='รายจ่ายเบ็ดเตล็ด'?w:null, targetWallet: t==='รายรับเบ็ดเตล็ด'?w:null, note: document.getElementById('ieNote').value }; } }).then(handleTransactionResponse);
+    Swal.fire({ title: 'รับ/จ่าย เบ็ดเตล็ด', html: `<select id="ieType" class="form-select mb-3"><option value="รายรับเบ็ดเตล็ด">รายรับ</option><option value="รายจ่ายเบ็ดเตล็ด">รายจ่าย</option></select><select id="ieWallet" class="form-select mb-3"><option value="bank">ธนาคาร</option><option value="cash">เงินสด</option></select><input id="ieAmt" type="number" class="form-control mb-3" placeholder="จำนวนเงิน"><input id="ieNote" class="form-control" placeholder="รายละเอียด">`, showCancelButton: true, confirmButtonColor: '#2563EB', preConfirm: () => { const t = document.getElementById('ieType').value; const w = document.getElementById('ieWallet').value; return { action: 'processLedgerTransaction', adminUid: currentAdminData.uid, txType: t, amount: document.getElementById('ieAmt').value, sourceWallet: t==='รายจ่ายเบ็ดเตล็ด'?w:null, targetWallet: t==='รายรับเบ็ดเตล็ด'?w:null, note: document.getElementById('ieNote').value }; } }).then(handleTransactionResponse);
   }
   function openInstitutionalModal() {
-    Swal.fire({ title: 'เพิ่มงบสถาบัน', html: `<select id="instType" class="form-select mb-2"><option value="พอช. (รัฐสมทบ)">พอช.</option><option value="เทศบาล">เทศบาล</option></select><input id="instSrc" class="form-control mb-2" placeholder="หน่วยงาน"><input id="instAmt" type="number" class="form-control" placeholder="จำนวนเงิน">`, showCancelButton: true, preConfirm: () => ({ action: 'processInstitutionalContribution', adminUid: currentAdminData.uid, capitalType: document.getElementById('instType').value, sourceName: document.getElementById('instSrc').value, amount: document.getElementById('instAmt').value }) }).then(handleTransactionResponse);
+    Swal.fire({ title: 'เพิ่มงบสถาบัน', html: `<select id="instType" class="form-select mb-3"><option value="พอช. (รัฐสมทบ)">พอช.</option><option value="เทศบาล">เทศบาล</option></select><input id="instSrc" class="form-control mb-3" placeholder="ชื่อหน่วยงาน"><input id="instAmt" type="number" class="form-control" placeholder="จำนวนเงิน">`, showCancelButton: true, confirmButtonColor: '#2563EB', preConfirm: () => ({ action: 'processInstitutionalContribution', adminUid: currentAdminData.uid, capitalType: document.getElementById('instType').value, sourceName: document.getElementById('instSrc').value, amount: document.getElementById('instAmt').value }) }).then(handleTransactionResponse);
   }
+  
+  // ➕ Admin Add Member
+  function openAddMemberModal() {
+    Swal.fire({
+      title: 'เพิ่มสมาชิกใหม่',
+      html: `
+        <div class="text-start">
+          <input id="addMemName" class="form-control mb-2" placeholder="ชื่อ-นามสกุล">
+          <input id="addMemNatId" type="tel" class="form-control mb-2" placeholder="เลข ปชช. 13 หลัก" maxlength="13">
+          <input id="addMemPhone" type="tel" class="form-control mb-2" placeholder="เบอร์โทรศัพท์" maxlength="10">
+          <select id="addMemCenter" class="form-select"><option value="ศูนย์ชุมชนปารีย์">ศูนย์ชุมชนปารีย์</option><option value="ศูนย์ชุมชนเกียร์">ศูนย์ชุมชนเกียร์</option><option value="ศูนย์ชุมชนราษฎร์สามัคคี">ศูนย์ชุมชนราษฎร์สามัคคี</option><option value="ศูนย์ชุมชนกลันตัน">ศูนย์ชุมชนกลันตัน</option><option value="ศูนย์ชุมชนมาโมง">ศูนย์ชุมชนมาโมง</option><option value="ศูนย์ชุมชนสุคิริน">ศูนย์ชุมชนสุคิริน</option></select>
+        </div>`,
+      showCancelButton: true, confirmButtonText: 'บันทึกข้อมูล', confirmButtonColor: '#10B981',
+      preConfirm: () => ({ action: 'adminAddMember', adminUid: currentAdminData.uid, fullName: document.getElementById('addMemName').value, nationalId: document.getElementById('addMemNatId').value, phone: document.getElementById('addMemPhone').value, center: document.getElementById('addMemCenter').value })
+    }).then(async (res) => {
+      if(res.isConfirmed) { showLoader(true); const r = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify(res.value) }).then(r=>r.json()); showLoader(false); if(r.status==='success') { Swal.fire('สำเร็จ', '', 'success'); loadMembersData(1); } else Swal.fire('Error', r.message, 'error'); }
+    });
+  }
+
+  // ➕ Admin Add Rule
+  function openAddRuleModal() {
+    Swal.fire({
+      title: 'เพิ่มระเบียบสวัสดิการ',
+      html: `
+        <div class="text-start">
+          <input id="addRuleName" class="form-control mb-2" placeholder="ชื่อสวัสดิการ (เช่น ทุนการศึกษา)">
+          <input id="addRuleMinDay" type="number" class="form-control mb-2" placeholder="อายุสมาชิกขั้นต่ำ (วัน)">
+          <input id="addRuleMaxAmt" type="number" class="form-control mb-2" placeholder="จ่ายสูงสุดต่อปี (บาท)">
+          <textarea id="addRuleDocs" class="form-control" rows="2" placeholder="เอกสารที่ต้องใช้ (เช่น สำเนาบัตร)"></textarea>
+        </div>`,
+      showCancelButton: true, confirmButtonText: 'บันทึกระเบียบ', confirmButtonColor: '#F59E0B',
+      preConfirm: () => ({ action: 'adminAddRule', adminUid: currentAdminData.uid, welfareName: document.getElementById('addRuleName').value, minDays: document.getElementById('addRuleMinDay').value, maxPerYear: document.getElementById('addRuleMaxAmt').value, docs: document.getElementById('addRuleDocs').value })
+    }).then(async (res) => {
+      if(res.isConfirmed) { showLoader(true); const r = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify(res.value) }).then(r=>r.json()); showLoader(false); if(r.status==='success') { Swal.fire('สำเร็จ', '', 'success'); loadUniversalData('rules'); } else Swal.fire('Error', r.message, 'error'); }
+    });
+  }
+
   async function handleTransactionResponse(res) {
     if(res.isConfirmed) { showLoader(true); const r = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify(res.value) }).then(r=>r.json()); showLoader(false); if(r.status==='success') { Swal.fire('สำเร็จ', '', 'success'); loadDashboardOverview(); } else Swal.fire('Error', r.message, 'error'); }
   }
@@ -269,7 +346,7 @@
     try {
       const res = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify(p) }).then(r=>r.json());
       if(res.status === 'success') {
-        document.getElementById('table-members').innerHTML = res.data.map(i => `<tr><td><strong class="text-primary">${i.memberId}</strong></td><td>${i.name}</td><td>${i.center}</td><td><span class="badge bg-light text-dark border">${i.status}</span></td></tr>`).join('');
+        document.getElementById('table-members').innerHTML = res.data.map(i => `<tr><td><strong class="text-primary">${i.memberId}</strong></td><td>${i.name}</td><td>${i.phone}</td><td>${i.center}</td><td><span class="badge ${i.status.includes('เป็นสมาชิก') ? 'bg-success text-white' : 'bg-light text-dark border'}">${i.status}</span></td></tr>`).join('');
         totalMemberPages = res.pagination.totalPages; document.getElementById('page-info-members').innerText = `หน้า ${page}/${totalMemberPages || 1}`;
       }
     } catch(e) {} showLoader(false);
@@ -284,8 +361,8 @@
       cachedData[module] = res.data;
       const t = document.getElementById(`table-${module}`);
       if (module === 'transactions') t.innerHTML = res.data.map(i => `<tr><td>${i.date}</td><td>${i.type}</td><td class="fw-bold ${i.isOut?'text-danger':'text-success'}">${i.amount}</td><td><span class="badge bg-light text-dark border">${i.status}</span></td></tr>`).join('');
-      else if (module === 'claims') t.innerHTML = res.data.map((i, idx) => `<tr><td>${i.name}</td><td>${i.welfareName}</td><td>${i.amount}</td><td><span class="badge bg-light text-dark border">${i.status}</span></td><td><button class="btn btn-sm btn-primary" onclick="approveClaim(${idx})">พิจารณา</button></td></tr>`).join('');
-      else if (module === 'rules') t.innerHTML = res.data.map(i => `<tr><td>${i.welfareName}</td><td>${i.minDays}</td><td>${i.maxPerYear}</td></tr>`).join('');
+      else if (module === 'claims') t.innerHTML = res.data.map((i, idx) => `<tr><td>${i.name}</td><td>${i.welfareName}</td><td class="fw-bold text-primary">${i.amount} ฿</td><td><span class="badge ${i.status==='อนุมัติแล้ว'?'bg-success text-white':'bg-warning text-dark'}">${i.status}</span></td><td><button class="btn btn-sm btn-primary rounded-pill px-3" onclick="approveClaim(${idx})"><i class="fa-solid fa-check"></i> พิจารณา</button></td></tr>`).join('');
+      else if (module === 'rules') t.innerHTML = res.data.map(i => `<tr><td><strong class="text-dark">${i.welfareName}</strong></td><td>${i.minDays} วัน</td><td class="text-danger fw-bold">${i.maxPerYear} ฿</td></tr>`).join('');
     } showLoader(false);
   }
 
@@ -304,7 +381,7 @@
     if(!data || data.length === 0) return;
     const ctx = document.getElementById('analyticsChart').getContext('2d');
     if(myChartInstance) myChartInstance.destroy();
-    myChartInstance = new Chart(ctx, { type: 'line', data: { labels: data.map(d => d.month), datasets: [{ label: 'รายรับ', data: data.map(d=>d.income), borderColor: '#10B981', tension: 0.3 }, { label: 'รายจ่าย', data: data.map(d=>d.expense), borderColor: '#EF4444', tension: 0.3 }] }, options: { responsive: true, maintainAspectRatio: false } });
+    myChartInstance = new Chart(ctx, { type: 'line', data: { labels: data.map(d => d.month), datasets: [{ label: 'รายรับ', data: data.map(d=>d.income), borderColor: '#10B981', tension: 0.3, fill: true, backgroundColor: 'rgba(16, 185, 129, 0.1)' }, { label: 'รายจ่าย', data: data.map(d=>d.expense), borderColor: '#EF4444', tension: 0.3, fill: true, backgroundColor: 'rgba(239, 68, 68, 0.1)' }] }, options: { responsive: true, maintainAspectRatio: false } });
   }
 </script>
 </body>
