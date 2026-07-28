@@ -39,19 +39,24 @@
     .dash-card { background: var(--card-bg); border-radius: 20px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); margin-bottom: 24px; border: 1px solid var(--border-color); }
     .card-title-app { font-size: 1.1rem; font-weight: 700; color: var(--primary-dark); margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
     
-    /* 💰 Financial UI */
-    .liquidity-box { background: linear-gradient(135deg, #0F172A 0%, #1E3A8A 100%); border-radius: 20px; padding: 24px; color: white; position: relative; overflow: hidden; box-shadow: 0 10px 25px rgba(30, 58, 138, 0.4); }
-    .balance-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 16px; }
-    .btn-liq { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 14px; padding: 12px; font-size: 0.85rem; font-weight: 600; display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; transition: 0.2s; }
+    /* 🌟 FinTech Ledger Specific Styles (Modern Pattern) */
+    .ledger-card-total { background: linear-gradient(135deg, #0f766e 0%, #10b981 100%); border-radius: 1.5rem; padding: 1.5rem; position: relative; overflow: hidden; color: white; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3); }
+    .ledger-card-total::after { content: ''; position: absolute; top: -40px; right: -40px; width: 150px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 50%; blur: 20px; }
+    .ledger-stat-card { background: white; border: 1px solid var(--border-color); border-radius: 1.2rem; padding: 1.25rem; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
     
-    /* 👥 Equation Grid & Stats */
-    .stat-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
-    .stat-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-    .eq-item { background: var(--bg-color); border-radius: 16px; padding: 20px 16px; text-align: center; border: 1px solid var(--border-color); position: relative;}
-    .eq-item h2 { font-weight: 800; margin: 10px 0 0; }
-    .eq-sub { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); background: #E2E8F0; padding: 2px 8px; border-radius: 10px; display: inline-block; margin-top: 5px; }
-
-    /* 📋 Tables */
+    .tab-btn-ledger { width: 50%; padding: 0.8rem; text-align: center; border-radius: 1rem; border: none; background: transparent; font-weight: 600; color: var(--text-muted); transition: 0.3s; font-size: 0.9rem; }
+    .tab-btn-ledger.active { background: #0f766e; color: white; box-shadow: 0 4px 6px -1px rgba(15, 118, 110, 0.2); }
+    
+    .tx-item { background: white; border: 1px solid var(--border-color); border-radius: 1.2rem; padding: 1.25rem; display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; transition: transform 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.01); }
+    .tx-item:hover { transform: translateY(-2px); border-color: #CBD5E1; }
+    .tx-icon { width: 44px; height: 44px; border-radius: 1rem; display: flex; justify-content: center; align-items: center; font-size: 1.2rem; }
+    .tx-income .tx-icon { background: #ecfdf5; color: #10b981; }
+    .tx-expense .tx-icon { background: #fff1f2; color: #f43f5e; }
+    .tx-transfer .tx-icon { background: #f1f5f9; color: #64748b; }
+    .tx-income .tx-amount { color: #10b981; }
+    .tx-expense .tx-amount { color: #f43f5e; }
+    
+    /* 📋 Tables & Generic */
     .table-responsive { border-radius: 16px; border: 1px solid var(--border-color); overflow-x: auto; background: white; }
     .table th { background-color: #F1F5F9; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; white-space: nowrap; padding: 16px; border-bottom: 2px solid #E2E8F0; }
     .table td { white-space: nowrap; vertical-align: middle; font-size: 0.95rem; padding: 16px; border-bottom: 1px solid #F1F5F9; font-weight: 500; }
@@ -62,9 +67,18 @@
     #loginGate { background: var(--primary-dark); color: white; }
     #loader { background: rgba(255,255,255,0.95); display: none; backdrop-filter: blur(5px); }
     .login-box { background: rgba(255,255,255,0.05); backdrop-filter: blur(15px); padding: 40px; border-radius: 24px; text-align: center; border: 1px solid rgba(255,255,255,0.1); width: 90%; max-width: 400px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+    .form-control, .form-select { border-radius: 12px; padding: 12px 16px; border-color: #CBD5E1; background-color: #F8FAFC; font-weight: 500; }
+    .form-control:focus, .form-select:focus { border-color: #0f766e; box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.15); background-color: #FFFFFF; }
     .chart-container { position: relative; height: 300px; width: 100%; }
-    .action-btn { background: none; border: none; font-size: 1.1rem; padding: 5px; transition: 0.2s; }
+    .action-btn { background: none; border: none; font-size: 1.1rem; padding: 5px; transition: 0.2s; cursor: pointer; }
     .action-btn:hover { transform: scale(1.1); }
+    
+    /* Grid Helpers */
+    .stat-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+    .stat-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .eq-item { background: var(--bg-color); border-radius: 16px; padding: 20px 16px; text-align: center; border: 1px solid var(--border-color); position: relative;}
+    .eq-item h2 { font-weight: 800; margin: 10px 0 0; }
+    .eq-sub { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); background: #E2E8F0; padding: 2px 8px; border-radius: 10px; display: inline-block; margin-top: 5px; }
   </style>
 </head>
 <body>
@@ -84,7 +98,7 @@
 </div>
 
 <!-- ⏳ Loader -->
-<div id="loader"><div class="spinner-border text-primary" style="width: 3.5rem; height: 3.5rem;" role="status"></div><h6 class="mt-4 fw-bold text-primary" id="loader-text">กำลังโหลดข้อมูล...</h6></div>
+<div id="loader"><div class="spinner-border" style="width: 3.5rem; height: 3.5rem; color: #0f766e;" role="status"></div><h6 class="mt-4 fw-bold" style="color: #0f766e;" id="loader-text">กำลังโหลดข้อมูล...</h6></div>
 
 <!-- 📱 App Header -->
 <div class="app-header" id="appHeader" style="display: none;">
@@ -119,25 +133,32 @@
     <!-- 📊 1. แดชบอร์ดภาพรวม -->
     <div class="tab-pane fade show active" id="view-overview">
       <div class="d-flex justify-content-end mb-3">
-        <button onclick="exportToCSV('export-dashboard', 'รายงานสรุปภาพรวมกองทุน')" class="btn btn-sm btn-dark rounded-pill fw-bold px-3"><i class="fa-solid fa-file-csv me-1"></i> ออกรายงาน CSV</button>
+        <button onclick="exportToCSV('export-dashboard', 'รายงานสรุปภาพรวมกองทุน')" class="btn btn-sm btn-dark rounded-pill fw-bold px-3 shadow-sm"><i class="fa-solid fa-file-csv me-1"></i> ออกรายงาน CSV</button>
       </div>
       
       <!-- การเงินรวม -->
-      <div class="dash-card p-0 border-0 mb-4">
-        <div class="liquidity-box">
-          <div class="d-flex justify-content-between mb-3"><span class="small text-white-50 fw-bold">สถานะทางการเงิน (Financial Status)</span><i class="fa-solid fa-building-columns text-white-50"></i></div>
-          <div class="balance-row">
-            <div><i class="fa-solid fa-wallet text-success me-2"></i>ยอดทุนสุทธิ</div>
-            <h2 class="fw-bold mb-0 text-white"><span id="cap-total">0</span> ฿</h2>
+      <div class="dash-card p-0 border-0 mb-4 bg-transparent shadow-none">
+        <div class="ledger-card-total mb-3">
+          <div class="d-flex justify-content-between mb-3"><span class="small text-white-50 fw-bold text-uppercase">สถานะทางการเงิน (Net Capital)</span><i class="fa-solid fa-wallet text-white-50"></i></div>
+          <h2 class="fw-bold mb-0 text-white"><span id="cap-total">0</span> ฿</h2>
+          <div class="d-flex justify-content-between small mt-4 border-top border-light pt-3" style="border-opacity: 0.2;">
+            <span class="text-white"><i class="fa-solid fa-arrow-trend-up text-white-50 me-1"></i> รับสะสม: <strong id="stat-total-in">0</strong></span>
+            <span class="text-white"><i class="fa-solid fa-arrow-trend-down text-white-50 me-1"></i> จ่ายสะสม: <strong id="stat-total-out">0</strong></span>
           </div>
-          <div class="d-flex justify-content-between small px-1 mb-3 border-bottom border-secondary pb-3">
-            <span class="text-white-50">ธนาคาร: <strong class="text-white fs-6 ms-1" id="liq-bank">0</strong></span>
-            <span class="text-white-50">เงินสด: <strong class="text-white fs-6 ms-1" id="liq-cash">0</strong></span>
-          </div>
-          <div class="d-flex justify-content-between small px-1">
-            <span class="text-success"><i class="fa-solid fa-arrow-trend-up me-1"></i> รับสะสม: <strong class="text-white" id="stat-total-in">0</strong></span>
-            <span class="text-danger"><i class="fa-solid fa-arrow-trend-down me-1"></i> จ่ายสะสม: <strong class="text-white" id="stat-total-out">0</strong></span>
-          </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-6">
+                <div class="ledger-stat-card">
+                    <div><h6 class="text-muted text-uppercase small mb-1" style="font-size:0.7rem; font-weight:700;">เงินในธนาคาร</h6><h5 class="fw-bold text-dark mb-0" id="liq-bank">฿0</h5></div>
+                    <div class="bg-primary bg-opacity-10 p-2 rounded-3 text-primary"><i class="fa-solid fa-building-columns"></i></div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="ledger-stat-card">
+                    <div><h6 class="text-muted text-uppercase small mb-1" style="font-size:0.7rem; font-weight:700;">เงินสดในมือ</h6><h5 class="fw-bold text-dark mb-0" id="liq-cash">฿0</h5></div>
+                    <div class="bg-success bg-opacity-10 p-2 rounded-3 text-success"><i class="fa-solid fa-money-bill-wave"></i></div>
+                </div>
+            </div>
         </div>
       </div>
 
@@ -166,7 +187,7 @@
       <div class="dash-card">
         <div class="card-title-app mb-3">
           <div class="d-flex align-items-center"><i class="fa-solid fa-chart-column text-primary me-2"></i> เปรียบเทียบรายรับ-รายจ่าย</div>
-          <select id="chartPeriodFilter" class="form-select form-select-sm w-auto" onchange="loadDashboardOverview()">
+          <select id="chartPeriodFilter" class="form-select form-select-sm w-auto fw-bold" style="border-radius:20px;" onchange="loadDashboardOverview()">
             <option value="1M">1 เดือน</option><option value="3M">3 เดือน</option><option value="6M">6 เดือน</option><option value="1Y">1 ปี</option><option value="ALL" selected>ทั้งหมด</option>
           </select>
         </div>
@@ -181,17 +202,17 @@
 
     <!-- 👥 2. ทะเบียนสมาชิก -->
     <div class="tab-pane fade" id="view-members">
-      <div class="dash-card p-3">
-        <div class="card-title-app px-2">
-          <div class="d-flex align-items-center"><i class="fa-solid fa-users text-primary me-2"></i> ทะเบียนสมาชิก</div>
+      <div class="dash-card p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div><h4 class="fw-bold text-dark mb-0">ทะเบียนสมาชิก</h4></div>
           <div>
-            <button onclick="exportToCSV('table-members', 'ทะเบียนสมาชิก')" class="btn btn-sm btn-dark rounded-pill px-3 me-1"><i class="fa-solid fa-download"></i></button>
-            <button onclick="openAddMemberModal()" class="btn btn-sm btn-primary rounded-pill fw-bold px-3"><i class="fa-solid fa-user-plus"></i> เพิ่มสมาชิก</button>
+            <button onclick="exportToCSV('table-members', 'ทะเบียนสมาชิก')" class="btn btn-sm btn-outline-dark rounded-pill px-3 me-1"><i class="fa-solid fa-download"></i></button>
+            <button onclick="openAddMemberModal()" class="btn btn-sm btn-primary rounded-pill fw-bold px-3"><i class="fa-solid fa-user-plus"></i> เพิ่ม</button>
           </div>
         </div>
-        <div class="row g-2 mb-3 px-2">
-          <div class="col-7"><input type="text" id="searchMemberInput" class="form-control" placeholder="ค้นหาชื่อ, รหัส, เบอร์โทร..." onkeyup="if(event.key==='Enter') loadMembersData(1)"></div>
-          <div class="col-5">
+        <div class="row g-2 mb-3">
+          <div class="col-12 col-md-7"><input type="text" id="searchMemberInput" class="form-control" placeholder="ค้นหาชื่อ, รหัส, เบอร์โทร..." onkeyup="if(event.key==='Enter') loadMembersData(1)"></div>
+          <div class="col-12 col-md-5">
             <select id="filterCenterInput" class="form-select" onchange="loadMembersData(1)">
               <option value="ALL">ทุกศูนย์ชุมชน</option>
               <option value="ศูนย์ชุมชนปารีย์">ศูนย์ชุมชนปารีย์</option><option value="ศูนย์ชุมชนเกียร์">ศูนย์ชุมชนเกียร์</option><option value="ศูนย์ชุมชนราษฎร์สามัคคี">ศูนย์ชุมชนราษฎร์สามัคคี</option><option value="ศูนย์ชุมชนกลันตัน">ศูนย์ชุมชนกลันตัน</option><option value="ศูนย์ชุมชนมาโมง">ศูนย์ชุมชนมาโมง</option><option value="ศูนย์ชุมชนสุคิริน">ศูนย์ชุมชนสุคิริน</option>
@@ -199,33 +220,105 @@
           </div>
         </div>
         <div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>รหัส</th><th>ชื่อ-นามสกุล</th><th>ศูนย์</th><th>สถานะ</th><th>จัดการ</th></tr></thead><tbody id="table-members"></tbody></table></div>
-        <div class="d-flex justify-content-between mt-3 px-2 align-items-center">
+        <div class="d-flex justify-content-between mt-3 align-items-center">
           <span id="page-info-members" class="small fw-bold text-muted">หน้า 1/1</span>
-          <div><button class="btn btn-sm btn-outline-secondary rounded-pill px-3 me-1" onclick="changeMemberPage(-1)">กลับ</button> <button class="btn btn-sm btn-outline-primary rounded-pill px-3" onclick="changeMemberPage(1)">ถัดไป</button></div>
+          <div><button class="btn btn-sm btn-light border rounded-pill px-3 me-1" onclick="changeMemberPage(-1)">กลับ</button> <button class="btn btn-sm btn-dark rounded-pill px-3" onclick="changeMemberPage(1)">ถัดไป</button></div>
         </div>
       </div>
     </div>
     
-    <!-- 💳 3. สมุดบัญชีกลาง -->
+    <!-- 💳 3. สมุดบัญชีกลาง (Modern FinTech Edition) -->
     <div class="tab-pane fade" id="view-ledger">
-      <div class="dash-card p-3">
-        <div class="card-title-app px-2">
-          <div class="d-flex align-items-center"><i class="fa-solid fa-money-bill-transfer text-success me-2"></i> สมุดบัญชีกลาง</div>
-          <div>
-            <button onclick="exportToCSV('table-transactions', 'สมุดบัญชีกลาง')" class="btn btn-sm btn-dark rounded-pill px-3 me-1"><i class="fa-solid fa-download"></i></button>
-            <button onclick="openTransactionMenu()" class="btn btn-sm btn-success rounded-pill fw-bold px-3"><i class="fa-solid fa-plus"></i> ทำธุรกรรม</button>
-          </div>
+      <div class="dash-card p-4 border-0 bg-transparent shadow-none px-0 pt-0">
+        
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h4 class="fw-bold text-dark mb-0">ระบบจัดการการเงิน</h4>
+                <p class="text-muted small mb-0">สมุดบัญชีกลาง (General Ledger)</p>
+            </div>
+            <button onclick="exportToCSV('export-ledger-table', 'สมุดบัญชีกลาง')" class="btn btn-sm bg-white border rounded-pill fw-bold shadow-sm px-3 text-success"><i class="fa-solid fa-file-excel me-1"></i> Export</button>
         </div>
-        <div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>วันที่</th><th>รายการ</th><th>ยอดเงิน</th><th>สถานะ</th><th>จัดการ</th></tr></thead><tbody id="table-transactions"></tbody></table></div>
+
+        <!-- 3 Cards -->
+        <div class="row g-3 mb-4">
+            <div class="col-12 col-lg-6">
+                <div class="ledger-card-total h-100">
+                    <h6 class="text-white-50 text-uppercase small mb-1">ยอดเงินคงเหลือทั้งหมด</h6>
+                    <h2 class="fw-bold mb-0" id="ledger-total-bal">฿0.00</h2>
+                    <i class="fa-solid fa-wallet position-absolute text-white-50" style="font-size: 5rem; right: -10px; bottom: -10px; opacity: 0.3;"></i>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="ledger-stat-card h-100 flex-column align-items-start justify-content-center">
+                    <div class="d-flex justify-content-between w-100 mb-2">
+                        <h6 class="text-muted text-uppercase small mb-0 fw-bold">บัญชีธนาคาร</h6>
+                        <div class="bg-primary bg-opacity-10 p-1 rounded text-primary"><i class="fa-solid fa-building-columns"></i></div>
+                    </div>
+                    <h4 class="fw-bold text-dark mb-0" id="ledger-bank-bal">฿0.00</h4>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="ledger-stat-card h-100 flex-column align-items-start justify-content-center">
+                    <div class="d-flex justify-content-between w-100 mb-2">
+                        <h6 class="text-muted text-uppercase small mb-0 fw-bold">เงินสดในมือ</h6>
+                        <div class="bg-success bg-opacity-10 p-1 rounded text-success"><i class="fa-solid fa-money-bill-wave"></i></div>
+                    </div>
+                    <h4 class="fw-bold text-dark mb-0" id="ledger-cash-bal">฿0.00</h4>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transaction Forms -->
+        <div class="bg-white p-4 rounded-4 shadow-sm border mb-4">
+            <div class="bg-light p-1 rounded-4 mb-4 d-flex">
+                <button id="tab-ie" class="tab-btn-ledger active" onclick="switchLedgerTab('ie')">รายรับ-รายจ่าย</button>
+                <button id="tab-tf" class="tab-btn-ledger" onclick="switchLedgerTab('tf')">โอนเงินระหว่างบัญชี</button>
+            </div>
+            
+            <!-- Income/Expense Form -->
+            <form id="form-ie" onsubmit="submitLedgerIE(event)">
+                <div class="row g-3">
+                    <div class="col-12"><label class="small text-muted fw-bold mb-1">คำอธิบายรายการ</label><input type="text" id="ieNote" class="form-control" placeholder="เช่น ค่าสวัสดิการ, เงินบริจาค" required></div>
+                    <div class="col-6"><label class="small text-muted fw-bold mb-1">จำนวนเงิน</label><input type="number" step="0.01" id="ieAmt" class="form-control" placeholder="0.00" required></div>
+                    <div class="col-6"><label class="small text-muted fw-bold mb-1">บัญชี</label><select id="ieWallet" class="form-select"><option value="bank">ธนาคาร</option><option value="cash">เงินสด</option></select></div>
+                    <div class="col-12">
+                        <label class="small text-muted fw-bold mb-2">ประเภท</label>
+                        <div class="d-flex gap-4">
+                            <label class="d-flex align-items-center"><input type="radio" name="ieType" value="รายรับเบ็ดเตล็ด" class="form-check-input me-2" checked><span class="fw-bold text-success">รายรับ</span></label>
+                            <label class="d-flex align-items-center"><input type="radio" name="ieType" value="รายจ่ายเบ็ดเตล็ด" class="form-check-input me-2"><span class="fw-bold text-danger">รายจ่าย</span></label>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn w-100 mt-4 rounded-3 py-3 fw-bold text-white" style="background:#0F172A;"><i class="fa-solid fa-save me-2"></i> บันทึกรายการ</button>
+            </form>
+
+            <!-- Transfer Form -->
+            <form id="form-tf" class="d-none" onsubmit="submitLedgerTF(event)">
+                <div class="row g-3">
+                    <div class="col-6"><label class="small text-muted fw-bold mb-1">จากบัญชี</label><select id="tfFrom" class="form-select"><option value="bank">ธนาคาร</option><option value="cash">เงินสด</option></select></div>
+                    <div class="col-6"><label class="small text-muted fw-bold mb-1">ไปบัญชี</label><select id="tfTo" class="form-select"><option value="cash">เงินสด</option><option value="bank">ธนาคาร</option></select></div>
+                    <div class="col-12"><label class="small text-muted fw-bold mb-1">จำนวนเงิน</label><input type="number" step="0.01" id="tfAmt" class="form-control" placeholder="0.00" required></div>
+                </div>
+                <button type="submit" class="btn w-100 mt-4 rounded-3 py-3 fw-bold text-white" style="background:#0F172A;"><i class="fa-solid fa-arrow-right-arrow-left me-2"></i> ยืนยันการโอนเงิน</button>
+            </form>
+        </div>
+
+        <!-- Transaction List -->
+        <h5 class="fw-bold mb-3 px-2">ประวัติธุรกรรมล่าสุด</h5>
+        <div id="ledger-tx-list"></div>
+
+        <!-- ซ่อน Table เดิมไว้สำหรับ Export Excel -->
+        <table id="export-ledger-table" class="d-none"><thead><tr><th>วันที่</th><th>รายการ</th><th>ยอดเงิน</th><th>สถานะ</th></tr></thead><tbody id="table-transactions"></tbody></table>
+
       </div>
     </div>
     
     <!-- 🏥 4. อนุมัติสวัสดิการ -->
     <div class="tab-pane fade" id="view-claims">
-      <div class="dash-card p-3">
-        <div class="card-title-app px-2">
-          <div class="d-flex align-items-center"><i class="fa-solid fa-file-medical text-danger me-2"></i> พิจารณาสวัสดิการ</div>
-          <button onclick="exportToCSV('table-claims', 'รายการสวัสดิการ')" class="btn btn-sm btn-dark rounded-pill px-3"><i class="fa-solid fa-download"></i></button>
+      <div class="dash-card p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h4 class="fw-bold text-dark mb-0">พิจารณาสวัสดิการ</h4>
+          <button onclick="exportToCSV('table-claims', 'รายการสวัสดิการ')" class="btn btn-sm btn-outline-dark rounded-pill px-3"><i class="fa-solid fa-download"></i></button>
         </div>
         <!-- กราฟสรุปสวัสดิการ -->
         <div class="chart-container mb-4" style="height: 200px;"><canvas id="claimsChart"></canvas></div>
@@ -235,10 +328,10 @@
 
     <!-- ⚖️ 5. ระเบียบกองทุน -->
     <div class="tab-pane fade" id="view-rules">
-      <div class="dash-card p-3">
-        <div class="card-title-app px-2">
-          <div class="d-flex align-items-center"><i class="fa-solid fa-scale-balanced text-warning me-2"></i> ระเบียบกองทุน</div>
-          <button onclick="openAddRuleModal()" class="btn btn-sm btn-primary rounded-pill fw-bold px-3"><i class="fa-solid fa-plus me-1"></i> เพิ่มสวัสดิการ</button>
+      <div class="dash-card p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h4 class="fw-bold text-dark mb-0">ระเบียบกองทุน</h4>
+          <button onclick="openAddRuleModal()" class="btn btn-sm btn-primary rounded-pill fw-bold px-3"><i class="fa-solid fa-plus me-1"></i> เพิ่ม</button>
         </div>
         <div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>ประเภทสวัสดิการ</th><th>อายุขั้นต่ำ</th><th>จ่ายสูงสุด/ปี</th><th>จัดการ</th></tr></thead><tbody id="table-rules"></tbody></table></div>
       </div>
@@ -246,10 +339,10 @@
 
     <!-- 🛡️ 6. ผู้ดูแลระบบ -->
     <div class="tab-pane fade" id="view-admins">
-      <div class="dash-card p-3">
-        <div class="card-title-app px-2">
-          <div class="d-flex align-items-center"><i class="fa-solid fa-user-shield text-primary me-2"></i> จัดการผู้ดูแลระบบ</div>
-          <button onclick="openAddAdminModal()" class="btn btn-sm btn-primary rounded-pill fw-bold px-3"><i class="fa-solid fa-plus me-1"></i> เพิ่ม Admin</button>
+      <div class="dash-card p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h4 class="fw-bold text-dark mb-0">จัดการผู้ดูแลระบบ</h4>
+          <button onclick="openAddAdminModal()" class="btn btn-sm btn-primary rounded-pill fw-bold px-3"><i class="fa-solid fa-user-plus me-1"></i> เพิ่ม Admin</button>
         </div>
         <div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>ชื่อ Admin</th><th>ระดับ/ศูนย์</th><th>สถานะ</th><th>จัดการ</th></tr></thead><tbody id="table-admins"></tbody></table></div>
       </div>
@@ -298,7 +391,7 @@
     const rows = document.querySelectorAll(`#${tableId} tr`);
     for (let i = 0; i < rows.length; i++) {
         let row = [], cols = rows[i].querySelectorAll("td, th");
-        for (let j = 0; j < cols.length - 1; j++) row.push('"' + cols[j].innerText.replace(/"/g, '""') + '"'); // Skip Action Column
+        for (let j = 0; j < cols.length - 1; j++) row.push('"' + cols[j].innerText.replace(/"/g, '""') + '"'); 
         csv.push(row.join(","));
     }
     const csvFile = new Blob(["\uFEFF"+csv.join("\n")], {type: "text/csv;charset=utf-8;"});
@@ -317,15 +410,20 @@
       const res = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "getAdminOverview", adminUid: currentAdminData.uid, period: period }) }).then(r => r.json());
       if(res.status === 'success') {
         const d = res.data;
-        // Financials
+        // Financials (Dashboard)
         document.getElementById('cap-total').innerText = d.liquidity.netTotal.toLocaleString();
         document.getElementById('liq-bank').innerText = d.liquidity.bank.toLocaleString(); 
         document.getElementById('liq-cash').innerText = d.liquidity.cash.toLocaleString();
         document.getElementById('stat-total-in').innerText = d.capital.totalIn.toLocaleString();
         document.getElementById('stat-total-out').innerText = d.capital.totalOut.toLocaleString();
         
+        // Update Ledger Tab Balances Sync
+        document.getElementById('ledger-total-bal').innerText = "฿" + d.liquidity.netTotal.toLocaleString('th-TH', {minimumFractionDigits:2});
+        document.getElementById('ledger-bank-bal').innerText = "฿" + d.liquidity.bank.toLocaleString('th-TH', {minimumFractionDigits:2});
+        document.getElementById('ledger-cash-bal').innerText = "฿" + d.liquidity.cash.toLocaleString('th-TH', {minimumFractionDigits:2});
+        
         // Equation & Population
-        const totalPop = 20000; // สมมติประชากร หรือรับจาก API
+        const totalPop = 20000; // ประชากรตำบลอ้างอิง
         document.getElementById('eq-population').innerText = totalPop.toLocaleString();
         document.getElementById('eq-active').innerText = d.equation.active.toLocaleString();
         document.getElementById('eq-percent-active').innerText = ((d.equation.active / totalPop) * 100).toFixed(2);
@@ -335,11 +433,10 @@
         // Community Stats
         let comHtml = "";
         for(const [center, count] of Object.entries(d.equation.byCenter)) {
-           comHtml += `<div class="d-flex justify-content-between border-bottom py-1"><span>${center.replace('ศูนย์ชุมชน','')}</span><strong class="text-primary">${count}</strong></div>`;
+           comHtml += `<div class="d-flex justify-content-between border-bottom py-2"><span>${center.replace('ศูนย์ชุมชน','')}</span><strong class="text-primary">${count}</strong></div>`;
         }
         document.getElementById('community-stats-container').innerHTML = comHtml;
 
-        // Charts
         renderCharts(d.charts);
       }
     } catch (e) { console.error(e); }
@@ -347,11 +444,11 @@
   }
 
   function renderCharts(cData) {
-    // 1. Bar Chart (In/Out)
+    // Bar Chart
     if(charts.bar) charts.bar.destroy();
-    charts.bar = new Chart(document.getElementById('barChart').getContext('2d'), { type: 'bar', data: { labels: cData.bar.labels, datasets: [{ label: 'รายรับ', data: cData.bar.income, backgroundColor: '#10B981' }, { label: 'รายจ่าย', data: cData.bar.expense, backgroundColor: '#EF4444' }] }, options: { responsive: true, maintainAspectRatio: false } });
+    charts.bar = new Chart(document.getElementById('barChart').getContext('2d'), { type: 'bar', data: { labels: cData.bar.labels, datasets: [{ label: 'รายรับ', data: cData.bar.income, backgroundColor: '#10B981', borderRadius: 4 }, { label: 'รายจ่าย', data: cData.bar.expense, backgroundColor: '#EF4444', borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top'} } } });
 
-    // 2. Doughnut Chart (Capital Structure)
+    // Doughnut Chart
     if(charts.doughnut) charts.doughnut.destroy();
     charts.doughnut = new Chart(document.getElementById('doughnutChart').getContext('2d'), { type: 'doughnut', data: { labels: ['สมทบสมาชิก', 'รัฐสมทบ', 'ท้องถิ่นสมทบ', 'ดอกเบี้ย/อื่นๆ', 'บริจาค'], datasets: [{ data: [cData.doughnut.member, cData.doughnut.gov, cData.doughnut.local, cData.doughnut.interest, cData.doughnut.donate], backgroundColor: ['#2563EB', '#F59E0B', '#10B981', '#8B5CF6', '#EC4899'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } } });
   }
@@ -372,22 +469,40 @@
   function changeMemberPage(offset) { const n = currentMemberPage + offset; if(n >= 1 && n <= totalMemberPages) loadMembersData(n); }
   
   function openAddMemberModal() {
-    Swal.fire({ title: 'เพิ่มสมาชิก (ไม่มี LINE)', html: `<input id="addMName" class="form-control mb-2" placeholder="ชื่อ-นามสกุล"><input id="addMNat" type="tel" class="form-control mb-2" placeholder="เลข ปชช. 13 หลัก" maxlength="13"><input id="addMPhone" type="tel" class="form-control mb-2" placeholder="เบอร์โทรศัพท์"><select id="addMCenter" class="form-select"><option value="ศูนย์ชุมชนปารีย์">ศูนย์ชุมชนปารีย์</option><option value="ศูนย์ชุมชนเกียร์">ศูนย์ชุมชนเกียร์</option><option value="ศูนย์ชุมชนมาโมง">ศูนย์ชุมชนมาโมง</option><option value="ศูนย์ชุมชนสุคิริน">ศูนย์ชุมชนสุคิริน</option></select>`, showCancelButton: true, confirmButtonText: 'บันทึก', preConfirm: () => ({ action: 'adminAddMember', adminUid: currentAdminData.uid, fullName: document.getElementById('addMName').value, nationalId: document.getElementById('addMNat').value, phone: document.getElementById('addMPhone').value, center: document.getElementById('addMCenter').value }) }).then(handleApiResponse);
+    Swal.fire({ title: 'เพิ่มสมาชิก (ไม่มี LINE)', html: `<input id="addMName" class="form-control mb-2" placeholder="ชื่อ-นามสกุล"><input id="addMNat" type="tel" class="form-control mb-2" placeholder="เลข ปชช. 13 หลัก" maxlength="13"><input id="addMPhone" type="tel" class="form-control mb-2" placeholder="เบอร์โทรศัพท์"><select id="addMCenter" class="form-select"><option value="ศูนย์ชุมชนปารีย์">ศูนย์ชุมชนปารีย์</option><option value="ศูนย์ชุมชนเกียร์">ศูนย์ชุมชนเกียร์</option><option value="ศูนย์ชุมชนราษฎร์สามัคคี">ศูนย์ชุมชนราษฎร์สามัคคี</option><option value="ศูนย์ชุมชนกลันตัน">ศูนย์ชุมชนกลันตัน</option><option value="ศูนย์ชุมชนมาโมง">ศูนย์ชุมชนมาโมง</option><option value="ศูนย์ชุมชนสุคิริน">ศูนย์ชุมชนสุคิริน</option></select>`, showCancelButton: true, confirmButtonText: 'บันทึก', preConfirm: () => ({ action: 'adminAddMember', adminUid: currentAdminData.uid, fullName: document.getElementById('addMName').value, nationalId: document.getElementById('addMNat').value, phone: document.getElementById('addMPhone').value, center: document.getElementById('addMCenter').value }) }).then(handleApiResponse);
   }
   function changeMemberStatus(idx) {
     const item = cachedData['members'][idx];
     Swal.fire({ title: 'เปลี่ยนสถานะสมาชิก', html: `<select id="newMStatus" class="form-select"><option value="เป็นสมาชิก" ${item.status==='เป็นสมาชิก'?'selected':''}>เป็นสมาชิก</option><option value="พ้นสภาพ" ${item.status==='พ้นสภาพ'?'selected':''}>พ้นสภาพ</option><option value="เสียชีวิต" ${item.status==='เสียชีวิต'?'selected':''}>เสียชีวิต</option></select>`, showCancelButton: true, confirmButtonText: 'อัปเดต', preConfirm: () => ({ action: 'adminUpdateData', module: 'members', adminUid: currentAdminData.uid, targetId: item.memberId, updateField: 'status', updateValue: document.getElementById('newMStatus').value }) }).then(handleApiResponse);
   }
 
-  // 💳 Ledger CRUD
-  function openTransactionMenu() {
-    Swal.fire({ title: 'เลือกประเภทธุรกรรม', showDenyButton: true, showCancelButton: true, confirmButtonText: 'รับ/จ่าย เบ็ดเตล็ด', denyButtonText: 'โอนย้ายสภาพคล่อง', cancelButtonText: 'งบสถาบัน/บริจาค' }).then((result) => { if (result.isConfirmed) openIncomeExpenseModal(); else if (result.isDenied) openLiquidityTransferModal(); else if (result.dismiss === Swal.DismissReason.cancel) openInstitutionalModal(); });
+  // 💳 Ledger FinTech Functions
+  function switchLedgerTab(tab) {
+      document.getElementById('tab-ie').classList.remove('active');
+      document.getElementById('tab-tf').classList.remove('active');
+      document.getElementById('form-ie').classList.add('d-none');
+      document.getElementById('form-tf').classList.add('d-none');
+      
+      document.getElementById(`tab-${tab}`).classList.add('active');
+      document.getElementById(`form-${tab}`).classList.remove('d-none');
   }
-  // (Modals โอนย้ายเหมือนโค้ดเดิม แค่เปลี่ยนไปเรียก handleApiResponse)
-  function openLiquidityTransferModal() { Swal.fire({ title: 'โอนย้ายสภาพคล่อง', html: `<select id="liqFrom" class="form-select mb-3"><option value="bank">ธนาคาร</option><option value="cash">เงินสด</option></select><select id="liqTo" class="form-select mb-3"><option value="cash">เงินสด</option><option value="bank">ธนาคาร</option></select><input id="liqAmt" type="number" class="form-control" placeholder="จำนวนเงิน">`, showCancelButton: true, preConfirm: () => ({ action: 'processLedgerTransaction', adminUid: currentAdminData.uid, txType: 'โอนย้ายสภาพคล่อง', amount: document.getElementById('liqAmt').value, sourceWallet: document.getElementById('liqFrom').value, targetWallet: document.getElementById('liqTo').value }) }).then(handleApiResponse); }
-  function openIncomeExpenseModal() { Swal.fire({ title: 'รับ/จ่าย เบ็ดเตล็ด', html: `<select id="ieType" class="form-select mb-3"><option value="รายรับเบ็ดเตล็ด">รายรับ</option><option value="รายจ่ายเบ็ดเตล็ด">รายจ่าย</option></select><select id="ieWallet" class="form-select mb-3"><option value="bank">ธนาคาร</option><option value="cash">เงินสด</option></select><input id="ieAmt" type="number" class="form-control mb-3" placeholder="จำนวนเงิน"><input id="ieNote" class="form-control" placeholder="รายละเอียด">`, showCancelButton: true, preConfirm: () => ({ action: 'processLedgerTransaction', adminUid: currentAdminData.uid, txType: document.getElementById('ieType').value, amount: document.getElementById('ieAmt').value, sourceWallet: document.getElementById('ieType').value==='รายจ่ายเบ็ดเตล็ด'?document.getElementById('ieWallet').value:null, targetWallet: document.getElementById('ieType').value==='รายรับเบ็ดเตล็ด'?document.getElementById('ieWallet').value:null, note: document.getElementById('ieNote').value }) }).then(handleApiResponse); }
-  function openInstitutionalModal() { Swal.fire({ title: 'งบสถาบัน/บริจาค', html: `<select id="instType" class="form-select mb-3"><option value="พอช. (รัฐสมทบ)">พอช.</option><option value="เทศบาล">เทศบาล</option><option value="เงินบริจาค">เงินบริจาค</option></select><input id="instSrc" class="form-control mb-3" placeholder="ชื่อหน่วยงาน/ผู้บริจาค"><input id="instAmt" type="number" class="form-control" placeholder="จำนวนเงิน">`, showCancelButton: true, preConfirm: () => ({ action: 'processInstitutionalContribution', adminUid: currentAdminData.uid, capitalType: document.getElementById('instType').value, sourceName: document.getElementById('instSrc').value, amount: document.getElementById('instAmt').value }) }).then(handleApiResponse); }
-  
+
+  function submitLedgerIE(e) {
+      e.preventDefault();
+      const type = document.querySelector('input[name="ieType"]:checked').value;
+      const wallet = document.getElementById('ieWallet').value;
+      const data = { action: 'processLedgerTransaction', adminUid: currentAdminData.uid, txType: type, amount: document.getElementById('ieAmt').value, sourceWallet: type.includes('จ่าย') ? wallet : null, targetWallet: type.includes('รับ') ? wallet : null, note: document.getElementById('ieNote').value };
+      showLoader(true); fetch(GAS_API_URL, { method: "POST", body: JSON.stringify(data) }).then(r=>r.json()).then(r => { showLoader(false); if(r.status==='success') { Swal.fire({icon:'success', title:'บันทึกสำเร็จ', timer:1500}); e.target.reset(); loadUniversalData('transactions'); loadDashboardOverview(); } else Swal.fire('Error', r.message, 'error'); });
+  }
+
+  function submitLedgerTF(e) {
+      e.preventDefault();
+      const from = document.getElementById('tfFrom').value; const to = document.getElementById('tfTo').value;
+      if (from === to) { Swal.fire('แจ้งเตือน', 'บัญชีต้นทางและปลายทางต้องไม่ซ้ำกัน', 'warning'); return; }
+      const data = { action: 'processLedgerTransaction', adminUid: currentAdminData.uid, txType: 'โอนย้ายสภาพคล่อง', amount: document.getElementById('tfAmt').value, sourceWallet: from, targetWallet: to, note: `โอนจาก ${from} ไป ${to}` };
+      showLoader(true); fetch(GAS_API_URL, { method: "POST", body: JSON.stringify(data) }).then(r=>r.json()).then(r => { showLoader(false); if(r.status==='success') { Swal.fire({icon:'success', title:'โอนเงินสำเร็จ', timer:1500}); e.target.reset(); loadUniversalData('transactions'); loadDashboardOverview(); } else Swal.fire('Error', r.message, 'error'); });
+  }
+
   function editTransaction(idx) {
     const item = cachedData['transactions'][idx];
     Swal.fire({ title: 'แก้ไขยอดเงิน', html: `<input type="number" id="editTxAmt" class="form-control" value="${item.amount}">`, showCancelButton: true, confirmButtonText: 'บันทึก', preConfirm: () => ({ action: 'adminUpdateData', module: 'transactions', adminUid: currentAdminData.uid, targetId: item.txId, updateField: 'amount', updateValue: document.getElementById('editTxAmt').value }) }).then(handleApiResponse);
@@ -401,7 +516,7 @@
   function renderClaimsChart(data) {
      if(!data || data.length === 0) return;
      if(charts.claims) charts.claims.destroy();
-     charts.claims = new Chart(document.getElementById('claimsChart').getContext('2d'), { type: 'bar', data: { labels: data.map(d => d.name), datasets: [{ label: 'จำนวนคำขอ', data: data.map(d=>d.count), backgroundColor: '#3B82F6' }] }, options: { responsive: true, maintainAspectRatio: false } });
+     charts.claims = new Chart(document.getElementById('claimsChart').getContext('2d'), { type: 'bar', data: { labels: data.map(d => d.name), datasets: [{ label: 'จำนวนคำขอ', data: data.map(d=>d.count), backgroundColor: '#3B82F6', borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false } });
   }
 
   // ⚖️ Rules CRUD
@@ -412,7 +527,12 @@
   // 🛡️ Admins Settings CRUD
   function openAddAdminModal() {
     if(currentAdminData.role !== 'Admin-Master') { Swal.fire('ปฏิเสธ', 'เฉพาะ Admin-Master เท่านั้นที่เพิ่มผู้ดูแลระบบได้', 'error'); return; }
-    Swal.fire({ title: 'ตั้งค่าผู้ดูแลระบบ', html: `<input id="addAdmUid" class="form-control mb-2" placeholder="UID LINE (ของสมาชิกที่จะตั้ง)"><input id="addAdmName" class="form-control mb-2" placeholder="ชื่อสำหรับแสดงผล"><select id="addAdmRole" class="form-select mb-2"><option value="Admin-ศูนย์ประสานงาน">Admin ศูนย์</option><option value="Admin-การเงิน">Admin การเงิน</option><option value="Admin-Master">Admin Master</option></select><select id="addAdmCenter" class="form-select"><option value="ALL">ดูแลทุกศูนย์ (Master/การเงิน)</option><option value="ศูนย์ชุมชนปารีย์">ศูนย์ชุมชนปารีย์</option><option value="ศูนย์ชุมชนเกียร์">ศูนย์ชุมชนเกียร์</option></select>`, showCancelButton: true, confirmButtonText: 'เพิ่มสิทธิ์', preConfirm: () => ({ action: 'adminAddAdmin', adminUid: currentAdminData.uid, targetUid: document.getElementById('addAdmUid').value, name: document.getElementById('addAdmName').value, role: document.getElementById('addAdmRole').value, center: document.getElementById('addAdmCenter').value }) }).then(handleApiResponse);
+    Swal.fire({ title: 'ตั้งค่าผู้ดูแลระบบ', html: `<input id="addAdmUid" class="form-control mb-2" placeholder="UID LINE (ของสมาชิกที่จะตั้ง)"><input id="addAdmName" class="form-control mb-2" placeholder="ชื่อสำหรับแสดงผล"><select id="addAdmRole" class="form-select mb-2"><option value="Admin-ศูนย์ประสานงาน">Admin ศูนย์</option><option value="Admin-การเงิน">Admin การเงิน</option><option value="Admin-Master">Admin Master</option></select><select id="addAdmCenter" class="form-select"><option value="ALL">ดูแลทุกศูนย์ (Master/การเงิน)</option><option value="ศูนย์ชุมชนปารีย์">ศูนย์ชุมชนปารีย์</option><option value="ศูนย์ชุมชนเกียร์">ศูนย์ชุมชนเกียร์</option><option value="ศูนย์ชุมชนราษฎร์สามัคคี">ศูนย์ชุมชนราษฎร์สามัคคี</option><option value="ศูนย์ชุมชนกลันตัน">ศูนย์ชุมชนกลันตัน</option><option value="ศูนย์ชุมชนมาโมง">ศูนย์ชุมชนมาโมง</option><option value="ศูนย์ชุมชนสุคิริน">ศูนย์ชุมชนสุคิริน</option></select>`, showCancelButton: true, confirmButtonText: 'เพิ่มสิทธิ์', preConfirm: () => ({ action: 'adminAddAdmin', adminUid: currentAdminData.uid, targetUid: document.getElementById('addAdmUid').value, name: document.getElementById('addAdmName').value, role: document.getElementById('addAdmRole').value, center: document.getElementById('addAdmCenter').value }) }).then(handleApiResponse);
+  }
+  function changeAdminStatus(adminId, currStatus) {
+      if(currentAdminData.role !== 'Admin-Master') return;
+      const newStatus = currStatus === 'ใช้งาน' ? 'ระงับ' : 'ใช้งาน';
+      Swal.fire({ title: 'เปลี่ยนสถานะ', text: `เปลี่ยนเป็น: ${newStatus}`, showCancelButton:true, confirmButtonText:'ตกลง' }).then(r=>{ if(r.isConfirmed){ fetch(GAS_API_URL, {method:'POST', body:JSON.stringify({action:'adminUpdateData', module:'admins', adminUid:currentAdminData.uid, targetId:adminId, updateField:'status', updateValue:newStatus})}).then(()=>loadUniversalData('admins')) } });
   }
 
   // 🛠️ Universal Data Fetcher & Action Handler
@@ -421,11 +541,34 @@
     const res = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "getAdminData", module: module, adminUid: currentAdminData.uid }) }).then(r=>r.json());
     if(res.status === 'success') {
       cachedData[module] = res.data;
-      const t = document.getElementById(`table-${module}`);
-      if (module === 'transactions') t.innerHTML = res.data.map((i, idx) => `<tr><td>${i.date}</td><td>${i.type}</td><td class="fw-bold ${i.isOut?'text-danger':'text-success'}">${i.amount}</td><td><span class="badge bg-light text-dark border">${i.status}</span></td><td><button class="action-btn text-primary" onclick="editTransaction(${idx})"><i class="fa-solid fa-pen"></i></button> <button class="action-btn text-danger" onclick="deleteRecord('transactions', '${i.txId}', ${idx})"><i class="fa-solid fa-trash"></i></button></td></tr>`).join('');
-      else if (module === 'claims') { t.innerHTML = res.data.list.map((i, idx) => `<tr><td>${i.name}</td><td>${i.welfareName}</td><td class="fw-bold text-primary">${i.amount} ฿</td><td><span class="badge ${i.status==='อนุมัติแล้ว'?'bg-success text-white':(i.status==='ปฏิเสธ'?'bg-danger text-white':'bg-warning text-dark')}">${i.status}</span></td><td><button class="btn btn-sm btn-primary rounded-pill px-3" onclick="approveClaim(${idx})"><i class="fa-solid fa-gear"></i> จัดการ</button></td></tr>`).join(''); renderClaimsChart(res.data.chart); }
-      else if (module === 'rules') t.innerHTML = res.data.map((i, idx) => `<tr><td><strong class="text-dark">${i.welfareName}</strong></td><td>${i.minDays} วัน</td><td class="text-danger fw-bold">${i.maxPerYear} ฿</td><td><button class="action-btn text-danger" onclick="deleteRecord('rules', '${i.ruleId}', ${idx})"><i class="fa-solid fa-trash"></i></button></td></tr>`).join('');
-      else if (module === 'admins') t.innerHTML = res.data.map((i, idx) => `<tr><td><strong class="text-dark">${i.name}</strong></td><td>${i.role} / ${i.center}</td><td><span class="badge ${i.status==='ใช้งาน'?'bg-success':'bg-danger'} text-white" onclick="changeAdminStatus('${i.adminId}', '${i.status}')">${i.status} <i class="fa-solid fa-caret-down"></i></span></td><td><button class="action-btn text-danger" onclick="deleteRecord('admins', '${i.adminId}', ${idx})"><i class="fa-solid fa-trash"></i></button></td></tr>`).join('');
+      if (module === 'transactions') {
+        // Table (Hidden for Export)
+        document.getElementById(`table-transactions`).innerHTML = res.data.map((i, idx) => `<tr><td>${i.date}</td><td>${i.name}</td><td>${i.amount}</td><td>${i.status}</td></tr>`).join('');
+        // Render FinTech List
+        document.getElementById('ledger-tx-list').innerHTML = res.data.map((i, idx) => {
+            const isTransfer = String(i.type).includes('โอน'); const isIncome = !i.isOut && !isTransfer; const isExpense = i.isOut && !isTransfer;
+            let iconClass = isIncome ? 'tx-income' : (isExpense ? 'tx-expense' : 'tx-transfer');
+            let icon = isIncome ? 'fa-arrow-up' : (isExpense ? 'fa-arrow-down' : 'fa-arrow-right-arrow-left');
+            let sign = isIncome ? '+' : (isExpense ? '-' : '');
+            return `<div class="tx-item ${iconClass}">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="tx-icon"><i class="fa-solid ${icon}"></i></div>
+                    <div><h6 class="mb-0 fw-bold text-dark" style="font-size:0.95rem;">${i.type}</h6><small class="text-muted" style="font-size:0.75rem;">${i.date}</small></div>
+                </div>
+                <div class="text-end flex-grow-1 px-3">
+                    <h6 class="mb-0 fw-bold tx-amount">${sign}฿${parseFloat(i.amount).toLocaleString('th-TH',{minimumFractionDigits:2})}</h6>
+                    <small class="badge bg-light text-dark border mt-1" style="font-size:0.65rem;">${i.status}</small>
+                </div>
+                <div class="ms-2 ps-3 border-start d-flex flex-column gap-2">
+                    <button class="action-btn text-primary" onclick="editTransaction(${idx})"><i class="fa-solid fa-pen" style="font-size:0.8rem;"></i></button> 
+                    <button class="action-btn text-danger" onclick="deleteRecord('transactions', '${i.txId}', ${idx})"><i class="fa-solid fa-trash" style="font-size:0.8rem;"></i></button>
+                </div>
+            </div>`;
+        }).join('');
+      }
+      else if (module === 'claims') { document.getElementById(`table-claims`).innerHTML = res.data.list.map((i, idx) => `<tr><td>${i.name}</td><td>${i.welfareName}</td><td class="fw-bold text-primary">${i.amount} ฿</td><td><span class="badge ${i.status==='อนุมัติแล้ว'?'bg-success text-white':(i.status==='ปฏิเสธ'?'bg-danger text-white':'bg-warning text-dark')}">${i.status}</span></td><td><button class="btn btn-sm btn-primary rounded-pill px-3" onclick="approveClaim(${idx})"><i class="fa-solid fa-gear"></i> จัดการ</button></td></tr>`).join(''); renderClaimsChart(res.data.chart); }
+      else if (module === 'rules') document.getElementById(`table-rules`).innerHTML = res.data.map((i, idx) => `<tr><td><strong class="text-dark">${i.welfareName}</strong></td><td>${i.minDays} วัน</td><td class="text-danger fw-bold">${i.maxPerYear} ฿</td><td><button class="action-btn text-danger" onclick="deleteRecord('rules', '${i.ruleId}', ${idx})"><i class="fa-solid fa-trash"></i></button></td></tr>`).join('');
+      else if (module === 'admins') document.getElementById(`table-admins`).innerHTML = res.data.map((i, idx) => `<tr><td><strong class="text-dark">${i.name}</strong></td><td>${i.role} / ${i.center}</td><td><span class="badge ${i.status==='ใช้งาน'?'bg-success':'bg-danger'} text-white" onclick="changeAdminStatus('${i.adminId}', '${i.status}')">${i.status} <i class="fa-solid fa-caret-down"></i></span></td><td><button class="action-btn text-danger" onclick="deleteRecord('admins', '${i.adminId}', ${idx})"><i class="fa-solid fa-trash"></i></button></td></tr>`).join('');
     } showLoader(false);
   }
 
@@ -435,7 +578,7 @@
 
   function deleteRecord(module, id, idx) {
     Swal.fire({ title: 'ยืนยันการลบ?', text: "ข้อมูลนี้จะถูกลบออกจากระบบ", icon: 'warning', showCancelButton: true, confirmButtonColor: '#EF4444' }).then(async (result) => {
-      if (result.isConfirmed) { showLoader(true); const r = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: 'adminDeleteRecord', adminUid: currentAdminData.uid, module: module, targetId: id }) }).then(r=>r.json()); showLoader(false); if(r.status==='success') { Swal.fire('ลบสำเร็จ', '', 'success'); if(module==='members') loadMembersData(currentMemberPage); else loadUniversalData(module); } else Swal.fire('Error', r.message, 'error'); }
+      if (result.isConfirmed) { showLoader(true); const r = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: 'adminDeleteRecord', adminUid: currentAdminData.uid, module: module, targetId: id }) }).then(r=>r.json()); showLoader(false); if(r.status==='success') { Swal.fire('ลบสำเร็จ', '', 'success'); if(module==='members') loadMembersData(currentMemberPage); else { loadUniversalData(module); loadDashboardOverview(); } } else Swal.fire('Error', r.message, 'error'); }
     });
   }
 </script>
