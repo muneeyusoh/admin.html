@@ -39,7 +39,7 @@
     .dash-card { background: var(--card-bg); border-radius: 20px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); margin-bottom: 24px; border: 1px solid var(--border-color); }
     .card-title-app { font-size: 1.1rem; font-weight: 700; color: var(--primary-dark); margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
     
-    /* 🌟 FinTech Ledger Specific Styles (Modern Pattern) */
+    /* 🌟 FinTech Ledger Specific Styles */
     .ledger-card-total { background: linear-gradient(135deg, #0f766e 0%, #10b981 100%); border-radius: 1.5rem; padding: 1.5rem; position: relative; overflow: hidden; color: white; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3); }
     .ledger-card-total::after { content: ''; position: absolute; top: -40px; right: -40px; width: 150px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 50%; blur: 20px; }
     .ledger-stat-card { background: white; border: 1px solid var(--border-color); border-radius: 1.2rem; padding: 1.25rem; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
@@ -139,7 +139,14 @@
       <!-- การเงินรวม -->
       <div class="dash-card p-0 border-0 mb-4 bg-transparent shadow-none">
         <div class="ledger-card-total mb-3">
-          <div class="d-flex justify-content-between mb-3"><span class="small text-white-50 fw-bold text-uppercase">สถานะทางการเงิน (Net Capital)</span><i class="fa-solid fa-wallet text-white-50"></i></div>
+          <div class="d-flex justify-content-between mb-3 align-items-center">
+            <span class="small text-white-50 fw-bold text-uppercase d-flex align-items-center gap-2">
+              สถานะทางการเงิน (Net Capital)
+              <!-- 🔗 ปุ่มเชื่อมโยงไปสมุดบัญชีกลาง -->
+              <button onclick="navigateToTab('view-ledger')" class="btn btn-sm rounded-pill px-2 py-0 border-0 text-white" style="font-size:0.7rem; background: rgba(255,255,255,0.15);" title="ไปที่สมุดบัญชีกลาง"><i class="fa-solid fa-book-open"></i> สมุดบัญชี</button>
+            </span>
+            <i class="fa-solid fa-wallet text-white-50"></i>
+          </div>
           <h2 class="fw-bold mb-0 text-white"><span id="cap-total">0</span> ฿</h2>
           <div class="d-flex justify-content-between small mt-4 border-top border-light pt-3" style="border-opacity: 0.2;">
             <span class="text-white"><i class="fa-solid fa-arrow-trend-up text-white-50 me-1"></i> รับสะสม: <strong id="stat-total-in">0</strong></span>
@@ -164,7 +171,13 @@
 
       <!-- สัดส่วนสมาชิก -->
       <div class="dash-card">
-        <h6 class="card-title-app"><div class="d-flex align-items-center"><i class="fa-solid fa-users-rays text-primary me-2"></i> สัดส่วนสมาชิกและประชากร</div></h6>
+        <h6 class="card-title-app">
+          <div class="d-flex align-items-center">
+            <i class="fa-solid fa-users-rays text-primary me-2"></i> สัดส่วนสมาชิกและประชากร
+            <!-- 🔗 ปุ่มเชื่อมโยงไปทะเบียนสมาชิก -->
+            <button onclick="navigateToTab('view-members')" class="btn btn-sm bg-primary bg-opacity-10 text-primary border-0 rounded-pill ms-2 px-2 py-0 fw-bold" style="font-size:0.7rem;" title="ไปที่ทะเบียนสมาชิก"><i class="fa-solid fa-address-book"></i> ทะเบียนสมาชิก</button>
+          </div>
+        </h6>
         <div class="stat-grid-2 mb-3">
           <div class="eq-item" style="border-top: 4px solid var(--success-main); grid-column: span 2;">
             <span class="text-muted fw-bold">สมาชิกปัจจุบัน</span>
@@ -173,7 +186,14 @@
           </div>
         </div>
         <div class="stat-grid-3">
-          <div class="eq-item p-2"><span class="small text-muted fw-bold">ประชากรตำบล</span><h5 class="text-dark mt-1 mb-0" id="eq-population">20,000</h5></div>
+          <div class="eq-item p-2">
+            <span class="small text-muted fw-bold">ประชากรตำบล</span>
+            <div class="d-flex justify-content-center align-items-center gap-2 mt-1">
+              <h5 class="text-dark mb-0" id="eq-population">20,000</h5>
+              <!-- ✏️ ปุ่มแก้ไขจำนวนประชากร -->
+              <button onclick="editPopulation()" class="btn btn-sm text-primary p-0" title="ตั้งค่าจำนวนประชากร"><i class="fa-solid fa-pen-to-square" style="font-size:0.85rem;"></i></button>
+            </div>
+          </div>
           <div class="eq-item p-2"><span class="small text-muted fw-bold">พ้นสภาพ</span><h5 class="text-secondary mt-1 mb-0" id="eq-resigned">0</h5></div>
           <div class="eq-item p-2"><span class="small text-muted fw-bold">เสียชีวิต</span><h5 class="text-danger mt-1 mb-0" id="eq-dead">0</h5></div>
         </div>
@@ -362,6 +382,9 @@
   let cachedData = {};
   let charts = { bar: null, doughnut: null, claims: null };
 
+  // 🌐 ระบบจัดการประชากร (Local Storage State Management)
+  let townPopulation = localStorage.getItem('cwf_town_pop') ? parseInt(localStorage.getItem('cwf_town_pop')) : 20000;
+
   document.addEventListener("DOMContentLoaded", async () => { 
     await liff.init({ liffId: LIFF_ID_ADMIN });
     if (liff.isLoggedIn()) verifyAdminAuth(liff.getDecodedIDToken().sub || (await liff.getProfile()).userId);
@@ -384,6 +407,45 @@
 
   function showLoader(show, text="ประมวลผล...") { document.getElementById('loader').style.display = show ? 'flex' : 'none'; if(show) document.getElementById('loader-text').innerText = text; }
   function closeSidebar() { bootstrap.Offcanvas.getInstance(document.getElementById('sidebarMenu'))?.hide(); }
+
+  // 🚀 Seamless Navigation Helper (สลับแท็บโดยไม่ต้องเข้าเมนูหลัก)
+  function navigateToTab(tabId) {
+    const targetBtn = document.querySelector(`.nav-link[data-bs-target="#${tabId}"]`);
+    if(targetBtn) targetBtn.click();
+    
+    // โหลดข้อมูลให้ด้วยเผื่อยังไม่ได้โหลด
+    if(tabId === 'view-ledger') loadUniversalData('transactions');
+    if(tabId === 'view-members') loadMembersData(1);
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ✏️ แก้ไขข้อมูลประชากร
+  function editPopulation() {
+    Swal.fire({
+      title: 'ตั้งค่าจำนวนประชากร',
+      text: 'ใช้สำหรับคำนวณสัดส่วนประชากรในตำบล',
+      input: 'number',
+      inputValue: townPopulation,
+      showCancelButton: true,
+      confirmButtonText: 'บันทึก',
+      cancelButtonText: 'ยกเลิก',
+      confirmButtonColor: '#2563EB'
+    }).then((result) => {
+      if(result.isConfirmed && result.value > 0) {
+        townPopulation = parseInt(result.value);
+        localStorage.setItem('cwf_town_pop', townPopulation);
+        document.getElementById('eq-population').innerText = townPopulation.toLocaleString();
+        
+        // คำนวณ % ใหม่ทันที
+        const activeStr = document.getElementById('eq-active').innerText.replace(/,/g, '');
+        const activeMembers = parseInt(activeStr) || 0;
+        document.getElementById('eq-percent-active').innerText = ((activeMembers / townPopulation) * 100).toFixed(2);
+        
+        Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'อัปเดตข้อมูลประชากรแล้ว', showConfirmButton: false, timer: 2000 });
+      }
+    });
+  }
 
   // 📈 CSV Export Function
   function exportToCSV(tableId, filename) {
@@ -423,10 +485,9 @@
         document.getElementById('ledger-cash-bal').innerText = "฿" + d.liquidity.cash.toLocaleString('th-TH', {minimumFractionDigits:2});
         
         // Equation & Population
-        const totalPop = 20000; // ประชากรตำบลอ้างอิง
-        document.getElementById('eq-population').innerText = totalPop.toLocaleString();
+        document.getElementById('eq-population').innerText = townPopulation.toLocaleString();
         document.getElementById('eq-active').innerText = d.equation.active.toLocaleString();
-        document.getElementById('eq-percent-active').innerText = ((d.equation.active / totalPop) * 100).toFixed(2);
+        document.getElementById('eq-percent-active').innerText = ((d.equation.active / townPopulation) * 100).toFixed(2);
         document.getElementById('eq-resigned').innerText = d.equation.resigned.toLocaleString(); 
         document.getElementById('eq-dead').innerText = d.equation.dead.toLocaleString();
         
