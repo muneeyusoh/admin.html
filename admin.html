@@ -24,7 +24,6 @@
     }
     body { background-color: var(--bg-color); font-family: 'Prompt', sans-serif; color: var(--text-main); padding-top: 70px; -webkit-tap-highlight-color: transparent; }
     
-    /* 📱 Header & Navigation */
     .app-header { background: var(--primary-dark); color: white; position: fixed; top: 0; left: 0; width: 100%; height: 64px; z-index: 1030; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
     .btn-icon { background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; }
     .btn-icon:active { transform: scale(0.9); }
@@ -35,11 +34,9 @@
     .nav-pills .nav-link:hover { background: #E2E8F0; }
     .nav-pills .nav-link.active { background: var(--primary-main); color: white; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3); }
 
-    /* 📊 Cards & Dashboard Layout */
     .dash-card { background: var(--card-bg); border-radius: 20px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); margin-bottom: 24px; border: 1px solid var(--border-color); }
     .card-title-app { font-size: 1.1rem; font-weight: 700; color: var(--primary-dark); margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
     
-    /* 🌟 FinTech Ledger Specific Styles */
     .ledger-card-total { background: linear-gradient(135deg, #0f766e 0%, #10b981 100%); border-radius: 1.5rem; padding: 1.5rem; position: relative; overflow: hidden; color: white; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3); }
     .ledger-card-total::after { content: ''; position: absolute; top: -40px; right: -40px; width: 150px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 50%; blur: 20px; }
     .ledger-stat-card { background: white; border: 1px solid var(--border-color); border-radius: 1.2rem; padding: 1.25rem; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
@@ -56,13 +53,11 @@
     .tx-income .tx-amount { color: #10b981; }
     .tx-expense .tx-amount { color: #f43f5e; }
     
-    /* 📋 Tables & Generic */
     .table-responsive { border-radius: 16px; border: 1px solid var(--border-color); overflow-x: auto; background: white; }
     .table th { background-color: #F1F5F9; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; white-space: nowrap; padding: 16px; border-bottom: 2px solid #E2E8F0; }
     .table td { white-space: nowrap; vertical-align: middle; font-size: 0.95rem; padding: 16px; border-bottom: 1px solid #F1F5F9; font-weight: 500; }
     .badge-status { padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; display: inline-flex; align-items: center; cursor: pointer; }
     
-    /* ⚙️ Utilities */
     #loader, #loginGate { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     #loginGate { background: var(--primary-dark); color: white; }
     #loader { background: rgba(255,255,255,0.95); display: none; backdrop-filter: blur(5px); }
@@ -73,7 +68,6 @@
     .action-btn { background: none; border: none; font-size: 1.1rem; padding: 5px; transition: 0.2s; cursor: pointer; }
     .action-btn:hover { transform: scale(1.1); }
     
-    /* Grid Helpers */
     .stat-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
     .stat-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
     .eq-item { background: var(--bg-color); border-radius: 16px; padding: 20px 16px; text-align: center; border: 1px solid var(--border-color); position: relative;}
@@ -136,7 +130,6 @@
         <button onclick="exportToCSV('export-dashboard', 'รายงานสรุปภาพรวมกองทุน')" class="btn btn-sm btn-dark rounded-pill fw-bold px-3 shadow-sm"><i class="fa-solid fa-file-csv me-1"></i> ออกรายงาน CSV</button>
       </div>
       
-      <!-- การเงินรวม -->
       <div class="dash-card p-0 border-0 mb-4 bg-transparent shadow-none">
         <div class="ledger-card-total mb-3">
           <div class="d-flex justify-content-between mb-3 align-items-center">
@@ -168,7 +161,6 @@
         </div>
       </div>
 
-      <!-- สัดส่วนสมาชิก -->
       <div class="dash-card">
         <h6 class="card-title-app">
           <div class="d-flex align-items-center">
@@ -200,7 +192,6 @@
         </div>
       </div>
 
-      <!-- กราฟการเงินและโครงสร้างทุน -->
       <div class="dash-card">
         <div class="card-title-app mb-3">
           <div class="d-flex align-items-center"><i class="fa-solid fa-chart-column text-primary me-2"></i> เปรียบเทียบรายรับ-รายจ่าย</div>
@@ -244,7 +235,7 @@
       </div>
     </div>
     
-    <!-- 💳 3. สมุดบัญชีกลาง (Modern FinTech Edition) -->
+    <!-- 💳 3. สมุดบัญชีกลาง -->
     <div class="tab-pane fade" id="view-ledger">
       <div class="dash-card p-4 border-0 bg-transparent shadow-none px-0 pt-0">
         
@@ -328,7 +319,11 @@
       <div class="dash-card p-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
           <h4 class="fw-bold text-dark mb-0">พิจารณาสวัสดิการ</h4>
-          <button onclick="exportToCSV('table-claims', 'รายการสวัสดิการ')" class="btn btn-sm btn-outline-dark rounded-pill px-3"><i class="fa-solid fa-download"></i></button>
+          <div>
+            <button onclick="exportToCSV('table-claims', 'รายการสวัสดิการ')" class="btn btn-sm btn-outline-dark rounded-pill px-3 me-1"><i class="fa-solid fa-download"></i></button>
+            <!-- 🌟 [Phase 2] ปุ่มแอดมินเบิกสวัสดิการแทนสมาชิก -->
+            <button onclick="openAdminProxyClaimModal()" class="btn btn-sm btn-danger rounded-pill fw-bold px-3"><i class="fa-solid fa-hand-holding-medical me-1"></i> ขอเบิกแทนสมาชิก</button>
+          </div>
         </div>
         <div class="chart-container mb-4" style="height: 200px;"><canvas id="claimsChart"></canvas></div>
         <div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>ผู้เบิก</th><th>ประเภท</th><th>ยอดขอ</th><th>สถานะ</th><th>จัดการ</th></tr></thead><tbody id="table-claims"></tbody></table></div>
@@ -339,10 +334,10 @@
     <div class="tab-pane fade" id="view-rules">
       <div class="dash-card p-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
-          <h4 class="fw-bold text-dark mb-0">ระเบียบกองทุน</h4>
-          <button onclick="openAddRuleModal()" class="btn btn-sm btn-primary rounded-pill fw-bold px-3"><i class="fa-solid fa-plus me-1"></i> เพิ่ม</button>
+          <h4 class="fw-bold text-dark mb-0">ระเบียบกองทุน (4 มิติ)</h4>
+          <button onclick="openAddRuleModal()" class="btn btn-sm btn-primary rounded-pill fw-bold px-3"><i class="fa-solid fa-plus me-1"></i> เพิ่มสวัสดิการ</button>
         </div>
-        <div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>ประเภทสวัสดิการ</th><th>อายุขั้นต่ำ</th><th>จ่ายสูงสุด/ปี</th><th>จัดการ</th></tr></thead><tbody id="table-rules"></tbody></table></div>
+        <div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>ประเภทสวัสดิการ</th><th>อายุขั้นต่ำ</th><th>สูงสุด/ครั้ง</th><th>สูงสุด/ปี (ครั้ง)</th><th>สูงสุด/ปี (บาท)</th><th>จัดการ</th></tr></thead><tbody id="table-rules"></tbody></table></div>
       </div>
     </div>
 
@@ -362,7 +357,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  // ⚠️ เปลี่ยนเป็น URL ของ Google Apps Script ของคุณ
   const GAS_API_URL = "https://script.google.com/macros/s/AKfycbw8ohbEXMSqCKzwTHeCem8pxpM_NcSA_twE3r4QU1HvsNZjtlEydGMoV6ffP1yBUOk/exec"; 
   const LIFF_ID_ADMIN = "2010764982-wudH3EsZ"; 
   
@@ -480,7 +474,7 @@
     charts.doughnut = new Chart(document.getElementById('doughnutChart').getContext('2d'), { type: 'doughnut', data: { labels: ['สมทบสมาชิก', 'รัฐสมทบ', 'ท้องถิ่นสมทบ', 'ดอกเบี้ย/อื่นๆ', 'บริจาค'], datasets: [{ data: [cData.doughnut.member, cData.doughnut.gov, cData.doughnut.local, cData.doughnut.interest, cData.doughnut.donate], backgroundColor: ['#2563EB', '#F59E0B', '#10B981', '#8B5CF6', '#EC4899'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } } });
   }
 
-  // 👥 Members CRUD (อัปเดตแสดงป้าย Admin)
+  // 👥 Members CRUD
   async function loadMembersData(page) {
     showLoader(true); currentMemberPage = page;
     const p = { action: 'getPaginatedMembers', adminUid: currentAdminData.uid, page: page, limit: 15, searchQuery: document.getElementById('searchMemberInput').value, centerFilter: document.getElementById('filterCenterInput').value };
@@ -489,9 +483,7 @@
       if(res.status === 'success') {
         cachedData['members'] = res.data;
         document.getElementById('table-members').innerHTML = res.data.map((i, idx) => {
-          // 🌟 สร้างป้าย Badge แจ้งสถานะ Admin (ถ้ามี)
           let adminBadge = i.adminRole ? `<span class="badge bg-danger text-white ms-1" style="font-size:0.6rem;"><i class="fa-solid fa-star"></i> ${i.adminRole.replace('Admin-','')}</span>` : '';
-          
           return `<tr>
             <td><strong class="text-primary">${i.memberId}</strong></td>
             <td>${i.name} ${adminBadge}</td>
@@ -544,7 +536,6 @@
     Swal.fire({ title: 'แก้ไขยอดเงิน', html: `<input type="number" id="editTxAmt" class="form-control" value="${item.amount}">`, showCancelButton: true, confirmButtonText: 'บันทึก', preConfirm: () => ({ action: 'adminUpdateData', module: 'transactions', adminUid: currentAdminData.uid, targetId: item.txId, updateField: 'amount', updateValue: document.getElementById('editTxAmt').value }) }).then(handleApiResponse);
   }
 
-  // 🌟 ฟังก์ชันอนุมัติเงินสมทบของหน้าสมุดบัญชีกลาง (Leak 1 Fix)
   function approveLedgerTransaction(idx) {
     const item = cachedData['transactions'][idx];
     Swal.fire({
@@ -562,7 +553,7 @@
     });
   }
 
- // 🏥 Claims CRUD (อัปเดตระบบเลือกบัญชีจ่ายเงิน)
+  // 🏥 Claims CRUD
   function approveClaim(idx) {
     const item = cachedData['claims'][idx];
     Swal.fire({ 
@@ -593,64 +584,160 @@
      charts.claims = new Chart(document.getElementById('claimsChart').getContext('2d'), { type: 'bar', data: { labels: data.map(d => d.name), datasets: [{ label: 'จำนวนคำขอ', data: data.map(d=>d.count), backgroundColor: '#3B82F6', borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false } });
   }
 
-  // ⚖️ Rules CRUD
-  function openAddRuleModal() {
-    Swal.fire({ title: 'เพิ่มระเบียบสวัสดิการ', html: `<input id="addRuleName" class="form-control mb-2" placeholder="ชื่อสวัสดิการ"><input id="addRuleMinDay" type="number" class="form-control mb-2" placeholder="อายุสมาชิกขั้นต่ำ (วัน)"><input id="addRuleMaxAmt" type="number" class="form-control" placeholder="จ่ายสูงสุดต่อปี (บาท)">`, showCancelButton: true, confirmButtonText: 'บันทึก', preConfirm: () => ({ action: 'adminAddRule', adminUid: currentAdminData.uid, welfareName: document.getElementById('addRuleName').value, minDays: document.getElementById('addRuleMinDay').value, maxPerYear: document.getElementById('addRuleMaxAmt').value }) }).then(handleApiResponse);
+  // 🌟 [Phase 2] ระบบแอดมินขอรับสวัสดิการแทนสมาชิก (Proxy Claim Modal)
+  async function openAdminProxyClaimModal() {
+    showLoader(true, "กำลังดึงรายชื่อสมาชิก...");
+    const res = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "getMemberListForAdmin", adminUid: currentAdminData.uid }) }).then(r=>r.json());
+    showLoader(false);
+
+    if (res.status !== 'success') { Swal.fire('Error', 'ไม่สามารถดึงรายชื่อสมาชิกได้', 'error'); return; }
+
+    let memberOptionsHtml = '<option value="" disabled selected>-- เลือกสมาชิกที่จะขอเบิกแทน --</option>';
+    res.data.forEach(m => { memberOptionsHtml += `<option value="${m.uid}">${m.name} (${m.center})</option>`; });
+
+    Swal.fire({
+      title: 'ขอเบิกสวัสดิการแทนสมาชิก',
+      html: `
+        <div class="text-start mb-2"><label class="small text-muted fw-bold">1. เลือกชื่อสมาชิก</label></div>
+        <select id="proxyMemberSelect" class="form-select mb-3 fw-bold text-primary" onchange="fetchProxyMemberEligibility()">${memberOptionsHtml}</select>
+        
+        <div id="proxyEligibilitySection" style="display:none;">
+          <div class="text-start mb-2"><label class="small text-muted fw-bold">2. เลือกประเภทสวัสดิการที่สิทธิ์ผ่าน</label></div>
+          <select id="proxyWelfareSelect" class="form-select mb-3" onchange="updateProxyMaxAmount()"></select>
+          
+          <div class="text-start mb-2"><label class="small text-muted fw-bold">3. ระบุจำนวนเงินที่ขอเบิก (บาท)</label></div>
+          <input type="number" id="proxyClaimAmount" class="form-control mb-3" placeholder="0.00">
+          
+          <div class="text-start mb-2"><label class="small text-muted fw-bold">4. หมายเหตุ / เหตุผลการเบิกแทน</label></div>
+          <textarea id="proxyClaimNote" class="form-control" rows="2" placeholder="เช่น สมาชิกเสียชีวิต / ไม่มีสมาร์ทโฟน"></textarea>
+        </div>
+      `,
+      showCancelButton: true, confirmButtonText: 'ส่งเรื่องเบิกแทน', confirmButtonColor: '#EF4444',
+      preConfirm: () => {
+        const memUid = document.getElementById('proxyMemberSelect').value;
+        const wSelect = document.getElementById('proxyWelfareSelect');
+        const amt = document.getElementById('proxyClaimAmount').value;
+        if(!memUid || !wSelect.value || !amt || parseFloat(amt) <= 0) {
+          Swal.showValidationMessage('กรุณากรอกข้อมูลสวัสดิการและยอดเงินให้ครบถ้วน');
+          return false;
+        }
+        const selectedWelfareOption = wSelect.options[wSelect.selectedIndex];
+        return {
+          action: 'adminSubmitProxyClaim',
+          adminUid: currentAdminData.uid,
+          targetUid: memUid,
+          fullName: selectedWelfareOption.dataset.fullName,
+          center: selectedWelfareOption.dataset.center,
+          welfareName: wSelect.value,
+          claimAmount: amt,
+          note: document.getElementById('proxyClaimNote').value
+        };
+      }
+    }).then(handleApiResponse);
   }
 
-  // 🛡️ Admins Settings CRUD (อัปเดตระบบดึงชื่อสมาชิกแบบสมาร์ทช้อยส์)
+  // ดึงสิทธิ์ของสมาชิกที่เลือกใน Modal เบิกแทน
+  async function fetchProxyMemberEligibility() {
+    const memUid = document.getElementById('proxyMemberSelect').value;
+    if(!memUid) return;
+    
+    const wSelect = document.getElementById('proxyWelfareSelect');
+    wSelect.innerHTML = '<option value="" disabled selected>กำลังคำนวณสิทธิ์ตามระเบียบ 4 มิติ...</option>';
+    document.getElementById('proxyEligibilitySection').style.display = 'block';
+    
+    const res = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "getMemberEligibilityForAdmin", adminUid: currentAdminData.uid, targetUid: memUid }) }).then(r=>r.json());
+    if(res.status === 'success') {
+      wSelect.innerHTML = '<option value="" disabled selected>-- เลือกสวัสดิการ --</option>';
+      res.data.welfareRules.forEach(r => {
+        const isOk = r.eligibility === 'eligible';
+        const opt = document.createElement('option');
+        opt.value = r.welfareName;
+        opt.disabled = !isOk;
+        opt.text = isOk ? `${r.welfareName} (เบิกได้สูงสุด ${r.maxPerClaim} ฿)` : `${r.welfareName} (${r.reason})`;
+        opt.dataset.maxClaim = r.maxPerClaim;
+        opt.dataset.fullName = res.data.memberInfo.fullName;
+        opt.dataset.center = res.data.memberInfo.center;
+        wSelect.appendChild(opt);
+      });
+    }
+  }
+
+  function updateProxyMaxAmount() {
+    const wSelect = document.getElementById('proxyWelfareSelect');
+    const selectedOpt = wSelect.options[wSelect.selectedIndex];
+    const max = selectedOpt.dataset.maxClaim;
+    const amtInput = document.getElementById('proxyClaimAmount');
+    amtInput.value = max;
+    amtInput.max = max;
+  }
+
+  // ⚖️ Rules CRUD (🌟 Phase 2 อัปเดตระเบียบ 4 มิติ)
+  function openAddRuleModal() {
+    Swal.fire({ 
+      title: 'เพิ่มระเบียบสวัสดิการ (4 มิติ)', 
+      html: `
+        <div class="text-start">
+          <label class="small text-muted fw-bold mb-1">1. ชื่อสวัสดิการ</label>
+          <input id="addRuleName" class="form-control mb-2" placeholder="เช่น สวัสดิการนอนโรงพยาบาล">
+          
+          <label class="small text-muted fw-bold mb-1">2. อายุสมาชิกขั้นต่ำ (วัน)</label>
+          <input id="addRuleMinDay" type="number" class="form-control mb-2" placeholder="เช่น 180">
+          
+          <label class="small text-muted fw-bold mb-1">3. เบอร์ได้สูงสุดต่อครั้ง (บาท/ครั้ง)</label>
+          <input id="addRuleMaxClaim" type="number" class="form-control mb-2" placeholder="เช่น 500">
+          
+          <label class="small text-muted fw-bold mb-1">4. เบิกได้สูงสุดต่อปี (ครั้ง/ปี)</label>
+          <input id="addRuleMaxTimes" type="number" class="form-control mb-2" placeholder="เช่น 10">
+          
+          <label class="small text-muted fw-bold mb-1">5. เบิกสะสมได้สูงสุดต่อปี (บาท/ปี)</label>
+          <input id="addRuleMaxYear" type="number" class="form-control mb-2" placeholder="เช่น 5000">
+          
+          <label class="small text-muted fw-bold mb-1">6. เอกสารแนบที่ต้องใช้</label>
+          <input id="addRuleDocs" class="form-control" placeholder="เช่น สำเนาบัตร ปชช., ใบรับรองแพทย์">
+        </div>
+      `, 
+      showCancelButton: true, confirmButtonText: 'บันทึกระเบียบ', confirmButtonColor: '#F59E0B',
+      preConfirm: () => ({ 
+        action: 'adminAddRule', adminUid: currentAdminData.uid, 
+        welfareName: document.getElementById('addRuleName').value, 
+        minDays: document.getElementById('addRuleMinDay').value, 
+        maxPerClaim: document.getElementById('addRuleMaxClaim').value,
+        maxTimesPerYear: document.getElementById('addRuleMaxTimes').value,
+        maxPerYear: document.getElementById('addRuleMaxYear').value,
+        docs: document.getElementById('addRuleDocs').value
+      }) 
+    }).then(handleApiResponse);
+  }
+
+  // 🛡️ Admins Settings CRUD
   async function openAddAdminModal() {
     if(currentAdminData.role !== 'Admin-Master') { Swal.fire('ปฏิเสธ', 'เฉพาะ Admin-Master เท่านั้นที่เพิ่มผู้ดูแลระบบได้', 'error'); return; }
     
-    // โหลดรายชื่อสมาชิกจากฐานข้อมูลก่อนเปิดหน้าต่าง
     showLoader(true, "กำลังโหลดรายชื่อสมาชิก...");
     const res = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "getMemberListForAdmin", adminUid: currentAdminData.uid }) }).then(r=>r.json());
     showLoader(false);
 
     if (res.status !== 'success') { Swal.fire('Error', 'ไม่สามารถดึงรายชื่อสมาชิกได้', 'error'); return; }
 
-    // สร้างตัวเลือก (Options) สำหรับ Dropdown
     let optionsHtml = '<option value="" disabled selected>-- เลือกชื่อสมาชิกที่จะแต่งตั้ง --</option>';
-    res.data.forEach(m => {
-      optionsHtml += `<option value="${m.uid}|${m.name}">${m.name} (${m.center})</option>`;
-    });
+    res.data.forEach(m => { optionsHtml += `<option value="${m.uid}|${m.name}">${m.name} (${m.center})</option>`; });
 
     Swal.fire({ 
       title: 'ตั้งค่าผู้ดูแลระบบ', 
       html: `
         <div class="text-start mb-2"><label class="small text-muted fw-bold">1. เลือกสมาชิกจากฐานข้อมูล</label></div>
         <select id="addAdmSelect" class="form-select mb-3 fw-bold text-primary">${optionsHtml}</select>
-        
         <div class="text-start mb-2"><label class="small text-muted fw-bold">2. กำหนดระดับสิทธิ์ (Role)</label></div>
-        <select id="addAdmRole" class="form-select mb-3">
-          <option value="Admin-ศูนย์ประสานงาน">Admin ศูนย์ประสานงาน</option>
-          <option value="Admin-การเงิน">Admin การเงิน</option>
-          <option value="Admin-Master">Admin Master</option>
-        </select>
-        
+        <select id="addAdmRole" class="form-select mb-3"><option value="Admin-ศูนย์ประสานงาน">Admin ศูนย์ประสานงาน</option><option value="Admin-การเงิน">Admin การเงิน</option><option value="Admin-Master">Admin Master</option></select>
         <div class="text-start mb-2"><label class="small text-muted fw-bold">3. กำหนดศูนย์ที่ดูแล (Area)</label></div>
-        <select id="addAdmCenter" class="form-select mb-2">
-          <option value="ALL">ดูแลทุกศูนย์ (Master/การเงิน)</option>
-          <option value="ศูนย์ชุมชนปารีย์">ศูนย์ชุมชนปารีย์</option>
-          <option value="ศูนย์ชุมชนเกียร์">ศูนย์ชุมชนเกียร์</option>
-          <option value="ศูนย์ชุมชนราษฎร์สามัคคี">ศูนย์ชุมชนราษฎร์สามัคคี</option>
-          <option value="ศูนย์ชุมชนกลันตัน">ศูนย์ชุมชนกลันตัน</option>
-          <option value="ศูนย์ชุมชนมาโมง">ศูนย์ชุมชนมาโมง</option>
-          <option value="ศูนย์ชุมชนสุคิริน">ศูนย์ชุมชนสุคิริน</option>
-        </select>
+        <select id="addAdmCenter" class="form-select mb-2"><option value="ALL">ดูแลทุกศูนย์ (Master/การเงิน)</option><option value="ศูนย์ชุมชนปารีย์">ศูนย์ชุมชนปารีย์</option><option value="ศูนย์ชุมชนเกียร์">ศูนย์ชุมชนเกียร์</option><option value="ศูนย์ชุมชนราษฎร์สามัคคี">ศูนย์ชุมชนราษฎร์สามัคคี</option><option value="ศูนย์ชุมชนกลันตัน">ศูนย์ชุมชนกลันตัน</option><option value="ศูนย์ชุมชนมาโมง">ศูนย์ชุมชนมาโมง</option><option value="ศูนย์ชุมชนสุคิริน">ศูนย์ชุมชนสุคิริน</option></select>
       `, 
       showCancelButton: true, confirmButtonText: 'เพิ่มสิทธิ์', confirmButtonColor: '#2563EB',
       preConfirm: () => {
-        // แยกค่า UID และ ชื่อ ออกจาก Dropdown
         const selectedVal = document.getElementById('addAdmSelect').value;
         if(!selectedVal) { Swal.showValidationMessage('กรุณาเลือกสมาชิกจาก Dropdown ก่อนครับ'); return false; }
-        
         const [targetUid, targetName] = selectedVal.split('|');
-        return { 
-          action: 'adminAddAdmin', adminUid: currentAdminData.uid, 
-          targetUid: targetUid, name: targetName, 
-          role: document.getElementById('addAdmRole').value, center: document.getElementById('addAdmCenter').value 
-        };
+        return { action: 'adminAddAdmin', adminUid: currentAdminData.uid, targetUid: targetUid, name: targetName, role: document.getElementById('addAdmRole').value, center: document.getElementById('addAdmCenter').value };
       } 
     }).then(handleApiResponse);
   }
@@ -667,16 +754,13 @@
     if(res.status === 'success') {
       cachedData[module] = res.data;
       if (module === 'transactions') {
-        // Table (Hidden for Export)
         document.getElementById(`table-transactions`).innerHTML = res.data.map((i, idx) => `<tr><td>${i.date}</td><td>${i.name}</td><td>${i.amount}</td><td>${i.status}</td></tr>`).join('');
-        // Render FinTech List
         document.getElementById('ledger-tx-list').innerHTML = res.data.map((i, idx) => {
             const isTransfer = String(i.type).includes('โอน'); const isIncome = !i.isOut && !isTransfer; const isExpense = i.isOut && !isTransfer;
             let iconClass = isIncome ? 'tx-income' : (isExpense ? 'tx-expense' : 'tx-transfer');
             let icon = isIncome ? 'fa-arrow-up' : (isExpense ? 'fa-arrow-down' : 'fa-arrow-right-arrow-left');
             let sign = isIncome ? '+' : (isExpense ? '-' : '');
             
-            // 🌟 ปุ่มดูสลิป และ ปุ่มอนุมัติ (Leak 1 Fix)
             let slipBtn = (i.url && i.url !== '-' && i.url !== 'undefined' && i.url.startsWith('http')) 
                 ? `<button class="action-btn text-info" onclick="window.open('${i.url}', '_blank')" title="ดูสลิปโอนเงิน"><i class="fa-solid fa-file-invoice"></i></button>` : '';
             let approveBtn = (i.status === 'รอตรวจสอบ') 
@@ -702,14 +786,23 @@
       }
       else if (module === 'claims') { 
         document.getElementById(`table-claims`).innerHTML = res.data.list.map((i, idx) => {
-            // 🌟 ปุ่มดูใบรับรองแพทย์ฝั่งสวัสดิการ (Leak 2 Fix)
             let docBtn = (i.docUrl && i.docUrl !== '-' && i.docUrl !== 'undefined' && i.docUrl.startsWith('http')) 
                 ? `<button class="btn btn-sm btn-info rounded-pill px-2 text-white me-1" onclick="window.open('${i.docUrl}', '_blank')" title="ดูเอกสารแนบ"><i class="fa-solid fa-file-medical"></i></button>` : '';
             return `<tr><td>${i.name}</td><td>${i.welfareName}</td><td class="fw-bold text-primary">${i.amount} ฿</td><td><span class="badge ${i.status==='อนุมัติแล้ว'?'bg-success text-white':(i.status==='ปฏิเสธ'?'bg-danger text-white':'bg-warning text-dark')}">${i.status}</span></td><td>${docBtn}<button class="btn btn-sm btn-primary rounded-pill px-3" onclick="approveClaim(${idx})"><i class="fa-solid fa-gear"></i> จัดการ</button></td></tr>`;
         }).join(''); 
         renderClaimsChart(res.data.chart); 
       }
-      else if (module === 'rules') document.getElementById(`table-rules`).innerHTML = res.data.map((i, idx) => `<tr><td><strong class="text-dark">${i.welfareName}</strong></td><td>${i.minDays} วัน</td><td class="text-danger fw-bold">${i.maxPerYear} ฿</td><td><button class="action-btn text-danger" onclick="deleteRecord('rules', '${i.ruleId}', ${idx})"><i class="fa-solid fa-trash"></i></button></td></tr>`).join('');
+      else if (module === 'rules') {
+        // 🌟 [Phase 2] ตารางระเบียบกองทุนแบบ 4 มิติ
+        document.getElementById(`table-rules`).innerHTML = res.data.map((i, idx) => `<tr>
+          <td><strong class="text-dark">${i.welfareName}</strong></td>
+          <td>${i.minDays} วัน</td>
+          <td class="text-primary fw-bold">${i.maxPerClaim} ฿</td>
+          <td class="text-warning text-dark fw-bold">${i.maxTimesPerYear} ครั้ง</td>
+          <td class="text-danger fw-bold">${i.maxPerYear} ฿</td>
+          <td><button class="action-btn text-danger" onclick="deleteRecord('rules', '${i.ruleId}', ${idx})"><i class="fa-solid fa-trash"></i></button></td>
+        </tr>`).join('');
+      }
       else if (module === 'admins') document.getElementById(`table-admins`).innerHTML = res.data.map((i, idx) => `<tr><td><strong class="text-dark">${i.name}</strong></td><td>${i.role} / ${i.center}</td><td><span class="badge ${i.status==='ใช้งาน'?'bg-success':'bg-danger'} text-white" onclick="changeAdminStatus('${i.adminId}', '${i.status}')">${i.status} <i class="fa-solid fa-caret-down"></i></span></td><td><button class="action-btn text-danger" onclick="deleteRecord('admins', '${i.adminId}', ${idx})"><i class="fa-solid fa-trash"></i></button></td></tr>`).join('');
     } showLoader(false);
   }
