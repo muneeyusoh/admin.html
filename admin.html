@@ -244,7 +244,11 @@
                 <h4 class="fw-bold text-dark mb-0">ระบบจัดการการเงิน</h4>
                 <p class="text-muted small mb-0">สมุดบัญชีกลาง (General Ledger)</p>
             </div>
-            <button onclick="exportToCSV('export-ledger-table', 'สมุดบัญชีกลาง')" class="btn btn-sm bg-white border rounded-pill fw-bold shadow-sm px-3 text-success"><i class="fa-solid fa-file-excel me-1"></i> Export</button>
+            <div>
+                <button onclick="exportToCSV('export-ledger-table', 'สมุดบัญชีกลาง')" class="btn btn-sm bg-white border rounded-pill fw-bold shadow-sm px-3 text-success"><i class="fa-solid fa-file-excel me-1"></i> Export</button>
+                <!-- 🌟 เพิ่มปุ่มใหม่ตรงนี้ครับ -->
+                <button onclick="openAdminProxyContributionModal()" class="btn btn-sm btn-primary rounded-pill fw-bold shadow-sm px-3 ms-2"><i class="fa-solid fa-hand-holding-dollar me-1"></i> บันทึกสมทบแทน</button>
+            </div>
         </div>
 
         <div class="row g-3 mb-4">
@@ -635,7 +639,58 @@
       }
     }).then(handleApiResponse);
   }
+  
+  // 🌟 [Phase 2.5] ระบบแอดมินบันทึกเงินสมทบแทนสมาชิก (Proxy Contribution)
+  async function openAdminProxyContributionModal() {
+    showLoader(true, "กำลังดึงรายชื่อสมาชิก...");
+    const res = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "getMemberListForAdmin", adminUid: currentAdminData.uid }) }).then(r=>r.json());
+    showLoader(false);
 
+    if (res.status !== 'success') { Swal.fire('Error', 'ไม่สามารถดึงรายชื่อสมาชิกได้', 'error'); return; }
+
+    let memberOptionsHtml = '<option value="" disabled selected>-- เลือกสมาชิกที่ต้องการบันทึกสมทบ --</option>';
+    res.data.forEach(m => { memberOptionsHtml += `<option value="${m.uid}|${m.name}">${m.name} (${m.center})</option>`; });
+
+    Swal.fire({
+      title: 'บันทึกสมทบแทนสมาชิก',
+      html: `
+        <div class="text-start mb-2"><label class="small text-muted fw-bold">1. เลือกชื่อสมาชิก</label></div>
+        <select id="proxyContribMember" class="form-select mb-3 fw-bold text-primary">${memberOptionsHtml}</select>
+        
+        <div class="text-start mb-2"><label class="small text-muted fw-bold">2. ระบุจำนวนเงินสมทบ (บาท)</label></div>
+        <input type="number" id="proxyContribAmount" class="form-control mb-3" placeholder="0.00">
+        
+        <div class="text-start mb-2"><label class="small text-muted fw-bold">3. รับเงินเข้าบัญชีไหน?</label></div>
+        <select id="proxyContribWallet" class="form-select mb-3">
+          <option value="cash">รับเป็นเงินสด (Cash)</option>
+          <option value="bank">รับโอนเข้าธนาคาร (Bank)</option>
+        </select>
+        
+        <div class="text-start mb-2"><label class="small text-muted fw-bold">4. หมายเหตุ (ถ้ามี)</label></div>
+        <input type="text" id="proxyContribNote" class="form-control" placeholder="เช่น จ่ายล่วงหน้า 1 ปี, ยายไม่มีมือถือ">
+      `,
+      showCancelButton: true, confirmButtonText: 'บันทึกยอดเงิน', confirmButtonColor: '#10B981',
+      preConfirm: () => {
+        const selectedVal = document.getElementById('proxyContribMember').value;
+        const amt = document.getElementById('proxyContribAmount').value;
+        if(!selectedVal || !amt || parseFloat(amt) <= 0) {
+          Swal.showValidationMessage('กรุณาเลือกสมาชิกและระบุจำนวนเงินให้ถูกต้อง');
+          return false;
+        }
+        const [targetUid, targetName] = selectedVal.split('|');
+        return {
+          action: 'adminSubmitProxyContribution',
+          adminUid: currentAdminData.uid,
+          targetUid: targetUid,
+          fullName: targetName,
+          amount: amt,
+          wallet: document.getElementById('proxyContribWallet').value,
+          note: document.getElementById('proxyContribNote').value
+        };
+      }
+    }).then(handleApiResponse);
+  }
+  
   // ดึงสิทธิ์ของสมาชิกที่เลือกใน Modal เบิกแทน
   async function fetchProxyMemberEligibility() {
     const memUid = document.getElementById('proxyMemberSelect').value;
