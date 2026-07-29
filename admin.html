@@ -480,6 +480,7 @@
     charts.doughnut = new Chart(document.getElementById('doughnutChart').getContext('2d'), { type: 'doughnut', data: { labels: ['สมทบสมาชิก', 'รัฐสมทบ', 'ท้องถิ่นสมทบ', 'ดอกเบี้ย/อื่นๆ', 'บริจาค'], datasets: [{ data: [cData.doughnut.member, cData.doughnut.gov, cData.doughnut.local, cData.doughnut.interest, cData.doughnut.donate], backgroundColor: ['#2563EB', '#F59E0B', '#10B981', '#8B5CF6', '#EC4899'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } } });
   }
 
+  // 👥 Members CRUD (อัปเดตแสดงป้าย Admin)
   async function loadMembersData(page) {
     showLoader(true); currentMemberPage = page;
     const p = { action: 'getPaginatedMembers', adminUid: currentAdminData.uid, page: page, limit: 15, searchQuery: document.getElementById('searchMemberInput').value, centerFilter: document.getElementById('filterCenterInput').value };
@@ -487,7 +488,18 @@
       const res = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify(p) }).then(r=>r.json());
       if(res.status === 'success') {
         cachedData['members'] = res.data;
-        document.getElementById('table-members').innerHTML = res.data.map((i, idx) => `<tr><td><strong class="text-primary">${i.memberId}</strong></td><td>${i.name}</td><td>${i.center}</td><td><span class="badge ${i.status.includes('เป็นสมาชิก') ? 'bg-success text-white' : 'bg-light text-dark border'}" onclick="changeMemberStatus(${idx})">${i.status} <i class="fa-solid fa-caret-down ms-1"></i></span></td><td><button class="action-btn text-danger" onclick="deleteRecord('members', '${i.memberId}', ${idx})"><i class="fa-solid fa-trash"></i></button></td></tr>`).join('');
+        document.getElementById('table-members').innerHTML = res.data.map((i, idx) => {
+          // 🌟 สร้างป้าย Badge แจ้งสถานะ Admin (ถ้ามี)
+          let adminBadge = i.adminRole ? `<span class="badge bg-danger text-white ms-1" style="font-size:0.6rem;"><i class="fa-solid fa-star"></i> ${i.adminRole.replace('Admin-','')}</span>` : '';
+          
+          return `<tr>
+            <td><strong class="text-primary">${i.memberId}</strong></td>
+            <td>${i.name} ${adminBadge}</td>
+            <td>${i.center}</td>
+            <td><span class="badge ${i.status.includes('เป็นสมาชิก') ? 'bg-success text-white' : 'bg-light text-dark border'}" onclick="changeMemberStatus(${idx})">${i.status} <i class="fa-solid fa-caret-down ms-1"></i></span></td>
+            <td><button class="action-btn text-danger" onclick="deleteRecord('members', '${i.memberId}', ${idx})"><i class="fa-solid fa-trash"></i></button></td>
+          </tr>`;
+        }).join('');
         totalMemberPages = res.pagination.totalPages; document.getElementById('page-info-members').innerText = `หน้า ${page}/${totalMemberPages || 1}`;
       }
     } catch(e) {} showLoader(false);
@@ -586,10 +598,61 @@
     Swal.fire({ title: 'เพิ่มระเบียบสวัสดิการ', html: `<input id="addRuleName" class="form-control mb-2" placeholder="ชื่อสวัสดิการ"><input id="addRuleMinDay" type="number" class="form-control mb-2" placeholder="อายุสมาชิกขั้นต่ำ (วัน)"><input id="addRuleMaxAmt" type="number" class="form-control" placeholder="จ่ายสูงสุดต่อปี (บาท)">`, showCancelButton: true, confirmButtonText: 'บันทึก', preConfirm: () => ({ action: 'adminAddRule', adminUid: currentAdminData.uid, welfareName: document.getElementById('addRuleName').value, minDays: document.getElementById('addRuleMinDay').value, maxPerYear: document.getElementById('addRuleMaxAmt').value }) }).then(handleApiResponse);
   }
 
-  // 🛡️ Admins Settings CRUD
-  function openAddAdminModal() {
+  // 🛡️ Admins Settings CRUD (อัปเดตระบบดึงชื่อสมาชิกแบบสมาร์ทช้อยส์)
+  async function openAddAdminModal() {
     if(currentAdminData.role !== 'Admin-Master') { Swal.fire('ปฏิเสธ', 'เฉพาะ Admin-Master เท่านั้นที่เพิ่มผู้ดูแลระบบได้', 'error'); return; }
-    Swal.fire({ title: 'ตั้งค่าผู้ดูแลระบบ', html: `<input id="addAdmUid" class="form-control mb-2" placeholder="UID LINE (ของสมาชิกที่จะตั้ง)"><input id="addAdmName" class="form-control mb-2" placeholder="ชื่อสำหรับแสดงผล"><select id="addAdmRole" class="form-select mb-2"><option value="Admin-ศูนย์ประสานงาน">Admin ศูนย์</option><option value="Admin-การเงิน">Admin การเงิน</option><option value="Admin-Master">Admin Master</option></select><select id="addAdmCenter" class="form-select"><option value="ALL">ดูแลทุกศูนย์ (Master/การเงิน)</option><option value="ศูนย์ชุมชนปารีย์">ศูนย์ชุมชนปารีย์</option><option value="ศูนย์ชุมชนเกียร์">ศูนย์ชุมชนเกียร์</option><option value="ศูนย์ชุมชนราษฎร์สามัคคี">ศูนย์ชุมชนราษฎร์สามัคคี</option><option value="ศูนย์ชุมชนกลันตัน">ศูนย์ชุมชนกลันตัน</option><option value="ศูนย์ชุมชนมาโมง">ศูนย์ชุมชนมาโมง</option><option value="ศูนย์ชุมชนสุคิริน">ศูนย์ชุมชนสุคิริน</option></select>`, showCancelButton: true, confirmButtonText: 'เพิ่มสิทธิ์', preConfirm: () => ({ action: 'adminAddAdmin', adminUid: currentAdminData.uid, targetUid: document.getElementById('addAdmUid').value, name: document.getElementById('addAdmName').value, role: document.getElementById('addAdmRole').value, center: document.getElementById('addAdmCenter').value }) }).then(handleApiResponse);
+    
+    // โหลดรายชื่อสมาชิกจากฐานข้อมูลก่อนเปิดหน้าต่าง
+    showLoader(true, "กำลังโหลดรายชื่อสมาชิก...");
+    const res = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "getMemberListForAdmin", adminUid: currentAdminData.uid }) }).then(r=>r.json());
+    showLoader(false);
+
+    if (res.status !== 'success') { Swal.fire('Error', 'ไม่สามารถดึงรายชื่อสมาชิกได้', 'error'); return; }
+
+    // สร้างตัวเลือก (Options) สำหรับ Dropdown
+    let optionsHtml = '<option value="" disabled selected>-- เลือกชื่อสมาชิกที่จะแต่งตั้ง --</option>';
+    res.data.forEach(m => {
+      optionsHtml += `<option value="${m.uid}|${m.name}">${m.name} (${m.center})</option>`;
+    });
+
+    Swal.fire({ 
+      title: 'ตั้งค่าผู้ดูแลระบบ', 
+      html: `
+        <div class="text-start mb-2"><label class="small text-muted fw-bold">1. เลือกสมาชิกจากฐานข้อมูล</label></div>
+        <select id="addAdmSelect" class="form-select mb-3 fw-bold text-primary">${optionsHtml}</select>
+        
+        <div class="text-start mb-2"><label class="small text-muted fw-bold">2. กำหนดระดับสิทธิ์ (Role)</label></div>
+        <select id="addAdmRole" class="form-select mb-3">
+          <option value="Admin-ศูนย์ประสานงาน">Admin ศูนย์ประสานงาน</option>
+          <option value="Admin-การเงิน">Admin การเงิน</option>
+          <option value="Admin-Master">Admin Master</option>
+        </select>
+        
+        <div class="text-start mb-2"><label class="small text-muted fw-bold">3. กำหนดศูนย์ที่ดูแล (Area)</label></div>
+        <select id="addAdmCenter" class="form-select mb-2">
+          <option value="ALL">ดูแลทุกศูนย์ (Master/การเงิน)</option>
+          <option value="ศูนย์ชุมชนปารีย์">ศูนย์ชุมชนปารีย์</option>
+          <option value="ศูนย์ชุมชนเกียร์">ศูนย์ชุมชนเกียร์</option>
+          <option value="ศูนย์ชุมชนราษฎร์สามัคคี">ศูนย์ชุมชนราษฎร์สามัคคี</option>
+          <option value="ศูนย์ชุมชนกลันตัน">ศูนย์ชุมชนกลันตัน</option>
+          <option value="ศูนย์ชุมชนมาโมง">ศูนย์ชุมชนมาโมง</option>
+          <option value="ศูนย์ชุมชนสุคิริน">ศูนย์ชุมชนสุคิริน</option>
+        </select>
+      `, 
+      showCancelButton: true, confirmButtonText: 'เพิ่มสิทธิ์', confirmButtonColor: '#2563EB',
+      preConfirm: () => {
+        // แยกค่า UID และ ชื่อ ออกจาก Dropdown
+        const selectedVal = document.getElementById('addAdmSelect').value;
+        if(!selectedVal) { Swal.showValidationMessage('กรุณาเลือกสมาชิกจาก Dropdown ก่อนครับ'); return false; }
+        
+        const [targetUid, targetName] = selectedVal.split('|');
+        return { 
+          action: 'adminAddAdmin', adminUid: currentAdminData.uid, 
+          targetUid: targetUid, name: targetName, 
+          role: document.getElementById('addAdmRole').value, center: document.getElementById('addAdmCenter').value 
+        };
+      } 
+    }).then(handleApiResponse);
   }
   function changeAdminStatus(adminId, currStatus) {
       if(currentAdminData.role !== 'Admin-Master') return;
