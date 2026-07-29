@@ -142,7 +142,6 @@
           <div class="d-flex justify-content-between mb-3 align-items-center">
             <span class="small text-white-50 fw-bold text-uppercase d-flex align-items-center gap-2">
               สถานะทางการเงิน (Net Capital)
-              <!-- 🔗 ปุ่มเชื่อมโยงไปสมุดบัญชีกลาง -->
               <button onclick="navigateToTab('view-ledger')" class="btn btn-sm rounded-pill px-2 py-0 border-0 text-white" style="font-size:0.7rem; background: rgba(255,255,255,0.15);" title="ไปที่สมุดบัญชีกลาง"><i class="fa-solid fa-book-open"></i> สมุดบัญชี</button>
             </span>
             <i class="fa-solid fa-wallet text-white-50"></i>
@@ -174,7 +173,6 @@
         <h6 class="card-title-app">
           <div class="d-flex align-items-center">
             <i class="fa-solid fa-users-rays text-primary me-2"></i> สัดส่วนสมาชิกและประชากร
-            <!-- 🔗 ปุ่มเชื่อมโยงไปทะเบียนสมาชิก -->
             <button onclick="navigateToTab('view-members')" class="btn btn-sm bg-primary bg-opacity-10 text-primary border-0 rounded-pill ms-2 px-2 py-0 fw-bold" style="font-size:0.7rem;" title="ไปที่ทะเบียนสมาชิก"><i class="fa-solid fa-address-book"></i> ทะเบียนสมาชิก</button>
           </div>
         </h6>
@@ -190,7 +188,6 @@
             <span class="small text-muted fw-bold">ประชากรตำบล</span>
             <div class="d-flex justify-content-center align-items-center gap-2 mt-1">
               <h5 class="text-dark mb-0" id="eq-population">20,000</h5>
-              <!-- ✏️ ปุ่มแก้ไขจำนวนประชากร -->
               <button onclick="editPopulation()" class="btn btn-sm text-primary p-0" title="ตั้งค่าจำนวนประชากร"><i class="fa-solid fa-pen-to-square" style="font-size:0.85rem;"></i></button>
             </div>
           </div>
@@ -259,7 +256,6 @@
             <button onclick="exportToCSV('export-ledger-table', 'สมุดบัญชีกลาง')" class="btn btn-sm bg-white border rounded-pill fw-bold shadow-sm px-3 text-success"><i class="fa-solid fa-file-excel me-1"></i> Export</button>
         </div>
 
-        <!-- 3 Cards -->
         <div class="row g-3 mb-4">
             <div class="col-12 col-lg-6">
                 <div class="ledger-card-total h-100">
@@ -288,14 +284,12 @@
             </div>
         </div>
 
-        <!-- Transaction Forms -->
         <div class="bg-white p-4 rounded-4 shadow-sm border mb-4">
             <div class="bg-light p-1 rounded-4 mb-4 d-flex">
                 <button id="tab-ie" class="tab-btn-ledger active" onclick="switchLedgerTab('ie')">รายรับ-รายจ่าย</button>
                 <button id="tab-tf" class="tab-btn-ledger" onclick="switchLedgerTab('tf')">โอนเงินระหว่างบัญชี</button>
             </div>
             
-            <!-- Income/Expense Form -->
             <form id="form-ie" onsubmit="submitLedgerIE(event)">
                 <div class="row g-3">
                     <div class="col-12"><label class="small text-muted fw-bold mb-1">คำอธิบายรายการ</label><input type="text" id="ieNote" class="form-control" placeholder="เช่น ค่าสวัสดิการ, เงินบริจาค" required></div>
@@ -312,7 +306,6 @@
                 <button type="submit" class="btn w-100 mt-4 rounded-3 py-3 fw-bold text-white" style="background:#0F172A;"><i class="fa-solid fa-save me-2"></i> บันทึกรายการ</button>
             </form>
 
-            <!-- Transfer Form -->
             <form id="form-tf" class="d-none" onsubmit="submitLedgerTF(event)">
                 <div class="row g-3">
                     <div class="col-6"><label class="small text-muted fw-bold mb-1">จากบัญชี</label><select id="tfFrom" class="form-select"><option value="bank">ธนาคาร</option><option value="cash">เงินสด</option></select></div>
@@ -323,11 +316,8 @@
             </form>
         </div>
 
-        <!-- Transaction List -->
         <h5 class="fw-bold mb-3 px-2">ประวัติธุรกรรมล่าสุด</h5>
         <div id="ledger-tx-list"></div>
-
-        <!-- ซ่อน Table เดิมไว้สำหรับ Export Excel -->
         <table id="export-ledger-table" class="d-none"><thead><tr><th>วันที่</th><th>รายการ</th><th>ยอดเงิน</th><th>สถานะ</th></tr></thead><tbody id="table-transactions"></tbody></table>
 
       </div>
@@ -340,7 +330,6 @@
           <h4 class="fw-bold text-dark mb-0">พิจารณาสวัสดิการ</h4>
           <button onclick="exportToCSV('table-claims', 'รายการสวัสดิการ')" class="btn btn-sm btn-outline-dark rounded-pill px-3"><i class="fa-solid fa-download"></i></button>
         </div>
-        <!-- กราฟสรุปสวัสดิการ -->
         <div class="chart-container mb-4" style="height: 200px;"><canvas id="claimsChart"></canvas></div>
         <div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>ผู้เบิก</th><th>ประเภท</th><th>ยอดขอ</th><th>สถานะ</th><th>จัดการ</th></tr></thead><tbody id="table-claims"></tbody></table></div>
       </div>
@@ -382,7 +371,6 @@
   let cachedData = {};
   let charts = { bar: null, doughnut: null, claims: null };
 
-  // 🌐 ระบบจัดการประชากร (Local Storage State Management)
   let townPopulation = localStorage.getItem('cwf_town_pop') ? parseInt(localStorage.getItem('cwf_town_pop')) : 20000;
 
   document.addEventListener("DOMContentLoaded", async () => { 
@@ -408,46 +396,31 @@
   function showLoader(show, text="ประมวลผล...") { document.getElementById('loader').style.display = show ? 'flex' : 'none'; if(show) document.getElementById('loader-text').innerText = text; }
   function closeSidebar() { bootstrap.Offcanvas.getInstance(document.getElementById('sidebarMenu'))?.hide(); }
 
-  // 🚀 Seamless Navigation Helper (สลับแท็บโดยไม่ต้องเข้าเมนูหลัก)
   function navigateToTab(tabId) {
     const targetBtn = document.querySelector(`.nav-link[data-bs-target="#${tabId}"]`);
     if(targetBtn) targetBtn.click();
-    
-    // โหลดข้อมูลให้ด้วยเผื่อยังไม่ได้โหลด
     if(tabId === 'view-ledger') loadUniversalData('transactions');
     if(tabId === 'view-members') loadMembersData(1);
-    
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  // ✏️ แก้ไขข้อมูลประชากร
   function editPopulation() {
     Swal.fire({
-      title: 'ตั้งค่าจำนวนประชากร',
-      text: 'ใช้สำหรับคำนวณสัดส่วนประชากรในตำบล',
-      input: 'number',
-      inputValue: townPopulation,
-      showCancelButton: true,
-      confirmButtonText: 'บันทึก',
-      cancelButtonText: 'ยกเลิก',
-      confirmButtonColor: '#2563EB'
+      title: 'ตั้งค่าจำนวนประชากร', text: 'ใช้สำหรับคำนวณสัดส่วนประชากรในตำบล', input: 'number', inputValue: townPopulation,
+      showCancelButton: true, confirmButtonText: 'บันทึก', cancelButtonText: 'ยกเลิก', confirmButtonColor: '#2563EB'
     }).then((result) => {
       if(result.isConfirmed && result.value > 0) {
         townPopulation = parseInt(result.value);
         localStorage.setItem('cwf_town_pop', townPopulation);
         document.getElementById('eq-population').innerText = townPopulation.toLocaleString();
-        
-        // คำนวณ % ใหม่ทันที
         const activeStr = document.getElementById('eq-active').innerText.replace(/,/g, '');
         const activeMembers = parseInt(activeStr) || 0;
         document.getElementById('eq-percent-active').innerText = ((activeMembers / townPopulation) * 100).toFixed(2);
-        
         Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'อัปเดตข้อมูลประชากรแล้ว', showConfirmButton: false, timer: 2000 });
       }
     });
   }
 
-  // 📈 CSV Export Function
   function exportToCSV(tableId, filename) {
     let csv = [];
     const rows = document.querySelectorAll(`#${tableId} tr`);
@@ -464,7 +437,6 @@
     document.body.appendChild(downloadLink); downloadLink.click(); document.body.removeChild(downloadLink);
   }
 
-  // 📊 Dashboard Engine
   async function loadDashboardOverview() {
     showLoader(true, "กำลังประมวลผลข้อมูลระดับมหภาค...");
     const period = document.getElementById('chartPeriodFilter').value;
@@ -472,26 +444,22 @@
       const res = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "getAdminOverview", adminUid: currentAdminData.uid, period: period }) }).then(r => r.json());
       if(res.status === 'success') {
         const d = res.data;
-        // Financials (Dashboard)
         document.getElementById('cap-total').innerText = d.liquidity.netTotal.toLocaleString();
         document.getElementById('liq-bank').innerText = d.liquidity.bank.toLocaleString(); 
         document.getElementById('liq-cash').innerText = d.liquidity.cash.toLocaleString();
         document.getElementById('stat-total-in').innerText = d.capital.totalIn.toLocaleString();
         document.getElementById('stat-total-out').innerText = d.capital.totalOut.toLocaleString();
         
-        // Update Ledger Tab Balances Sync
         document.getElementById('ledger-total-bal').innerText = "฿" + d.liquidity.netTotal.toLocaleString('th-TH', {minimumFractionDigits:2});
         document.getElementById('ledger-bank-bal').innerText = "฿" + d.liquidity.bank.toLocaleString('th-TH', {minimumFractionDigits:2});
         document.getElementById('ledger-cash-bal').innerText = "฿" + d.liquidity.cash.toLocaleString('th-TH', {minimumFractionDigits:2});
         
-        // Equation & Population
         document.getElementById('eq-population').innerText = townPopulation.toLocaleString();
         document.getElementById('eq-active').innerText = d.equation.active.toLocaleString();
         document.getElementById('eq-percent-active').innerText = ((d.equation.active / townPopulation) * 100).toFixed(2);
         document.getElementById('eq-resigned').innerText = d.equation.resigned.toLocaleString(); 
         document.getElementById('eq-dead').innerText = d.equation.dead.toLocaleString();
         
-        // Community Stats
         let comHtml = "";
         for(const [center, count] of Object.entries(d.equation.byCenter)) {
            comHtml += `<div class="d-flex justify-content-between border-bottom py-2"><span>${center.replace('ศูนย์ชุมชน','')}</span><strong class="text-primary">${count}</strong></div>`;
@@ -505,16 +473,13 @@
   }
 
   function renderCharts(cData) {
-    // Bar Chart
     if(charts.bar) charts.bar.destroy();
     charts.bar = new Chart(document.getElementById('barChart').getContext('2d'), { type: 'bar', data: { labels: cData.bar.labels, datasets: [{ label: 'รายรับ', data: cData.bar.income, backgroundColor: '#10B981', borderRadius: 4 }, { label: 'รายจ่าย', data: cData.bar.expense, backgroundColor: '#EF4444', borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top'} } } });
 
-    // Doughnut Chart
     if(charts.doughnut) charts.doughnut.destroy();
     charts.doughnut = new Chart(document.getElementById('doughnutChart').getContext('2d'), { type: 'doughnut', data: { labels: ['สมทบสมาชิก', 'รัฐสมทบ', 'ท้องถิ่นสมทบ', 'ดอกเบี้ย/อื่นๆ', 'บริจาค'], datasets: [{ data: [cData.doughnut.member, cData.doughnut.gov, cData.doughnut.local, cData.doughnut.interest, cData.doughnut.donate], backgroundColor: ['#2563EB', '#F59E0B', '#10B981', '#8B5CF6', '#EC4899'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } } });
   }
 
-  // 👥 Members CRUD
   async function loadMembersData(page) {
     showLoader(true); currentMemberPage = page;
     const p = { action: 'getPaginatedMembers', adminUid: currentAdminData.uid, page: page, limit: 15, searchQuery: document.getElementById('searchMemberInput').value, centerFilter: document.getElementById('filterCenterInput').value };
@@ -537,13 +502,11 @@
     Swal.fire({ title: 'เปลี่ยนสถานะสมาชิก', html: `<select id="newMStatus" class="form-select"><option value="เป็นสมาชิก" ${item.status==='เป็นสมาชิก'?'selected':''}>เป็นสมาชิก</option><option value="พ้นสภาพ" ${item.status==='พ้นสภาพ'?'selected':''}>พ้นสภาพ</option><option value="เสียชีวิต" ${item.status==='เสียชีวิต'?'selected':''}>เสียชีวิต</option></select>`, showCancelButton: true, confirmButtonText: 'อัปเดต', preConfirm: () => ({ action: 'adminUpdateData', module: 'members', adminUid: currentAdminData.uid, targetId: item.memberId, updateField: 'status', updateValue: document.getElementById('newMStatus').value }) }).then(handleApiResponse);
   }
 
-  // 💳 Ledger FinTech Functions
   function switchLedgerTab(tab) {
       document.getElementById('tab-ie').classList.remove('active');
       document.getElementById('tab-tf').classList.remove('active');
       document.getElementById('form-ie').classList.add('d-none');
       document.getElementById('form-tf').classList.add('d-none');
-      
       document.getElementById(`tab-${tab}`).classList.add('active');
       document.getElementById(`form-${tab}`).classList.remove('d-none');
   }
@@ -567,6 +530,24 @@
   function editTransaction(idx) {
     const item = cachedData['transactions'][idx];
     Swal.fire({ title: 'แก้ไขยอดเงิน', html: `<input type="number" id="editTxAmt" class="form-control" value="${item.amount}">`, showCancelButton: true, confirmButtonText: 'บันทึก', preConfirm: () => ({ action: 'adminUpdateData', module: 'transactions', adminUid: currentAdminData.uid, targetId: item.txId, updateField: 'amount', updateValue: document.getElementById('editTxAmt').value }) }).then(handleApiResponse);
+  }
+
+  // 🌟 ฟังก์ชันอนุมัติเงินสมทบของหน้าสมุดบัญชีกลาง (Leak 1 Fix)
+  function approveLedgerTransaction(idx) {
+    const item = cachedData['transactions'][idx];
+    Swal.fire({
+      title: 'อนุมัติเงินสมทบ',
+      text: `รับเงิน ${item.amount} บาท จาก ${item.name} ใช่หรือไม่?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#10B981',
+      confirmButtonText: 'อนุมัติรับเงิน',
+      cancelButtonText: 'ยกเลิก'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleApiResponse({ isConfirmed: true, value: { action: 'adminUpdateStatus', module: 'transactions', adminUid: currentAdminData.uid, rowIndex: item.rowIndex, status: 'อนุมัติแล้ว' } });
+      }
+    });
   }
 
   // 🏥 Claims CRUD
@@ -611,23 +592,40 @@
             let iconClass = isIncome ? 'tx-income' : (isExpense ? 'tx-expense' : 'tx-transfer');
             let icon = isIncome ? 'fa-arrow-up' : (isExpense ? 'fa-arrow-down' : 'fa-arrow-right-arrow-left');
             let sign = isIncome ? '+' : (isExpense ? '-' : '');
+            
+            // 🌟 ปุ่มดูสลิป และ ปุ่มอนุมัติ (Leak 1 Fix)
+            let slipBtn = (i.url && i.url !== '-' && i.url !== 'undefined' && i.url.startsWith('http')) 
+                ? `<button class="action-btn text-info" onclick="window.open('${i.url}', '_blank')" title="ดูสลิปโอนเงิน"><i class="fa-solid fa-file-invoice"></i></button>` : '';
+            let approveBtn = (i.status === 'รอตรวจสอบ') 
+                ? `<button class="action-btn text-success" onclick="approveLedgerTransaction(${idx})" title="ตรวจสอบและอนุมัติ"><i class="fa-solid fa-circle-check"></i></button>` : '';
+
             return `<div class="tx-item ${iconClass}">
                 <div class="d-flex align-items-center gap-3">
                     <div class="tx-icon"><i class="fa-solid ${icon}"></i></div>
-                    <div><h6 class="mb-0 fw-bold text-dark" style="font-size:0.95rem;">${i.type}</h6><small class="text-muted" style="font-size:0.75rem;">${i.date}</small></div>
+                    <div><h6 class="mb-0 fw-bold text-dark" style="font-size:0.95rem;">${i.type}</h6><small class="text-muted" style="font-size:0.75rem;">${i.date} | ${i.name}</small></div>
                 </div>
                 <div class="text-end flex-grow-1 px-3">
                     <h6 class="mb-0 fw-bold tx-amount">${sign}฿${parseFloat(i.amount).toLocaleString('th-TH',{minimumFractionDigits:2})}</h6>
-                    <small class="badge bg-light text-dark border mt-1" style="font-size:0.65rem;">${i.status}</small>
+                    <small class="badge ${i.status==='อนุมัติแล้ว'?'bg-success text-white':(i.status==='รอตรวจสอบ'?'bg-warning text-dark':'bg-light text-dark border')} mt-1" style="font-size:0.65rem;">${i.status}</small>
                 </div>
                 <div class="ms-2 ps-3 border-start d-flex flex-column gap-2">
-                    <button class="action-btn text-primary" onclick="editTransaction(${idx})"><i class="fa-solid fa-pen" style="font-size:0.8rem;"></i></button> 
-                    <button class="action-btn text-danger" onclick="deleteRecord('transactions', '${i.txId}', ${idx})"><i class="fa-solid fa-trash" style="font-size:0.8rem;"></i></button>
+                    ${slipBtn}
+                    ${approveBtn}
+                    <button class="action-btn text-primary" onclick="editTransaction(${idx})" title="แก้ไขยอดเงิน"><i class="fa-solid fa-pen" style="font-size:0.8rem;"></i></button> 
+                    <button class="action-btn text-danger" onclick="deleteRecord('transactions', '${i.txId}', ${idx})" title="ลบรายการ"><i class="fa-solid fa-trash" style="font-size:0.8rem;"></i></button>
                 </div>
             </div>`;
         }).join('');
       }
-      else if (module === 'claims') { document.getElementById(`table-claims`).innerHTML = res.data.list.map((i, idx) => `<tr><td>${i.name}</td><td>${i.welfareName}</td><td class="fw-bold text-primary">${i.amount} ฿</td><td><span class="badge ${i.status==='อนุมัติแล้ว'?'bg-success text-white':(i.status==='ปฏิเสธ'?'bg-danger text-white':'bg-warning text-dark')}">${i.status}</span></td><td><button class="btn btn-sm btn-primary rounded-pill px-3" onclick="approveClaim(${idx})"><i class="fa-solid fa-gear"></i> จัดการ</button></td></tr>`).join(''); renderClaimsChart(res.data.chart); }
+      else if (module === 'claims') { 
+        document.getElementById(`table-claims`).innerHTML = res.data.list.map((i, idx) => {
+            // 🌟 ปุ่มดูใบรับรองแพทย์ฝั่งสวัสดิการ (Leak 2 Fix)
+            let docBtn = (i.docUrl && i.docUrl !== '-' && i.docUrl !== 'undefined' && i.docUrl.startsWith('http')) 
+                ? `<button class="btn btn-sm btn-info rounded-pill px-2 text-white me-1" onclick="window.open('${i.docUrl}', '_blank')" title="ดูเอกสารแนบ"><i class="fa-solid fa-file-medical"></i></button>` : '';
+            return `<tr><td>${i.name}</td><td>${i.welfareName}</td><td class="fw-bold text-primary">${i.amount} ฿</td><td><span class="badge ${i.status==='อนุมัติแล้ว'?'bg-success text-white':(i.status==='ปฏิเสธ'?'bg-danger text-white':'bg-warning text-dark')}">${i.status}</span></td><td>${docBtn}<button class="btn btn-sm btn-primary rounded-pill px-3" onclick="approveClaim(${idx})"><i class="fa-solid fa-gear"></i> จัดการ</button></td></tr>`;
+        }).join(''); 
+        renderClaimsChart(res.data.chart); 
+      }
       else if (module === 'rules') document.getElementById(`table-rules`).innerHTML = res.data.map((i, idx) => `<tr><td><strong class="text-dark">${i.welfareName}</strong></td><td>${i.minDays} วัน</td><td class="text-danger fw-bold">${i.maxPerYear} ฿</td><td><button class="action-btn text-danger" onclick="deleteRecord('rules', '${i.ruleId}', ${idx})"><i class="fa-solid fa-trash"></i></button></td></tr>`).join('');
       else if (module === 'admins') document.getElementById(`table-admins`).innerHTML = res.data.map((i, idx) => `<tr><td><strong class="text-dark">${i.name}</strong></td><td>${i.role} / ${i.center}</td><td><span class="badge ${i.status==='ใช้งาน'?'bg-success':'bg-danger'} text-white" onclick="changeAdminStatus('${i.adminId}', '${i.status}')">${i.status} <i class="fa-solid fa-caret-down"></i></span></td><td><button class="action-btn text-danger" onclick="deleteRecord('admins', '${i.adminId}', ${idx})"><i class="fa-solid fa-trash"></i></button></td></tr>`).join('');
     } showLoader(false);
