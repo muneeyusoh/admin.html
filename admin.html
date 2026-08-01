@@ -476,7 +476,7 @@
     charts.doughnut = new Chart(document.getElementById('doughnutChart').getContext('2d'), { type: 'doughnut', data: { labels: ['สมทบสมาชิก', 'รัฐสมทบ', 'ท้องถิ่นสมทบ', 'ดอกเบี้ย/อื่นๆ', 'บริจาค'], datasets: [{ data: [cData.doughnut.member, cData.doughnut.gov, cData.doughnut.local, cData.doughnut.interest, cData.doughnut.donate], backgroundColor: ['#2563EB', '#F59E0B', '#10B981', '#8B5CF6', '#EC4899'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } } });
   }
 
-  // 👥 Members CRUD
+ // 🌟 [อัปเดตใหม่] 👥 Members CRUD พร้อมการจัดการข้อผิดพลาด (System Hardening)
   async function loadMembersData(page) {
     showLoader(true); currentMemberPage = page;
     const p = { action: 'getPaginatedMembers', adminUid: currentAdminData.uid, page: page, limit: 15, searchQuery: document.getElementById('searchMemberInput').value, centerFilter: document.getElementById('filterCenterInput').value };
@@ -496,10 +496,25 @@
         }).join('');
         totalMemberPages = res.pagination.totalPages; document.getElementById('page-info-members').innerText = `หน้า ${page}/${totalMemberPages || 1}`;
       }
-    } catch(e) {} showLoader(false);
+    } catch(e) {
+        // แจ้งเตือนเมื่อเกิด Network Error ป้องกันหน้าจอค้าง
+        Swal.fire({
+            icon: 'warning',
+            title: 'การเชื่อมต่อขัดข้อง',
+            text: 'ไม่สามารถโหลดข้อมูลได้ กรุณาตรวจสอบสัญญาณอินเทอร์เน็ตแล้วลองอีกครั้ง',
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+        });
+        console.error("Load Members Error:", e);
+    } finally {
+        showLoader(false); // รับประกันว่า Loader จะปิดเสมอ
+    }
   }
   function changeMemberPage(offset) { const n = currentMemberPage + offset; if(n >= 1 && n <= totalMemberPages) loadMembersData(n); }
   
+  // 🌟 [อัปเดตใหม่] เพิ่มฟิลด์เลือกหมู่บ้าน (Village) เข้าไปในฟังก์ชันเพิ่มสมาชิก
   function openAddMemberModal() {
     Swal.fire({ 
       title: 'เพิ่มสมาชิก (ไม่มี LINE)', 
@@ -509,6 +524,9 @@
         <input id="addMPhone" type="tel" class="form-control mb-2" placeholder="เบอร์โทรศัพท์">
         <select id="addMVillage" class="form-select mb-2 text-dark">
           <option value="" disabled selected>-- เลือกหมู่บ้าน --</option>
+          <option value="บ้านจารังตาดง">บ้านจารังตาดง</option>
+          <option value="บ้านมาโมง">บ้านมาโมง</option>
+          <option value="บ้านภูเขาทอง">บ้านภูเขาทอง</option>
           <option value="บ้านปารีย์">บ้านปารีย์</option>
           <option value="บ้านสายเอก">บ้านสายเอก</option>
           <option value="บ้านเกียร์">บ้านเกียร์</option>
@@ -533,11 +551,12 @@
         fullName: document.getElementById('addMName').value, 
         nationalId: document.getElementById('addMNat').value, 
         phone: document.getElementById('addMPhone').value, 
-        village: document.getElementById('addMVillage').value, // 🌟 ข้อมูลใหม่ที่จะส่งไป Backend
+        village: document.getElementById('addMVillage').value, // ดึงข้อมูลหมู่บ้าน
         center: document.getElementById('addMCenter').value 
       }) 
     }).then(handleApiResponse);
   }
+  
   function changeMemberStatus(idx) {
     const item = cachedData['members'][idx];
     Swal.fire({ title: 'เปลี่ยนสถานะสมาชิก', html: `<select id="newMStatus" class="form-select"><option value="เป็นสมาชิก" ${item.status==='เป็นสมาชิก'?'selected':''}>เป็นสมาชิก</option><option value="พ้นสภาพ" ${item.status==='พ้นสภาพ'?'selected':''}>พ้นสภาพ</option><option value="เสียชีวิต" ${item.status==='เสียชีวิต'?'selected':''}>เสียชีวิต</option></select>`, showCancelButton: true, confirmButtonText: 'อัปเดต', preConfirm: () => ({ action: 'adminUpdateData', module: 'members', adminUid: currentAdminData.uid, targetId: item.memberId, updateField: 'status', updateValue: document.getElementById('newMStatus').value }) }).then(handleApiResponse);
@@ -712,7 +731,6 @@
   async function openAdminProxyContributionModal() {
     showLoader(true, "กำลังดึงรายชื่อผู้ที่ค้างชำระในศูนย์ของคุณ...");
     
-    // ส่ง parameter "purpose: 'proxyContribution'" ไปบอกให้ API กรองเฉพาะคนค้างจ่าย
     const res = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "getMemberListForAdmin", adminUid: currentAdminData.uid, purpose: 'proxyContribution' }) }).then(r=>r.json());
     showLoader(false);
 
@@ -721,7 +739,6 @@
 
     let memberOptionsHtml = '<option value="" disabled selected>-- เลือกสมาชิกที่ต้องการบันทึกสมทบ --</option>';
     res.data.forEach(m => { 
-      // นำยอดค้าง (outstanding) มาแสดงในวงเล็บ และซ่อนไว้ใน dataset เพื่อเรียกใช้งาน
       memberOptionsHtml += `<option value="${m.uid}|${m.name}" data-outstanding="${m.outstanding}">${m.name} (ค้าง: ฿${m.outstanding})</option>`; 
     });
 
@@ -841,64 +858,70 @@
       Swal.fire({ title: 'เปลี่ยนสถานะ', text: `เปลี่ยนเป็น: ${newStatus}`, showCancelButton:true, confirmButtonText:'ตกลง' }).then(r=>{ if(r.isConfirmed){ fetch(GAS_API_URL, {method:'POST', body:JSON.stringify({action:'adminUpdateData', module:'admins', adminUid:currentAdminData.uid, targetId:adminId, updateField:'status', updateValue:newStatus})}).then(()=>loadUniversalData('admins')) } });
   }
 
-  // 🛠️ Universal Data Fetcher & Action Handler
+  // 🌟 [อัปเดตใหม่] 🛠️ Universal Data Fetcher พร้อมการจัดการข้อผิดพลาด
   async function loadUniversalData(module) {
     showLoader(true);
-    const res = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "getAdminData", module: module, adminUid: currentAdminData.uid }) }).then(r=>r.json());
-    if(res.status === 'success') {
-      cachedData[module] = res.data;
-      if (module === 'transactions') {
-        document.getElementById(`table-transactions`).innerHTML = res.data.map((i, idx) => `<tr><td>${i.date}</td><td>${i.name}</td><td>${i.amount}</td><td>${i.status}</td></tr>`).join('');
-        document.getElementById('ledger-tx-list').innerHTML = res.data.map((i, idx) => {
-            const isTransfer = String(i.type).includes('โอน'); const isIncome = !i.isOut && !isTransfer; const isExpense = i.isOut && !isTransfer;
-            let iconClass = isIncome ? 'tx-income' : (isExpense ? 'tx-expense' : 'tx-transfer');
-            let icon = isIncome ? 'fa-arrow-up' : (isExpense ? 'fa-arrow-down' : 'fa-arrow-right-arrow-left');
-            let sign = isIncome ? '+' : (isExpense ? '-' : '');
-            
-            let slipBtn = (i.url && i.url !== '-' && i.url !== 'undefined' && i.url.startsWith('http')) 
-                ? `<button class="action-btn text-info" onclick="window.open('${i.url}', '_blank')" title="ดูสลิปโอนเงิน"><i class="fa-solid fa-file-invoice"></i></button>` : '';
-            let approveBtn = (i.status === 'รอตรวจสอบ') 
-                ? `<button class="action-btn text-success" onclick="approveLedgerTransaction(${idx})" title="ตรวจสอบและอนุมัติ"><i class="fa-solid fa-circle-check"></i></button>` : '';
+    try {
+      const res = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "getAdminData", module: module, adminUid: currentAdminData.uid }) }).then(r=>r.json());
+      if(res.status === 'success') {
+        cachedData[module] = res.data;
+        if (module === 'transactions') {
+          document.getElementById(`table-transactions`).innerHTML = res.data.map((i, idx) => `<tr><td>${i.date}</td><td>${i.name}</td><td>${i.amount}</td><td>${i.status}</td></tr>`).join('');
+          document.getElementById('ledger-tx-list').innerHTML = res.data.map((i, idx) => {
+              const isTransfer = String(i.type).includes('โอน'); const isIncome = !i.isOut && !isTransfer; const isExpense = i.isOut && !isTransfer;
+              let iconClass = isIncome ? 'tx-income' : (isExpense ? 'tx-expense' : 'tx-transfer');
+              let icon = isIncome ? 'fa-arrow-up' : (isExpense ? 'fa-arrow-down' : 'fa-arrow-right-arrow-left');
+              let sign = isIncome ? '+' : (isExpense ? '-' : '');
+              
+              let slipBtn = (i.url && i.url !== '-' && i.url !== 'undefined' && i.url.startsWith('http')) 
+                  ? `<button class="action-btn text-info" onclick="window.open('${i.url}', '_blank')" title="ดูสลิปโอนเงิน"><i class="fa-solid fa-file-invoice"></i></button>` : '';
+              let approveBtn = (i.status === 'รอตรวจสอบ') 
+                  ? `<button class="action-btn text-success" onclick="approveLedgerTransaction(${idx})" title="ตรวจสอบและอนุมัติ"><i class="fa-solid fa-circle-check"></i></button>` : '';
 
-            return `<div class="tx-item ${iconClass}">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="tx-icon"><i class="fa-solid ${icon}"></i></div>
-                    <div><h6 class="mb-0 fw-bold text-dark" style="font-size:0.95rem;">${i.type}</h6><small class="text-muted" style="font-size:0.75rem;">${i.date} | ${i.name}</small></div>
-                </div>
-                <div class="text-end flex-grow-1 px-3">
-                    <h6 class="mb-0 fw-bold tx-amount">${sign}฿${parseFloat(i.amount).toLocaleString('th-TH',{minimumFractionDigits:2})}</h6>
-                    <small class="badge ${i.status==='อนุมัติแล้ว'?'bg-success text-white':(i.status==='รอตรวจสอบ'?'bg-warning text-dark':'bg-light text-dark border')} mt-1" style="font-size:0.65rem;">${i.status}</small>
-                </div>
-                <div class="ms-2 ps-3 border-start d-flex flex-column gap-2">
-                    ${slipBtn}
-                    ${approveBtn}
-                    <button class="action-btn text-primary" onclick="editTransaction(${idx})" title="แก้ไขยอดเงิน"><i class="fa-solid fa-pen" style="font-size:0.8rem;"></i></button> 
-                    <button class="action-btn text-danger" onclick="deleteRecord('transactions', '${i.txId}', ${idx})" title="ลบรายการ"><i class="fa-solid fa-trash" style="font-size:0.8rem;"></i></button>
-                </div>
-            </div>`;
-        }).join('');
+              return `<div class="tx-item ${iconClass}">
+                  <div class="d-flex align-items-center gap-3">
+                      <div class="tx-icon"><i class="fa-solid ${icon}"></i></div>
+                      <div><h6 class="mb-0 fw-bold text-dark" style="font-size:0.95rem;">${i.type}</h6><small class="text-muted" style="font-size:0.75rem;">${i.date} | ${i.name}</small></div>
+                  </div>
+                  <div class="text-end flex-grow-1 px-3">
+                      <h6 class="mb-0 fw-bold tx-amount">${sign}฿${parseFloat(i.amount).toLocaleString('th-TH',{minimumFractionDigits:2})}</h6>
+                      <small class="badge ${i.status==='อนุมัติแล้ว'?'bg-success text-white':(i.status==='รอตรวจสอบ'?'bg-warning text-dark':'bg-light text-dark border')} mt-1" style="font-size:0.65rem;">${i.status}</small>
+                  </div>
+                  <div class="ms-2 ps-3 border-start d-flex flex-column gap-2">
+                      ${slipBtn}
+                      ${approveBtn}
+                      <button class="action-btn text-primary" onclick="editTransaction(${idx})" title="แก้ไขยอดเงิน"><i class="fa-solid fa-pen" style="font-size:0.8rem;"></i></button> 
+                      <button class="action-btn text-danger" onclick="deleteRecord('transactions', '${i.txId}', ${idx})" title="ลบรายการ"><i class="fa-solid fa-trash" style="font-size:0.8rem;"></i></button>
+                  </div>
+              </div>`;
+          }).join('');
+        }
+        else if (module === 'claims') { 
+          document.getElementById(`table-claims`).innerHTML = res.data.list.map((i, idx) => {
+              let docBtn = (i.docUrl && i.docUrl !== '-' && i.docUrl !== 'undefined' && i.docUrl.startsWith('http')) 
+                  ? `<button class="btn btn-sm btn-info rounded-pill px-2 text-white me-1" onclick="window.open('${i.docUrl}', '_blank')" title="ดูเอกสารแนบ"><i class="fa-solid fa-file-medical"></i></button>` : '';
+              return `<tr><td>${i.name}</td><td>${i.welfareName}</td><td class="fw-bold text-primary">${i.amount} ฿</td><td><span class="badge ${i.status==='อนุมัติแล้ว'?'bg-success text-white':(i.status==='ปฏิเสธ'?'bg-danger text-white':'bg-warning text-dark')}">${i.status}</span></td><td>${docBtn}<button class="btn btn-sm btn-primary rounded-pill px-3" onclick="approveClaim(${idx})"><i class="fa-solid fa-gear"></i> จัดการ</button></td></tr>`;
+          }).join(''); 
+          renderClaimsChart(res.data.chart); 
+        }
+        else if (module === 'rules') {
+          document.getElementById(`table-rules`).innerHTML = res.data.map((i, idx) => `<tr>
+            <td><strong class="text-dark">${i.welfareName}</strong></td>
+            <td>${i.minDays} วัน</td>
+            <td class="text-primary fw-bold">${i.maxPerClaim} ฿</td>
+            <td class="text-warning text-dark fw-bold">${i.maxTimesPerYear} ครั้ง</td>
+            <td class="text-danger fw-bold">${i.maxPerYear} ฿</td>
+            <td><button class="action-btn text-danger" onclick="deleteRecord('rules', '${i.ruleId}', ${idx})"><i class="fa-solid fa-trash"></i></button></td>
+          </tr>`).join('');
+        }
+        else if (module === 'admins') document.getElementById(`table-admins`).innerHTML = res.data.map((i, idx) => `<tr><td><strong class="text-dark">${i.name}</strong></td><td>${i.role} / ${i.center}</td><td><span class="badge ${i.status==='ใช้งาน'?'bg-success':'bg-danger'} text-white" onclick="changeAdminStatus('${i.adminId}', '${i.status}')">${i.status} <i class="fa-solid fa-caret-down"></i></span></td><td><button class="action-btn text-danger" onclick="deleteRecord('admins', '${i.adminId}', ${idx})"><i class="fa-solid fa-trash"></i></button></td></tr>`).join('');
       }
-      else if (module === 'claims') { 
-        document.getElementById(`table-claims`).innerHTML = res.data.list.map((i, idx) => {
-            let docBtn = (i.docUrl && i.docUrl !== '-' && i.docUrl !== 'undefined' && i.docUrl.startsWith('http')) 
-                ? `<button class="btn btn-sm btn-info rounded-pill px-2 text-white me-1" onclick="window.open('${i.docUrl}', '_blank')" title="ดูเอกสารแนบ"><i class="fa-solid fa-file-medical"></i></button>` : '';
-            return `<tr><td>${i.name}</td><td>${i.welfareName}</td><td class="fw-bold text-primary">${i.amount} ฿</td><td><span class="badge ${i.status==='อนุมัติแล้ว'?'bg-success text-white':(i.status==='ปฏิเสธ'?'bg-danger text-white':'bg-warning text-dark')}">${i.status}</span></td><td>${docBtn}<button class="btn btn-sm btn-primary rounded-pill px-3" onclick="approveClaim(${idx})"><i class="fa-solid fa-gear"></i> จัดการ</button></td></tr>`;
-        }).join(''); 
-        renderClaimsChart(res.data.chart); 
-      }
-      else if (module === 'rules') {
-        // 🌟 [Phase 2] ตารางระเบียบกองทุนแบบ 4 มิติ
-        document.getElementById(`table-rules`).innerHTML = res.data.map((i, idx) => `<tr>
-          <td><strong class="text-dark">${i.welfareName}</strong></td>
-          <td>${i.minDays} วัน</td>
-          <td class="text-primary fw-bold">${i.maxPerClaim} ฿</td>
-          <td class="text-warning text-dark fw-bold">${i.maxTimesPerYear} ครั้ง</td>
-          <td class="text-danger fw-bold">${i.maxPerYear} ฿</td>
-          <td><button class="action-btn text-danger" onclick="deleteRecord('rules', '${i.ruleId}', ${idx})"><i class="fa-solid fa-trash"></i></button></td>
-        </tr>`).join('');
-      }
-      else if (module === 'admins') document.getElementById(`table-admins`).innerHTML = res.data.map((i, idx) => `<tr><td><strong class="text-dark">${i.name}</strong></td><td>${i.role} / ${i.center}</td><td><span class="badge ${i.status==='ใช้งาน'?'bg-success':'bg-danger'} text-white" onclick="changeAdminStatus('${i.adminId}', '${i.status}')">${i.status} <i class="fa-solid fa-caret-down"></i></span></td><td><button class="action-btn text-danger" onclick="deleteRecord('admins', '${i.adminId}', ${idx})"><i class="fa-solid fa-trash"></i></button></td></tr>`).join('');
-    } showLoader(false);
+    } catch (e) {
+        Swal.fire({ toast: true, position: 'top-end', icon: 'error', title: 'ดึงข้อมูลไม่สำเร็จ ขัดข้องทางเครือข่าย', showConfirmButton: false, timer: 3000 });
+        console.error(`Load ${module} Error:`, e);
+    } finally {
+        showLoader(false);
+    }
   }
 
   async function handleApiResponse(res) {
