@@ -501,7 +501,42 @@
   function changeMemberPage(offset) { const n = currentMemberPage + offset; if(n >= 1 && n <= totalMemberPages) loadMembersData(n); }
   
   function openAddMemberModal() {
-    Swal.fire({ title: 'เพิ่มสมาชิก (ไม่มี LINE)', html: `<input id="addMName" class="form-control mb-2" placeholder="ชื่อ-นามสกุล"><input id="addMNat" type="tel" class="form-control mb-2" placeholder="เลข ปชช. 13 หลัก" maxlength="13"><input id="addMPhone" type="tel" class="form-control mb-2" placeholder="เบอร์โทรศัพท์"><select id="addMCenter" class="form-select"><option value="ศูนย์ชุมชนปารีย์">ศูนย์ชุมชนปารีย์</option><option value="ศูนย์ชุมชนเกียร์">ศูนย์ชุมชนเกียร์</option><option value="ศูนย์ชุมชนราษฎร์สามัคคี">ศูนย์ชุมชนราษฎร์สามัคคี</option><option value="ศูนย์ชุมชนกลันตัน">ศูนย์ชุมชนกลันตัน</option><option value="ศูนย์ชุมชนมาโมง">ศูนย์ชุมชนมาโมง</option><option value="ศูนย์ชุมชนสุคิริน">ศูนย์ชุมชนสุคิริน</option></select>`, showCancelButton: true, confirmButtonText: 'บันทึก', preConfirm: () => ({ action: 'adminAddMember', adminUid: currentAdminData.uid, fullName: document.getElementById('addMName').value, nationalId: document.getElementById('addMNat').value, phone: document.getElementById('addMPhone').value, center: document.getElementById('addMCenter').value }) }).then(handleApiResponse);
+    Swal.fire({ 
+      title: 'เพิ่มสมาชิก (ไม่มี LINE)', 
+      html: `
+        <input id="addMName" class="form-control mb-2" placeholder="ชื่อ-นามสกุล">
+        <input id="addMNat" type="tel" class="form-control mb-2" placeholder="เลข ปชช. 13 หลัก" maxlength="13">
+        <input id="addMPhone" type="tel" class="form-control mb-2" placeholder="เบอร์โทรศัพท์">
+        <select id="addMVillage" class="form-select mb-2 text-dark">
+          <option value="" disabled selected>-- เลือกหมู่บ้าน --</option>
+          <option value="บ้านปารีย์">บ้านปารีย์</option>
+          <option value="บ้านสายเอก">บ้านสายเอก</option>
+          <option value="บ้านเกียร์">บ้านเกียร์</option>
+          <option value="บ้านราษฎร์สามัคคี">บ้านราษฎร์สามัคคี</option>
+          <option value="บ้านกลันตัน">บ้านกลันตัน</option>
+          <option value="บ้านสุคิริน">บ้านสุคิริน</option>
+          <option value="อื่นๆ">อื่นๆ</option>
+        </select>
+        <select id="addMCenter" class="form-select">
+          <option value="ศูนย์ชุมชนปารีย์">ศูนย์ชุมชนปารีย์</option>
+          <option value="ศูนย์ชุมชนเกียร์">ศูนย์ชุมชนเกียร์</option>
+          <option value="ศูนย์ชุมชนราษฎร์สามัคคี">ศูนย์ชุมชนราษฎร์สามัคคี</option>
+          <option value="ศูนย์ชุมชนกลันตัน">ศูนย์ชุมชนกลันตัน</option>
+          <option value="ศูนย์ชุมชนมาโมง">ศูนย์ชุมชนมาโมง</option>
+          <option value="ศูนย์ชุมชนสุคิริน">ศูนย์ชุมชนสุคิริน</option>
+        </select>
+      `, 
+      showCancelButton: true, confirmButtonText: 'บันทึก', 
+      preConfirm: () => ({ 
+        action: 'adminAddMember', 
+        adminUid: currentAdminData.uid, 
+        fullName: document.getElementById('addMName').value, 
+        nationalId: document.getElementById('addMNat').value, 
+        phone: document.getElementById('addMPhone').value, 
+        village: document.getElementById('addMVillage').value, // 🌟 ข้อมูลใหม่ที่จะส่งไป Backend
+        center: document.getElementById('addMCenter').value 
+      }) 
+    }).then(handleApiResponse);
   }
   function changeMemberStatus(idx) {
     const item = cachedData['members'][idx];
