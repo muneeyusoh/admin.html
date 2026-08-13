@@ -16,6 +16,10 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
+  <!-- 🗺️ Google Maps API & Visualization Library -->
+  <!-- ⚠️ ข้อสำคัญ: กรุณาเปลี่ยน YOUR_GOOGLE_MAPS_API_KEY เป็น API Key ของคุณ -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=visualization"></script>
+  
   <style>
     :root {
       --bg-color: #F8FAFC; --card-bg: #FFFFFF; --primary-dark: #0F172A; 
@@ -38,7 +42,7 @@
     .card-title-app { font-size: 1.1rem; font-weight: 700; color: var(--primary-dark); margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
     
     .ledger-card-total { background: linear-gradient(135deg, #0f766e 0%, #10b981 100%); border-radius: 1.5rem; padding: 1.5rem; position: relative; overflow: hidden; color: white; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3); }
-    .ledger-card-total::after { content: ''; position: absolute; top: -40px; right: -40px; width: 150px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 50%; blur: 20px; }
+    .ledger-card-total::after { content: ''; position: absolute; top: -40px; right: -40px; width: 150px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 50%; filter: blur(20px); }
     .ledger-stat-card { background: white; border: 1px solid var(--border-color); border-radius: 1.2rem; padding: 1.25rem; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
     
     .tab-btn-ledger { width: 50%; padding: 0.8rem; text-align: center; border-radius: 1rem; border: none; background: transparent; font-weight: 600; color: var(--text-muted); transition: 0.3s; font-size: 0.9rem; }
@@ -73,6 +77,9 @@
     .eq-item { background: var(--bg-color); border-radius: 16px; padding: 20px 16px; text-align: center; border: 1px solid var(--border-color); position: relative;}
     .eq-item h2 { font-weight: 800; margin: 10px 0 0; }
     .eq-sub { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); background: #E2E8F0; padding: 2px 8px; border-radius: 10px; display: inline-block; margin-top: 5px; }
+    
+    /* 🗺️ Map Toggle Styles */
+    .map-toggle-btn { font-size: 0.85rem; padding: 8px 16px; font-weight: 600; }
   </style>
 </head>
 <body>
@@ -110,6 +117,10 @@
     <div class="nav flex-column nav-pills">
       <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#view-overview" onclick="loadDashboardOverview(); closeSidebar();"><i class="fa-solid fa-chart-pie me-2"></i> แดชบอร์ดภาพรวม</button>
       <button class="nav-link" data-bs-toggle="pill" data-bs-target="#view-members" onclick="loadMembersData(1); closeSidebar();"><i class="fa-solid fa-users me-2"></i> ทะเบียนสมาชิก</button>
+      
+      <!-- 🗺️ เพิ่มเมนู แผนที่ GIS -->
+      <button class="nav-link" data-bs-toggle="pill" data-bs-target="#view-gis" onclick="loadGISMap(); closeSidebar();"><i class="fa-solid fa-map-location-dot me-2"></i> แผนที่ภูมิสารสนเทศ</button>
+      
       <button class="nav-link" data-bs-toggle="pill" data-bs-target="#view-ledger" onclick="loadUniversalData('transactions'); closeSidebar();"><i class="fa-solid fa-money-bill-transfer me-2"></i> สมุดบัญชีกลาง</button>
       <button class="nav-link" data-bs-toggle="pill" data-bs-target="#view-claims" onclick="loadUniversalData('claims'); closeSidebar();"><i class="fa-solid fa-file-medical me-2"></i> อนุมัติสวัสดิการ</button>
       <button class="nav-link" data-bs-toggle="pill" data-bs-target="#view-rules" onclick="loadUniversalData('rules'); closeSidebar();"><i class="fa-solid fa-scale-balanced me-2"></i> ระเบียบกองทุน</button>
@@ -231,6 +242,36 @@
         <div class="d-flex justify-content-between mt-3 align-items-center">
           <span id="page-info-members" class="small fw-bold text-muted">หน้า 1/1</span>
           <div><button class="btn btn-sm btn-light border rounded-pill px-3 me-1" onclick="changeMemberPage(-1)">กลับ</button> <button class="btn btn-sm btn-dark rounded-pill px-3" onclick="changeMemberPage(1)">ถัดไป</button></div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 🗺️ 7. แผนที่ภูมิสารสนเทศ (GIS Mapping) -->
+    <div class="tab-pane fade" id="view-gis">
+      <div class="dash-card p-4">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+          <h4 class="fw-bold text-dark mb-0"><i class="fa-solid fa-map-location-dot text-primary me-2"></i>ระบบภูมิสารสนเทศ</h4>
+          <div class="btn-group shadow-sm" role="group">
+            <input type="radio" class="btn-check" name="btnMapMode" id="btnMapMacro" autocomplete="off" onchange="switchMapMode('macro')">
+            <label class="btn btn-outline-primary map-toggle-btn" for="btnMapMacro"><i class="fa-solid fa-fire me-1"></i> Macro View (ความหนาแน่น)</label>
+
+            <input type="radio" class="btn-check" name="btnMapMode" id="btnMapMicro" autocomplete="off" checked onchange="switchMapMode('micro')">
+            <label class="btn btn-outline-primary map-toggle-btn" for="btnMapMicro"><i class="fa-solid fa-location-dot me-1"></i> Micro View (ปักหมุดบุคคล)</label>
+          </div>
+        </div>
+        
+        <div class="alert alert-info border-0 bg-primary bg-opacity-10 text-primary small fw-bold mb-4" id="mapAlertInfo">
+          <i class="fa-solid fa-circle-info me-2"></i> <span id="mapAlertText">กำลังแสดงผลปักหมุดรายบุคคล แผนที่นี้ใช้สำหรับการจัดเส้นทางและปฏิบัติงานในพื้นที่เท่านั้น</span>
+        </div>
+
+        <div class="border rounded-4 overflow-hidden shadow-sm position-relative">
+          <!-- พื้นที่แสดงผล Google Maps -->
+          <div id="adminGISMap" style="width: 100%; height: 600px; background-color: #E2E8F0; display: flex; align-items: center; justify-content: center;">
+            <div class="text-center text-muted">
+              <div class="spinner-border mb-3 text-primary" role="status"></div>
+              <h6 class="fw-bold">กำลังโหลดข้อมูลและเชื่อมต่อ Google Maps...</h6>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -369,6 +410,11 @@
 
   let townPopulation = localStorage.getItem('cwf_town_pop') ? parseInt(localStorage.getItem('cwf_town_pop')) : 20000;
 
+  // 🗺️ ตัวแปรสำหรับจัดการ Google Maps
+  let mapInstance = null;
+  let heatmapLayer = null;
+  let mapMarkers = [];
+
   document.addEventListener("DOMContentLoaded", async () => { 
     await liff.init({ liffId: LIFF_ID_ADMIN });
     if (liff.isLoggedIn()) verifyAdminAuth(liff.getDecodedIDToken().sub || (await liff.getProfile()).userId);
@@ -476,7 +522,105 @@
     charts.doughnut = new Chart(document.getElementById('doughnutChart').getContext('2d'), { type: 'doughnut', data: { labels: ['สมทบสมาชิก', 'รัฐสมทบ', 'ท้องถิ่นสมทบ', 'ดอกเบี้ย/อื่นๆ', 'บริจาค'], datasets: [{ data: [cData.doughnut.member, cData.doughnut.gov, cData.doughnut.local, cData.doughnut.interest, cData.doughnut.donate], backgroundColor: ['#2563EB', '#F59E0B', '#10B981', '#8B5CF6', '#EC4899'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } } });
   }
 
- // 🌟 [อัปเดตใหม่] 👥 Members CRUD พร้อมการจัดการข้อผิดพลาด (System Hardening)
+  // 🌟 [อัปเดตใหม่] 🗺️ ระบบเชื่อมต่อและควบคุมแผนที่ภูมิสารสนเทศ (GIS Control Hub)
+  async function loadGISMap() {
+    // กำหนดจุดศูนย์กลางของแผนที่ไปที่อำเภอสุคิริน
+    if (!mapInstance) {
+      const mapOptions = { 
+        zoom: 12, 
+        center: { lat: 5.9405, lng: 101.7618 }, 
+        mapTypeId: 'roadmap',
+        mapTypeControl: true,
+        streetViewControl: false
+      };
+      // ตรวจสอบว่า Google Maps ถูกโหลดหรือยัง
+      if (typeof google === 'object' && typeof google.maps === 'object') {
+        mapInstance = new google.maps.Map(document.getElementById("adminGISMap"), mapOptions);
+        switchMapMode('micro'); // เริ่มต้นด้วย Micro View
+      } else {
+        document.getElementById('adminGISMap').innerHTML = `<div class="text-danger fw-bold"><i class="fa-solid fa-triangle-exclamation"></i> ไม่สามารถเชื่อมต่อ Google Maps API ได้ กรุณาตรวจสอบ API Key</div>`;
+      }
+    } else {
+      switchMapMode('micro');
+    }
+  }
+
+  async function switchMapMode(mode) {
+    showLoader(true, "กำลังโหลดข้อมูลพิกัดภูมิศาสตร์...");
+    
+    // เคลียร์ข้อมูลแผนที่เดิมออกก่อน
+    if (heatmapLayer) heatmapLayer.setMap(null);
+    mapMarkers.forEach(m => m.setMap(null));
+    mapMarkers = [];
+
+    const alertInfo = document.getElementById('mapAlertInfo');
+    const alertText = document.getElementById('mapAlertText');
+
+    try {
+      if (mode === 'macro') {
+        // 🔥 โหมด Macro View: แผนที่ความหนาแน่น (Data Anonymization)
+        alertInfo.className = "alert alert-warning border-0 bg-warning bg-opacity-10 text-warning small fw-bold mb-4";
+        alertText.innerHTML = "กำลังแสดงผล <b>Macro View (แผนที่ความร้อน)</b> - ข้อมูลถูกเข้ารหัสไม่ระบุตัวตน ปลอดภัยตามมาตรฐาน PDPA ใช้สำหรับรายงานภาพรวมได้ทันที";
+        
+        mapInstance.setMapTypeId('satellite'); // เปลี่ยนเป็นภาพดาวเทียมให้ดูอลังการ
+        
+        const res = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "getMapDataMacro" }) }).then(r=>r.json());
+        if (res.status === 'success' && res.data.length > 0) {
+          const heatMapPoints = res.data.map(p => new google.maps.LatLng(p.lat, p.lng));
+          heatmapLayer = new google.maps.visualization.HeatmapLayer({ 
+            data: heatMapPoints, 
+            map: mapInstance, 
+            radius: 30, // ปรับรัศมีความร้อนให้ดูสวยงาม
+            opacity: 0.8
+          });
+        }
+      } else {
+        // 📍 โหมด Micro View: ปักหมุดรายบุคคล (Need-to-Know Basis)
+        alertInfo.className = "alert alert-info border-0 bg-primary bg-opacity-10 text-primary small fw-bold mb-4";
+        alertText.innerHTML = "กำลังแสดงผล <b>Micro View (ปักหมุดบุคคล)</b> - แผนที่นี้ใช้สำหรับการจัดเส้นทาง (Routing) และปฏิบัติงานในพื้นที่เท่านั้น ห้ามเผยแพร่สู่สาธารณะ";
+        
+        mapInstance.setMapTypeId('roadmap'); // แผนที่ถนนเพื่อการเดินทาง
+        
+        const res = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "getMapDataMicro", adminUid: currentAdminData.uid }) }).then(r=>r.json());
+        if (res.status === 'success' && res.data.length > 0) {
+          const infoWindow = new google.maps.InfoWindow();
+          
+          res.data.forEach(m => {
+            const marker = new google.maps.Marker({ 
+              position: { lat: m.lat, lng: m.lng }, 
+              map: mapInstance, 
+              title: m.name,
+              animation: google.maps.Animation.DROP
+            });
+            
+            // ใส่ Event เมื่อแอดมินคลิกที่หมุด
+            marker.addListener("click", () => {
+              const statusColor = m.status.includes('เป็นสมาชิก') ? 'bg-success' : 'bg-warning text-dark';
+              const contentHtml = `
+                <div style="font-family: 'Prompt', sans-serif; min-width: 220px; padding: 5px;">
+                  <h6 class="fw-bold mb-1 text-primary"><i class="fa-solid fa-house-chimney-user me-1"></i> ${m.name}</h6>
+                  <p class="mb-1 small text-muted"><i class="fa-solid fa-phone me-1"></i> ${m.phone || 'ไม่มีข้อมูล'}</p>
+                  <span class="badge ${statusColor} mb-3 shadow-sm">${m.status}</span><br>
+                  <a href="https://www.google.com/maps/dir/?api=1&destination=${m.lat},${m.lng}" target="_blank" class="btn btn-sm btn-primary w-100 text-white rounded-pill fw-bold shadow-sm">
+                    <i class="fa-solid fa-location-arrow me-1"></i> นำทางไปบ้านสมาชิก
+                  </a>
+                </div>
+              `;
+              infoWindow.setContent(contentHtml);
+              infoWindow.open(mapInstance, marker);
+            });
+            mapMarkers.push(marker);
+          });
+        }
+      }
+    } catch(e) {
+      console.error("GIS Error:", e);
+      Swal.fire('ข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อฐานข้อมูล GIS ได้ในขณะนี้', 'error');
+    }
+    showLoader(false);
+  }
+
+  // 👥 Members CRUD พร้อมการจัดการข้อผิดพลาด
   async function loadMembersData(page) {
     showLoader(true); currentMemberPage = page;
     const p = { action: 'getPaginatedMembers', adminUid: currentAdminData.uid, page: page, limit: 15, searchQuery: document.getElementById('searchMemberInput').value, centerFilter: document.getElementById('filterCenterInput').value };
@@ -497,24 +641,12 @@
         totalMemberPages = res.pagination.totalPages; document.getElementById('page-info-members').innerText = `หน้า ${page}/${totalMemberPages || 1}`;
       }
     } catch(e) {
-        // แจ้งเตือนเมื่อเกิด Network Error ป้องกันหน้าจอค้าง
-        Swal.fire({
-            icon: 'warning',
-            title: 'การเชื่อมต่อขัดข้อง',
-            text: 'ไม่สามารถโหลดข้อมูลได้ กรุณาตรวจสอบสัญญาณอินเทอร์เน็ตแล้วลองอีกครั้ง',
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-        });
+        Swal.fire({ icon: 'warning', title: 'การเชื่อมต่อขัดข้อง', text: 'ไม่สามารถโหลดข้อมูลได้', toast: true, position: 'top-end', showConfirmButton: false, timer: 3000 });
         console.error("Load Members Error:", e);
-    } finally {
-        showLoader(false); // รับประกันว่า Loader จะปิดเสมอ
-    }
+    } finally { showLoader(false); }
   }
   function changeMemberPage(offset) { const n = currentMemberPage + offset; if(n >= 1 && n <= totalMemberPages) loadMembersData(n); }
   
-  // 🌟 [อัปเดตใหม่] เพิ่มฟิลด์เลือกหมู่บ้าน (Village) เข้าไปในฟังก์ชันเพิ่มสมาชิก
   function openAddMemberModal() {
     Swal.fire({ 
       title: 'เพิ่มสมาชิก (ไม่มี LINE)', 
@@ -551,7 +683,7 @@
         fullName: document.getElementById('addMName').value, 
         nationalId: document.getElementById('addMNat').value, 
         phone: document.getElementById('addMPhone').value, 
-        village: document.getElementById('addMVillage').value, // ดึงข้อมูลหมู่บ้าน
+        village: document.getElementById('addMVillage').value,
         center: document.getElementById('addMCenter').value 
       }) 
     }).then(handleApiResponse);
@@ -858,7 +990,7 @@
       Swal.fire({ title: 'เปลี่ยนสถานะ', text: `เปลี่ยนเป็น: ${newStatus}`, showCancelButton:true, confirmButtonText:'ตกลง' }).then(r=>{ if(r.isConfirmed){ fetch(GAS_API_URL, {method:'POST', body:JSON.stringify({action:'adminUpdateData', module:'admins', adminUid:currentAdminData.uid, targetId:adminId, updateField:'status', updateValue:newStatus})}).then(()=>loadUniversalData('admins')) } });
   }
 
-  // 🌟 [อัปเดตใหม่] 🛠️ Universal Data Fetcher พร้อมการจัดการข้อผิดพลาด
+  // 🛠️ Universal Data Fetcher พร้อมการจัดการข้อผิดพลาด
   async function loadUniversalData(module) {
     showLoader(true);
     try {
