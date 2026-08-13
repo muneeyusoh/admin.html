@@ -104,7 +104,7 @@
 <!-- 📱 App Header -->
 <div class="app-header" id="appHeader" style="display: none;">
   <div class="fw-bold fs-5 d-flex align-items-center"><button class="btn-icon me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu"><i class="fa-solid fa-bars"></i></button> Executive</div>
-  <button onclick="loadDashboardOverview()" class="btn-icon"><i class="fa-solid fa-rotate"></i></button>
+  <button onclick="loadDashboardOverview(true)" class="btn-icon"><i class="fa-solid fa-rotate"></i></button>
 </div>
 
 <!-- 🗂️ Sidebar -->
@@ -505,39 +505,66 @@
     document.body.appendChild(downloadLink); downloadLink.click(); document.body.removeChild(downloadLink);
   }
 
-  async function loadDashboardOverview() {
-    showLoader(true, "กำลังประมวลผลข้อมูลระดับมหภาค...");
+  // ====================================================================
+  // 🚀 สถาปัตยกรรมมิติที่ 1: Frontend Caching (Stale-While-Revalidate)
+  // ====================================================================
+
+  // 📊 แดชบอร์ดภาพรวม (SWR)
+  async function loadDashboardOverview(forceRefresh = false) {
     const period = document.getElementById('chartPeriodFilter').value;
+    const cacheKey = `dashboard_${period}`;
+
+    // ⚡ ดึงของเก่ามาโชว์ก่อน (ถ้ามี)
+    if (!forceRefresh && cachedData[cacheKey]) {
+      renderDashboard(cachedData[cacheKey]);
+      fetchDashboardBackground(period, cacheKey); // แอบไปดึงของใหม่มาอัปเดต
+      return;
+    }
+
+    showLoader(true, "กำลังประมวลผลข้อมูลระดับมหภาค...");
     try {
       const res = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "getAdminOverview", adminUid: currentAdminData.uid, period: period }) }).then(r => r.json());
       if(res.status === 'success') {
-        const d = res.data;
-        document.getElementById('cap-total').innerText = d.liquidity.netTotal.toLocaleString();
-        document.getElementById('liq-bank').innerText = d.liquidity.bank.toLocaleString(); 
-        document.getElementById('liq-cash').innerText = d.liquidity.cash.toLocaleString();
-        document.getElementById('stat-total-in').innerText = d.capital.totalIn.toLocaleString();
-        document.getElementById('stat-total-out').innerText = d.capital.totalOut.toLocaleString();
-        
-        document.getElementById('ledger-total-bal').innerText = "฿" + d.liquidity.netTotal.toLocaleString('th-TH', {minimumFractionDigits:2});
-        document.getElementById('ledger-bank-bal').innerText = "฿" + d.liquidity.bank.toLocaleString('th-TH', {minimumFractionDigits:2});
-        document.getElementById('ledger-cash-bal').innerText = "฿" + d.liquidity.cash.toLocaleString('th-TH', {minimumFractionDigits:2});
-        
-        document.getElementById('eq-population').innerText = townPopulation.toLocaleString();
-        document.getElementById('eq-active').innerText = d.equation.active.toLocaleString();
-        document.getElementById('eq-percent-active').innerText = ((d.equation.active / townPopulation) * 100).toFixed(2);
-        document.getElementById('eq-resigned').innerText = d.equation.resigned.toLocaleString(); 
-        document.getElementById('eq-dead').innerText = d.equation.dead.toLocaleString();
-        
-        let comHtml = "";
-        for(const [center, count] of Object.entries(d.equation.byCenter)) {
-           comHtml += `<div class="d-flex justify-content-between border-bottom py-2"><span>${center.replace('ศูนย์ชุมชน','')}</span><strong class="text-primary">${count}</strong></div>`;
-        }
-        document.getElementById('community-stats-container').innerHTML = comHtml;
-
-        renderCharts(d.charts);
+        cachedData[cacheKey] = res.data;
+        renderDashboard(res.data);
       }
     } catch (e) { console.error(e); }
     showLoader(false);
+  }
+
+  async function fetchDashboardBackground(period, cacheKey) {
+    try {
+      const res = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "getAdminOverview", adminUid: currentAdminData.uid, period: period }) }).then(r => r.json());
+      if(res.status === 'success' && JSON.stringify(cachedData[cacheKey]) !== JSON.stringify(res.data)) {
+        cachedData[cacheKey] = res.data;
+        renderDashboard(res.data); // อัปเดตเงียบๆ
+      }
+    } catch(e) { console.error("Background Dashboard Sync Error:", e); }
+  }
+
+  function renderDashboard(d) {
+    document.getElementById('cap-total').innerText = d.liquidity.netTotal.toLocaleString();
+    document.getElementById('liq-bank').innerText = d.liquidity.bank.toLocaleString(); 
+    document.getElementById('liq-cash').innerText = d.liquidity.cash.toLocaleString();
+    document.getElementById('stat-total-in').innerText = d.capital.totalIn.toLocaleString();
+    document.getElementById('stat-total-out').innerText = d.capital.totalOut.toLocaleString();
+    
+    document.getElementById('ledger-total-bal').innerText = "฿" + d.liquidity.netTotal.toLocaleString('th-TH', {minimumFractionDigits:2});
+    document.getElementById('ledger-bank-bal').innerText = "฿" + d.liquidity.bank.toLocaleString('th-TH', {minimumFractionDigits:2});
+    document.getElementById('ledger-cash-bal').innerText = "฿" + d.liquidity.cash.toLocaleString('th-TH', {minimumFractionDigits:2});
+    
+    document.getElementById('eq-population').innerText = townPopulation.toLocaleString();
+    document.getElementById('eq-active').innerText = d.equation.active.toLocaleString();
+    document.getElementById('eq-percent-active').innerText = ((d.equation.active / townPopulation) * 100).toFixed(2);
+    document.getElementById('eq-resigned').innerText = d.equation.resigned.toLocaleString(); 
+    document.getElementById('eq-dead').innerText = d.equation.dead.toLocaleString();
+    
+    let comHtml = "";
+    for(const [center, count] of Object.entries(d.equation.byCenter)) {
+       comHtml += `<div class="d-flex justify-content-between border-bottom py-2"><span>${center.replace('ศูนย์ชุมชน','')}</span><strong class="text-primary">${count}</strong></div>`;
+    }
+    document.getElementById('community-stats-container').innerHTML = comHtml;
+    renderCharts(d.charts);
   }
 
   function renderCharts(cData) {
@@ -548,7 +575,7 @@
     charts.doughnut = new Chart(document.getElementById('doughnutChart').getContext('2d'), { type: 'doughnut', data: { labels: ['สมทบสมาชิก', 'รัฐสมทบ', 'ท้องถิ่นสมทบ', 'ดอกเบี้ย/อื่นๆ', 'บริจาค'], datasets: [{ data: [cData.doughnut.member, cData.doughnut.gov, cData.doughnut.local, cData.doughnut.interest, cData.doughnut.donate], backgroundColor: ['#2563EB', '#F59E0B', '#10B981', '#8B5CF6', '#EC4899'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } } });
   }
 
-  // 🌟 [อัปเดตใหม่] 🗺️ ระบบเชื่อมต่อและควบคุมแผนที่ภูมิสารสนเทศ (GIS Control Hub)
+  // 🌟 แผนที่ภูมิสารสนเทศ (GIS Control Hub)
   async function loadGISMap() {
     if (!mapInstance) {
       const mapOptions = { 
@@ -676,31 +703,61 @@
     showLoader(false);
   }
 
-  // 👥 Members CRUD พร้อมการจัดการข้อผิดพลาด
-  async function loadMembersData(page) {
-    showLoader(true); currentMemberPage = page;
-    const p = { action: 'getPaginatedMembers', adminUid: currentAdminData.uid, page: page, limit: 15, searchQuery: document.getElementById('searchMemberInput').value, centerFilter: document.getElementById('filterCenterInput').value };
+  // 👥 ทะเบียนสมาชิก (SWR)
+  async function loadMembersData(page, forceRefresh = false) {
+    const searchQuery = document.getElementById('searchMemberInput').value;
+    const centerFilter = document.getElementById('filterCenterInput').value;
+    const cacheKey = `members_p${page}_${searchQuery}_${centerFilter}`;
+
+    // ⚡ ดึงของเก่ามาโชว์ก่อน (ถ้ามี)
+    if (!forceRefresh && cachedData[cacheKey]) {
+      renderMembersTable(cachedData[cacheKey].data, page, cachedData[cacheKey].pagination.totalPages);
+      fetchMembersBackground(page, searchQuery, centerFilter, cacheKey); // แอบอัปเดตเบื้องหลัง
+      return;
+    }
+
+    showLoader(true); 
     try {
+      const p = { action: 'getPaginatedMembers', adminUid: currentAdminData.uid, page: page, limit: 15, searchQuery: searchQuery, centerFilter: centerFilter };
       const res = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify(p) }).then(r=>r.json());
       if(res.status === 'success') {
-        cachedData['members'] = res.data;
-        document.getElementById('table-members').innerHTML = res.data.map((i, idx) => {
-          let adminBadge = i.adminRole ? `<span class="badge bg-danger text-white ms-1" style="font-size:0.6rem;"><i class="fa-solid fa-star"></i> ${i.adminRole.replace('Admin-','')}</span>` : '';
-          return `<tr>
-            <td><strong class="text-primary">${i.memberId}</strong></td>
-            <td>${i.name} ${adminBadge}</td>
-            <td>${i.center}</td>
-            <td><span class="badge ${i.status.includes('เป็นสมาชิก') ? 'bg-success text-white' : 'bg-light text-dark border'}" onclick="changeMemberStatus(${idx})">${i.status} <i class="fa-solid fa-caret-down ms-1"></i></span></td>
-            <td><button class="action-btn text-danger" onclick="deleteRecord('members', '${i.memberId}', ${idx})"><i class="fa-solid fa-trash"></i></button></td>
-          </tr>`;
-        }).join('');
-        totalMemberPages = res.pagination.totalPages; document.getElementById('page-info-members').innerText = `หน้า ${page}/${totalMemberPages || 1}`;
+        cachedData[cacheKey] = res;
+        renderMembersTable(res.data, page, res.pagination.totalPages);
       }
     } catch(e) {
         Swal.fire({ icon: 'warning', title: 'การเชื่อมต่อขัดข้อง', text: 'ไม่สามารถโหลดข้อมูลได้', toast: true, position: 'top-end', showConfirmButton: false, timer: 3000 });
         console.error("Load Members Error:", e);
     } finally { showLoader(false); }
   }
+
+  async function fetchMembersBackground(page, searchQuery, centerFilter, cacheKey) {
+    try {
+      const p = { action: 'getPaginatedMembers', adminUid: currentAdminData.uid, page: page, limit: 15, searchQuery: searchQuery, centerFilter: centerFilter };
+      const res = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify(p) }).then(r=>r.json());
+      if(res.status === 'success' && JSON.stringify(cachedData[cacheKey]) !== JSON.stringify(res)) {
+        cachedData[cacheKey] = res;
+        renderMembersTable(res.data, page, res.pagination.totalPages); // อัปเดตเงียบๆ
+      }
+    } catch(e) { console.error("Background Members Sync Error:", e); }
+  }
+
+  function renderMembersTable(data, page, totalPages) {
+    currentMemberPage = page;
+    totalMemberPages = totalPages;
+    cachedData['members'] = data; // อัปเดต Cache กลางให้ระบบแก้ไขสถานะใช้อ้างอิง (Index) ได้
+    document.getElementById('table-members').innerHTML = data.map((i, idx) => {
+      let adminBadge = i.adminRole ? `<span class="badge bg-danger text-white ms-1" style="font-size:0.6rem;"><i class="fa-solid fa-star"></i> ${i.adminRole.replace('Admin-','')}</span>` : '';
+      return `<tr>
+        <td><strong class="text-primary">${i.memberId}</strong></td>
+        <td>${i.name} ${adminBadge}</td>
+        <td>${i.center}</td>
+        <td><span class="badge ${i.status.includes('เป็นสมาชิก') ? 'bg-success text-white' : 'bg-light text-dark border'}" onclick="changeMemberStatus(${idx})">${i.status} <i class="fa-solid fa-caret-down ms-1"></i></span></td>
+        <td><button class="action-btn text-danger" onclick="deleteRecord('members', '${i.memberId}', ${idx})"><i class="fa-solid fa-trash"></i></button></td>
+      </tr>`;
+    }).join('');
+    document.getElementById('page-info-members').innerText = `หน้า ${page}/${totalMemberPages || 1}`;
+  }
+
   function changeMemberPage(offset) { const n = currentMemberPage + offset; if(n >= 1 && n <= totalMemberPages) loadMembersData(n); }
   
   function openAddMemberModal() {
@@ -747,7 +804,7 @@
   
   function changeMemberStatus(idx) {
     const item = cachedData['members'][idx];
-    Swal.fire({ title: 'เปลี่ยนสถานะสมาชิก', html: `<select id="newMStatus" class="form-select"><option value="เป็นสมาชิก" ${item.status==='เป็นสมาชิก'?'selected':''}>เป็นสมาชิก</option><option value="พ้นสภาพ" ${item.status==='พ้นสภาพ'?'selected':''}>พ้นสภาพ</option><option value="เสียชีวิต" ${item.status==='เสียชีวิต'?'selected':''}>เสียชีวิต</option></select>`, showCancelButton: true, confirmButtonText: 'อัปเดต', preConfirm: () => ({ action: 'adminUpdateData', module: 'members', adminUid: currentAdminData.uid, targetId: item.memberId, updateField: 'status', updateValue: document.getElementById('newMStatus').value }) }).then(handleApiResponse);
+    Swal.fire({ title: 'เปลี่ยนสถานะสมาชิก', html: `<select id="newMStatus" class="form-select"><option value="เป็นสมาชิก" ${item.status==='เป็นสมาชิก'?'selected':''}>เป็นสมาชิก</option><option value="พ้นสภาพ" ${item.status==='พ้นสภาพ'?'selected':''}>พ้นสภาพ</option><option value="เสียชีวิต" ${item.status==='เสียชีวิต'?'selected':''}>เสียชีวิต</option></select>`, showCancelButton: true, confirmButtonText: 'อัปเดต', preConfirm: () => ({ action: 'adminUpdateData', module: 'members', adminUid: currentAdminData.uid, targetId: item.memberId, updateField: 'status', updateValue: document.getElementById('newMStatus').value }) }).then((res) => handleApiResponse(res, 'members'));
   }
 
   function switchLedgerTab(tab) {
@@ -764,7 +821,7 @@
       const type = document.querySelector('input[name="ieType"]:checked').value;
       const wallet = document.getElementById('ieWallet').value;
       const data = { action: 'processLedgerTransaction', adminUid: currentAdminData.uid, txType: type, amount: document.getElementById('ieAmt').value, sourceWallet: type.includes('จ่าย') ? wallet : null, targetWallet: type.includes('รับ') ? wallet : null, note: document.getElementById('ieNote').value };
-      showLoader(true); fetch(GAS_API_URL, { method: "POST", body: JSON.stringify(data) }).then(r=>r.json()).then(r => { showLoader(false); if(r.status==='success') { Swal.fire({icon:'success', title:'บันทึกสำเร็จ', timer:1500}); e.target.reset(); loadUniversalData('transactions'); loadDashboardOverview(); } else Swal.fire('Error', r.message, 'error'); });
+      showLoader(true); fetch(GAS_API_URL, { method: "POST", body: JSON.stringify(data) }).then(r=>r.json()).then(r => { showLoader(false); if(r.status==='success') { Swal.fire({icon:'success', title:'บันทึกสำเร็จ', timer:1500}); e.target.reset(); loadUniversalData('transactions', true); loadDashboardOverview(true); } else Swal.fire('Error', r.message, 'error'); });
   }
 
   function submitLedgerTF(e) {
@@ -772,12 +829,12 @@
       const from = document.getElementById('tfFrom').value; const to = document.getElementById('tfTo').value;
       if (from === to) { Swal.fire('แจ้งเตือน', 'บัญชีต้นทางและปลายทางต้องไม่ซ้ำกัน', 'warning'); return; }
       const data = { action: 'processLedgerTransaction', adminUid: currentAdminData.uid, txType: 'โอนย้ายสภาพคล่อง', amount: document.getElementById('tfAmt').value, sourceWallet: from, targetWallet: to, note: `โอนจาก ${from} ไป ${to}` };
-      showLoader(true); fetch(GAS_API_URL, { method: "POST", body: JSON.stringify(data) }).then(r=>r.json()).then(r => { showLoader(false); if(r.status==='success') { Swal.fire({icon:'success', title:'โอนเงินสำเร็จ', timer:1500}); e.target.reset(); loadUniversalData('transactions'); loadDashboardOverview(); } else Swal.fire('Error', r.message, 'error'); });
+      showLoader(true); fetch(GAS_API_URL, { method: "POST", body: JSON.stringify(data) }).then(r=>r.json()).then(r => { showLoader(false); if(r.status==='success') { Swal.fire({icon:'success', title:'โอนเงินสำเร็จ', timer:1500}); e.target.reset(); loadUniversalData('transactions', true); loadDashboardOverview(true); } else Swal.fire('Error', r.message, 'error'); });
   }
 
   function editTransaction(idx) {
     const item = cachedData['transactions'][idx];
-    Swal.fire({ title: 'แก้ไขยอดเงิน', html: `<input type="number" id="editTxAmt" class="form-control" value="${item.amount}">`, showCancelButton: true, confirmButtonText: 'บันทึก', preConfirm: () => ({ action: 'adminUpdateData', module: 'transactions', adminUid: currentAdminData.uid, targetId: item.txId, updateField: 'amount', updateValue: document.getElementById('editTxAmt').value }) }).then(handleApiResponse);
+    Swal.fire({ title: 'แก้ไขยอดเงิน', html: `<input type="number" id="editTxAmt" class="form-control" value="${item.amount}">`, showCancelButton: true, confirmButtonText: 'บันทึก', preConfirm: () => ({ action: 'adminUpdateData', module: 'transactions', adminUid: currentAdminData.uid, targetId: item.txId, updateField: 'amount', updateValue: document.getElementById('editTxAmt').value }) }).then((res) => handleApiResponse(res, 'transactions'));
   }
 
   function approveLedgerTransaction(idx) {
@@ -792,14 +849,14 @@
       cancelButtonText: 'ยกเลิก'
     }).then((result) => {
       if (result.isConfirmed) {
-        handleApiResponse({ isConfirmed: true, value: { action: 'adminUpdateStatus', module: 'transactions', adminUid: currentAdminData.uid, rowIndex: item.rowIndex, status: 'อนุมัติแล้ว' } });
+        handleApiResponse({ isConfirmed: true, value: { action: 'adminUpdateStatus', module: 'transactions', adminUid: currentAdminData.uid, rowIndex: item.rowIndex, status: 'อนุมัติแล้ว' } }, 'transactions');
       }
     });
   }
 
   // 🏥 Claims CRUD
   function approveClaim(idx) {
-    const item = cachedData['claims'][idx];
+    const item = cachedData['claims'].list[idx]; // แก้เป็น .list สำหรับ claims 
     Swal.fire({ 
       title: 'จัดการสวัสดิการ', 
       html: `
@@ -820,7 +877,7 @@
         status: document.getElementById('claimStatus').value, 
         updateData: { amount: document.getElementById('claimPay').value, wallet: document.getElementById('claimWallet').value } 
       }) 
-    }).then(handleApiResponse);
+    }).then((res) => handleApiResponse(res, 'claims'));
   }
   function renderClaimsChart(data) {
      if(!data || data.length === 0) return;
@@ -828,7 +885,7 @@
      charts.claims = new Chart(document.getElementById('claimsChart').getContext('2d'), { type: 'bar', data: { labels: data.map(d => d.name), datasets: [{ label: 'จำนวนคำขอ', data: data.map(d=>d.count), backgroundColor: '#3B82F6', borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false } });
   }
 
-  // 🌟 [Phase 2] ระบบแอดมินขอรับสวัสดิการแทนสมาชิก (Proxy Claim Modal)
+  // 🌟 ระบบแอดมินขอรับสวัสดิการแทนสมาชิก (Proxy Claim Modal)
   async function openAdminProxyClaimModal() {
     showLoader(true, "กำลังดึงรายชื่อสมาชิก...");
     const res = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "getMemberListForAdmin", adminUid: currentAdminData.uid }) }).then(r=>r.json());
@@ -877,7 +934,7 @@
           note: document.getElementById('proxyClaimNote').value
         };
       }
-    }).then(handleApiResponse);
+    }).then((res) => handleApiResponse(res, 'claims'));
   }
 
   // ดึงสิทธิ์ของสมาชิกที่เลือกใน Modal เบิกแทน
@@ -915,7 +972,7 @@
     amtInput.max = max;
   }
 
- // 🌟 [Phase 2.5] ระบบแอดมินบันทึกเงินสมทบแทนสมาชิก (Smart Filter & Auto-Fill)
+ // 🌟 ระบบแอดมินบันทึกเงินสมทบแทนสมาชิก (Smart Filter & Auto-Fill)
   async function openAdminProxyContributionModal() {
     showLoader(true, "กำลังดึงรายชื่อผู้ที่ค้างชำระในศูนย์ของคุณ...");
     
@@ -967,10 +1024,10 @@
           note: document.getElementById('proxyContribNote').value
         };
       }
-    }).then(handleApiResponse);
+    }).then((res) => handleApiResponse(res, 'transactions'));
   }
 
-  // ⚖️ Rules CRUD (🌟 Phase 2 อัปเดตระเบียบ 4 มิติ)
+  // ⚖️ Rules CRUD (🌟 ระเบียบ 4 มิติ)
   function openAddRuleModal() {
     Swal.fire({ 
       title: 'เพิ่มระเบียบสวัสดิการ (4 มิติ)', 
@@ -1005,7 +1062,7 @@
         maxPerYear: document.getElementById('addRuleMaxYear').value,
         docs: document.getElementById('addRuleDocs').value
       }) 
-    }).then(handleApiResponse);
+    }).then((res) => handleApiResponse(res, 'rules'));
   }
 
   // 🛡️ Admins Settings CRUD
@@ -1038,87 +1095,134 @@
         const [targetUid, targetName] = selectedVal.split('|');
         return { action: 'adminAddAdmin', adminUid: currentAdminData.uid, targetUid: targetUid, name: targetName, role: document.getElementById('addAdmRole').value, center: document.getElementById('addAdmCenter').value };
       } 
-    }).then(handleApiResponse);
+    }).then((res) => handleApiResponse(res, 'admins'));
   }
   function changeAdminStatus(adminId, currStatus) {
       if(currentAdminData.role !== 'Admin-Master') return;
       const newStatus = currStatus === 'ใช้งาน' ? 'ระงับ' : 'ใช้งาน';
-      Swal.fire({ title: 'เปลี่ยนสถานะ', text: `เปลี่ยนเป็น: ${newStatus}`, showCancelButton:true, confirmButtonText:'ตกลง' }).then(r=>{ if(r.isConfirmed){ fetch(GAS_API_URL, {method:'POST', body:JSON.stringify({action:'adminUpdateData', module:'admins', adminUid:currentAdminData.uid, targetId:adminId, updateField:'status', updateValue:newStatus})}).then(()=>loadUniversalData('admins')) } });
+      Swal.fire({ title: 'เปลี่ยนสถานะ', text: `เปลี่ยนเป็น: ${newStatus}`, showCancelButton:true, confirmButtonText:'ตกลง' }).then(r=>{ if(r.isConfirmed){ fetch(GAS_API_URL, {method:'POST', body:JSON.stringify({action:'adminUpdateData', module:'admins', adminUid:currentAdminData.uid, targetId:adminId, updateField:'status', updateValue:newStatus})}).then(()=>loadUniversalData('admins', true)) } });
   }
 
-  // 🛠️ Universal Data Fetcher พร้อมการจัดการข้อผิดพลาด
-  async function loadUniversalData(module) {
+  // 🛠️ ระบบข้อมูลส่วนกลาง (SWR) สำหรับ Transactions, Claims, Rules, Admins
+  async function loadUniversalData(module, forceRefresh = false) {
+    // ⚡ ดึงของเก่ามาโชว์ก่อน (ถ้ามี)
+    if (!forceRefresh && cachedData[module]) {
+      renderUniversalTable(module, cachedData[module]);
+      fetchUniversalBackground(module); // แอบอัปเดตเบื้องหลัง
+      return;
+    }
+
     showLoader(true);
     try {
       const res = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "getAdminData", module: module, adminUid: currentAdminData.uid }) }).then(r=>r.json());
       if(res.status === 'success') {
         cachedData[module] = res.data;
-        if (module === 'transactions') {
-          document.getElementById(`table-transactions`).innerHTML = res.data.map((i, idx) => `<tr><td>${i.date}</td><td>${i.name}</td><td>${i.amount}</td><td>${i.status}</td></tr>`).join('');
-          document.getElementById('ledger-tx-list').innerHTML = res.data.map((i, idx) => {
-              const isTransfer = String(i.type).includes('โอน'); const isIncome = !i.isOut && !isTransfer; const isExpense = i.isOut && !isTransfer;
-              let iconClass = isIncome ? 'tx-income' : (isExpense ? 'tx-expense' : 'tx-transfer');
-              let icon = isIncome ? 'fa-arrow-up' : (isExpense ? 'fa-arrow-down' : 'fa-arrow-right-arrow-left');
-              let sign = isIncome ? '+' : (isExpense ? '-' : '');
-              
-              let slipBtn = (i.url && i.url !== '-' && i.url !== 'undefined' && i.url.startsWith('http')) 
-                  ? `<button class="action-btn text-info" onclick="window.open('${i.url}', '_blank')" title="ดูสลิปโอนเงิน"><i class="fa-solid fa-file-invoice"></i></button>` : '';
-              let approveBtn = (i.status === 'รอตรวจสอบ') 
-                  ? `<button class="action-btn text-success" onclick="approveLedgerTransaction(${idx})" title="ตรวจสอบและอนุมัติ"><i class="fa-solid fa-circle-check"></i></button>` : '';
-
-              return `<div class="tx-item ${iconClass}">
-                  <div class="d-flex align-items-center gap-3">
-                      <div class="tx-icon"><i class="fa-solid ${icon}"></i></div>
-                      <div><h6 class="mb-0 fw-bold text-dark" style="font-size:0.95rem;">${i.type}</h6><small class="text-muted" style="font-size:0.75rem;">${i.date} | ${i.name}</small></div>
-                  </div>
-                  <div class="text-end flex-grow-1 px-3">
-                      <h6 class="mb-0 fw-bold tx-amount">${sign}฿${parseFloat(i.amount).toLocaleString('th-TH',{minimumFractionDigits:2})}</h6>
-                      <small class="badge ${i.status==='อนุมัติแล้ว'?'bg-success text-white':(i.status==='รอตรวจสอบ'?'bg-warning text-dark':'bg-light text-dark border')} mt-1" style="font-size:0.65rem;">${i.status}</small>
-                  </div>
-                  <div class="ms-2 ps-3 border-start d-flex flex-column gap-2">
-                      ${slipBtn}
-                      ${approveBtn}
-                      <button class="action-btn text-primary" onclick="editTransaction(${idx})" title="แก้ไขยอดเงิน"><i class="fa-solid fa-pen" style="font-size:0.8rem;"></i></button> 
-                      <button class="action-btn text-danger" onclick="deleteRecord('transactions', '${i.txId}', ${idx})" title="ลบรายการ"><i class="fa-solid fa-trash" style="font-size:0.8rem;"></i></button>
-                  </div>
-              </div>`;
-          }).join('');
-        }
-        else if (module === 'claims') { 
-          document.getElementById(`table-claims`).innerHTML = res.data.list.map((i, idx) => {
-              let docBtn = (i.docUrl && i.docUrl !== '-' && i.docUrl !== 'undefined' && i.docUrl.startsWith('http')) 
-                  ? `<button class="btn btn-sm btn-info rounded-pill px-2 text-white me-1" onclick="window.open('${i.docUrl}', '_blank')" title="ดูเอกสารแนบ"><i class="fa-solid fa-file-medical"></i></button>` : '';
-              return `<tr><td>${i.name}</td><td>${i.welfareName}</td><td class="fw-bold text-primary">${i.amount} ฿</td><td><span class="badge ${i.status==='อนุมัติแล้ว'?'bg-success text-white':(i.status==='ปฏิเสธ'?'bg-danger text-white':'bg-warning text-dark')}">${i.status}</span></td><td>${docBtn}<button class="btn btn-sm btn-primary rounded-pill px-3" onclick="approveClaim(${idx})"><i class="fa-solid fa-gear"></i> จัดการ</button></td></tr>`;
-          }).join(''); 
-          renderClaimsChart(res.data.chart); 
-        }
-        else if (module === 'rules') {
-          document.getElementById(`table-rules`).innerHTML = res.data.map((i, idx) => `<tr>
-            <td><strong class="text-dark">${i.welfareName}</strong></td>
-            <td>${i.minDays} วัน</td>
-            <td class="text-primary fw-bold">${i.maxPerClaim} ฿</td>
-            <td class="text-warning text-dark fw-bold">${i.maxTimesPerYear} ครั้ง</td>
-            <td class="text-danger fw-bold">${i.maxPerYear} ฿</td>
-            <td><button class="action-btn text-danger" onclick="deleteRecord('rules', '${i.ruleId}', ${idx})"><i class="fa-solid fa-trash"></i></button></td>
-          </tr>`).join('');
-        }
-        else if (module === 'admins') document.getElementById(`table-admins`).innerHTML = res.data.map((i, idx) => `<tr><td><strong class="text-dark">${i.name}</strong></td><td>${i.role} / ${i.center}</td><td><span class="badge ${i.status==='ใช้งาน'?'bg-success':'bg-danger'} text-white" onclick="changeAdminStatus('${i.adminId}', '${i.status}')">${i.status} <i class="fa-solid fa-caret-down"></i></span></td><td><button class="action-btn text-danger" onclick="deleteRecord('admins', '${i.adminId}', ${idx})"><i class="fa-solid fa-trash"></i></button></td></tr>`).join('');
+        renderUniversalTable(module, res.data);
       }
     } catch (e) {
         Swal.fire({ toast: true, position: 'top-end', icon: 'error', title: 'ดึงข้อมูลไม่สำเร็จ ขัดข้องทางเครือข่าย', showConfirmButton: false, timer: 3000 });
         console.error(`Load ${module} Error:`, e);
-    } finally {
-        showLoader(false);
+    } finally { showLoader(false); }
+  }
+
+  async function fetchUniversalBackground(module) {
+    try {
+      const res = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "getAdminData", module: module, adminUid: currentAdminData.uid }) }).then(r=>r.json());
+      if(res.status === 'success' && JSON.stringify(cachedData[module]) !== JSON.stringify(res.data)) {
+        cachedData[module] = res.data;
+        renderUniversalTable(module, res.data); // อัปเดตเงียบๆ
+      }
+    } catch(e) { console.error(`Background Universal Sync Error (${module}):`, e); }
+  }
+
+  function renderUniversalTable(module, data) {
+    if (module === 'transactions') {
+      document.getElementById(`table-transactions`).innerHTML = data.map((i, idx) => `<tr><td>${i.date}</td><td>${i.name}</td><td>${i.amount}</td><td>${i.status}</td></tr>`).join('');
+      document.getElementById('ledger-tx-list').innerHTML = data.map((i, idx) => {
+          const isTransfer = String(i.type).includes('โอน'); const isIncome = !i.isOut && !isTransfer; const isExpense = i.isOut && !isTransfer;
+          let iconClass = isIncome ? 'tx-income' : (isExpense ? 'tx-expense' : 'tx-transfer');
+          let icon = isIncome ? 'fa-arrow-up' : (isExpense ? 'fa-arrow-down' : 'fa-arrow-right-arrow-left');
+          let sign = isIncome ? '+' : (isExpense ? '-' : '');
+          
+          let slipBtn = (i.url && i.url !== '-' && i.url !== 'undefined' && i.url.startsWith('http')) 
+              ? `<button class="action-btn text-info" onclick="window.open('${i.url}', '_blank')" title="ดูสลิปโอนเงิน"><i class="fa-solid fa-file-invoice"></i></button>` : '';
+          let approveBtn = (i.status === 'รอตรวจสอบ') 
+              ? `<button class="action-btn text-success" onclick="approveLedgerTransaction(${idx})" title="ตรวจสอบและอนุมัติ"><i class="fa-solid fa-circle-check"></i></button>` : '';
+
+          return `<div class="tx-item ${iconClass}">
+              <div class="d-flex align-items-center gap-3">
+                  <div class="tx-icon"><i class="fa-solid ${icon}"></i></div>
+                  <div><h6 class="mb-0 fw-bold text-dark" style="font-size:0.95rem;">${i.type}</h6><small class="text-muted" style="font-size:0.75rem;">${i.date} | ${i.name}</small></div>
+              </div>
+              <div class="text-end flex-grow-1 px-3">
+                  <h6 class="mb-0 fw-bold tx-amount">${sign}฿${parseFloat(i.amount).toLocaleString('th-TH',{minimumFractionDigits:2})}</h6>
+                  <small class="badge ${i.status==='อนุมัติแล้ว'?'bg-success text-white':(i.status==='รอตรวจสอบ'?'bg-warning text-dark':'bg-light text-dark border')} mt-1" style="font-size:0.65rem;">${i.status}</small>
+              </div>
+              <div class="ms-2 ps-3 border-start d-flex flex-column gap-2">
+                  ${slipBtn}
+                  ${approveBtn}
+                  <button class="action-btn text-primary" onclick="editTransaction(${idx})" title="แก้ไขยอดเงิน"><i class="fa-solid fa-pen" style="font-size:0.8rem;"></i></button> 
+                  <button class="action-btn text-danger" onclick="deleteRecord('transactions', '${i.txId}', ${idx})" title="ลบรายการ"><i class="fa-solid fa-trash" style="font-size:0.8rem;"></i></button>
+              </div>
+          </div>`;
+      }).join('');
+    }
+    else if (module === 'claims') { 
+      document.getElementById(`table-claims`).innerHTML = data.list.map((i, idx) => {
+          let docBtn = (i.docUrl && i.docUrl !== '-' && i.docUrl !== 'undefined' && i.docUrl.startsWith('http')) 
+              ? `<button class="btn btn-sm btn-info rounded-pill px-2 text-white me-1" onclick="window.open('${i.docUrl}', '_blank')" title="ดูเอกสารแนบ"><i class="fa-solid fa-file-medical"></i></button>` : '';
+          return `<tr><td>${i.name}</td><td>${i.welfareName}</td><td class="fw-bold text-primary">${i.amount} ฿</td><td><span class="badge ${i.status==='อนุมัติแล้ว'?'bg-success text-white':(i.status==='ปฏิเสธ'?'bg-danger text-white':'bg-warning text-dark')}">${i.status}</span></td><td>${docBtn}<button class="btn btn-sm btn-primary rounded-pill px-3" onclick="approveClaim(${idx})"><i class="fa-solid fa-gear"></i> จัดการ</button></td></tr>`;
+      }).join(''); 
+      renderClaimsChart(data.chart); 
+    }
+    else if (module === 'rules') {
+      document.getElementById(`table-rules`).innerHTML = data.map((i, idx) => `<tr>
+        <td><strong class="text-dark">${i.welfareName}</strong></td>
+        <td>${i.minDays} วัน</td>
+        <td class="text-primary fw-bold">${i.maxPerClaim} ฿</td>
+        <td class="text-warning text-dark fw-bold">${i.maxTimesPerYear} ครั้ง</td>
+        <td class="text-danger fw-bold">${i.maxPerYear} ฿</td>
+        <td><button class="action-btn text-danger" onclick="deleteRecord('rules', '${i.ruleId}', ${idx})"><i class="fa-solid fa-trash"></i></button></td>
+      </tr>`).join('');
+    }
+    else if (module === 'admins') {
+      document.getElementById(`table-admins`).innerHTML = data.map((i, idx) => `<tr><td><strong class="text-dark">${i.name}</strong></td><td>${i.role} / ${i.center}</td><td><span class="badge ${i.status==='ใช้งาน'?'bg-success':'bg-danger'} text-white" onclick="changeAdminStatus('${i.adminId}', '${i.status}')">${i.status} <i class="fa-solid fa-caret-down"></i></span></td><td><button class="action-btn text-danger" onclick="deleteRecord('admins', '${i.adminId}', ${idx})"><i class="fa-solid fa-trash"></i></button></td></tr>`).join('');
     }
   }
 
-  async function handleApiResponse(res) {
-    if(res.isConfirmed) { showLoader(true); const r = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify(res.value) }).then(r=>r.json()); showLoader(false); if(r.status==='success') { Swal.fire('สำเร็จ', '', 'success'); location.reload(); } else Swal.fire('Error', r.message, 'error'); }
+  // อัปเดตฟังก์ชันจัดการ Response ให้รองรับการบังคับล้าง Cache (Force Refresh)
+  async function handleApiResponse(res, moduleToRefresh) {
+    if(res.isConfirmed) { 
+      showLoader(true); 
+      const r = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify(res.value) }).then(r=>r.json()); 
+      showLoader(false); 
+      if(r.status==='success') { 
+        Swal.fire({icon: 'success', title: 'สำเร็จ', toast: true, position: 'top-end', showConfirmButton: false, timer: 1500}); 
+        
+        // บังคับดึงข้อมูลใหม่ตามโมดูลที่แก้ไข
+        if(moduleToRefresh === 'members') loadMembersData(currentMemberPage, true);
+        else if (moduleToRefresh) {
+            loadUniversalData(moduleToRefresh, true);
+            if(moduleToRefresh === 'transactions' || moduleToRefresh === 'claims') loadDashboardOverview(true); // อัปเดตหน้าแรกด้วย
+        } else {
+            location.reload(); // กรณีหาโมดูลไม่เจอ ให้รีเฟรชทั้งหน้าเหมือนเดิม
+        }
+      } else Swal.fire('Error', r.message, 'error'); 
+    }
   }
 
   function deleteRecord(module, id, idx) {
     Swal.fire({ title: 'ยืนยันการลบ?', text: "ข้อมูลนี้จะถูกลบออกจากระบบ", icon: 'warning', showCancelButton: true, confirmButtonColor: '#EF4444' }).then(async (result) => {
-      if (result.isConfirmed) { showLoader(true); const r = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: 'adminDeleteRecord', adminUid: currentAdminData.uid, module: module, targetId: id }) }).then(r=>r.json()); showLoader(false); if(r.status==='success') { Swal.fire('ลบสำเร็จ', '', 'success'); if(module==='members') loadMembersData(currentMemberPage); else { loadUniversalData(module); loadDashboardOverview(); } } else Swal.fire('Error', r.message, 'error'); }
+      if (result.isConfirmed) { 
+        showLoader(true); 
+        const r = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: 'adminDeleteRecord', adminUid: currentAdminData.uid, module: module, targetId: id }) }).then(r=>r.json()); 
+        showLoader(false); 
+        if(r.status==='success') { 
+          Swal.fire({icon: 'success', title: 'ลบสำเร็จ', toast: true, position: 'top-end', showConfirmButton: false, timer: 1500}); 
+          if(module==='members') loadMembersData(currentMemberPage, true); 
+          else { loadUniversalData(module, true); loadDashboardOverview(true); } 
+        } else Swal.fire('Error', r.message, 'error'); 
+      }
     });
   }
 </script>
