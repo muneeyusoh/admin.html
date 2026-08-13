@@ -273,6 +273,20 @@
             </div>
           </div>
         </div>
+        
+        <!-- 🎨 เพิ่มคำอธิบายสีของแต่ละศูนย์ประสานงาน -->
+        <div id="mapLegend" class="mt-3 p-3 bg-white border rounded-4 shadow-sm small" style="display: none;">
+          <div class="fw-bold mb-2 text-dark"><i class="fa-solid fa-list-ul me-2"></i>สัญลักษณ์แยกตามศูนย์ชุมชน:</div>
+          <div class="d-flex flex-wrap gap-3">
+            <div class="d-flex align-items-center"><img src="http://maps.google.com/mapfiles/ms/icons/blue-dot.png" style="width:24px; height:24px;" class="me-1"> ปารีย์</div>
+            <div class="d-flex align-items-center"><img src="http://maps.google.com/mapfiles/ms/icons/green-dot.png" style="width:24px; height:24px;" class="me-1"> เกียร์</div>
+            <div class="d-flex align-items-center"><img src="http://maps.google.com/mapfiles/ms/icons/yellow-dot.png" style="width:24px; height:24px;" class="me-1"> ราษฎร์สามัคคี</div>
+            <div class="d-flex align-items-center"><img src="http://maps.google.com/mapfiles/ms/icons/purple-dot.png" style="width:24px; height:24px;" class="me-1"> กลันตัน</div>
+            <div class="d-flex align-items-center"><img src="http://maps.google.com/mapfiles/ms/icons/orange-dot.png" style="width:24px; height:24px;" class="me-1"> มาโมง</div>
+            <div class="d-flex align-items-center"><img src="http://maps.google.com/mapfiles/ms/icons/pink-dot.png" style="width:24px; height:24px;" class="me-1"> สุคิริน</div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -415,6 +429,18 @@
   let heatmapLayer = null;
   let mapMarkers = [];
 
+  // 🎨 ฟังก์ชันเลือกสีหมุดตามศูนย์ประสานงาน (Color Mapping)
+  function getMarkerColorForCenter(centerName) {
+    const name = centerName || "";
+    if (name.includes('ปารีย์')) return 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png';
+    if (name.includes('เกียร์')) return 'http://maps.google.com/mapfiles/ms/icons/green-dot.png';
+    if (name.includes('ราษฎร์สามัคคี')) return 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png';
+    if (name.includes('กลันตัน')) return 'http://maps.google.com/mapfiles/ms/icons/purple-dot.png';
+    if (name.includes('มาโมง')) return 'http://maps.google.com/mapfiles/ms/icons/orange-dot.png';
+    if (name.includes('สุคิริน')) return 'http://maps.google.com/mapfiles/ms/icons/pink-dot.png';
+    return 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'; // ค่าเริ่มต้น
+  }
+
   document.addEventListener("DOMContentLoaded", async () => { 
     await liff.init({ liffId: LIFF_ID_ADMIN });
     if (liff.isLoggedIn()) verifyAdminAuth(liff.getDecodedIDToken().sub || (await liff.getProfile()).userId);
@@ -524,7 +550,6 @@
 
   // 🌟 [อัปเดตใหม่] 🗺️ ระบบเชื่อมต่อและควบคุมแผนที่ภูมิสารสนเทศ (GIS Control Hub)
   async function loadGISMap() {
-    // กำหนดจุดศูนย์กลางของแผนที่ไปที่อำเภอสุคิริน
     if (!mapInstance) {
       const mapOptions = { 
         zoom: 12, 
@@ -533,10 +558,9 @@
         mapTypeControl: true,
         streetViewControl: false
       };
-      // ตรวจสอบว่า Google Maps ถูกโหลดหรือยัง
       if (typeof google === 'object' && typeof google.maps === 'object') {
         mapInstance = new google.maps.Map(document.getElementById("adminGISMap"), mapOptions);
-        switchMapMode('micro'); // เริ่มต้นด้วย Micro View
+        switchMapMode('micro'); 
       } else {
         document.getElementById('adminGISMap').innerHTML = `<div class="text-danger fw-bold"><i class="fa-solid fa-triangle-exclamation"></i> ไม่สามารถเชื่อมต่อ Google Maps API ได้ กรุณาตรวจสอบ API Key</div>`;
       }
@@ -548,69 +572,101 @@
   async function switchMapMode(mode) {
     showLoader(true, "กำลังโหลดข้อมูลพิกัดภูมิศาสตร์...");
     
-    // เคลียร์ข้อมูลแผนที่เดิมออกก่อน
-    if (heatmapLayer) heatmapLayer.setMap(null);
-    mapMarkers.forEach(m => m.setMap(null));
+    if (heatmapLayer) { heatmapLayer.setMap(null); heatmapLayer = null; }
+    if (mapMarkers && mapMarkers.length > 0) { mapMarkers.forEach(m => m.setMap(null)); }
     mapMarkers = [];
 
     const alertInfo = document.getElementById('mapAlertInfo');
     const alertText = document.getElementById('mapAlertText');
+    const mapLegend = document.getElementById('mapLegend');
 
     try {
       if (mode === 'macro') {
-        // 🔥 โหมด Macro View: แผนที่ความหนาแน่น (Data Anonymization)
+        mapLegend.style.display = 'none'; // ซ่อนคำอธิบายสัญลักษณ์
         alertInfo.className = "alert alert-warning border-0 bg-warning bg-opacity-10 text-warning small fw-bold mb-4";
         alertText.innerHTML = "กำลังแสดงผล <b>Macro View (แผนที่ความร้อน)</b> - ข้อมูลถูกเข้ารหัสไม่ระบุตัวตน ปลอดภัยตามมาตรฐาน PDPA ใช้สำหรับรายงานภาพรวมได้ทันที";
-        
-        mapInstance.setMapTypeId('satellite'); // เปลี่ยนเป็นภาพดาวเทียมให้ดูอลังการ
+        mapInstance.setMapTypeId('satellite');
         
         const res = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "getMapDataMacro" }) }).then(r=>r.json());
-        if (res.status === 'success' && res.data.length > 0) {
-          const heatMapPoints = res.data.map(p => new google.maps.LatLng(p.lat, p.lng));
-          heatmapLayer = new google.maps.visualization.HeatmapLayer({ 
-            data: heatMapPoints, 
-            map: mapInstance, 
-            radius: 30, // ปรับรัศมีความร้อนให้ดูสวยงาม
-            opacity: 0.8
+        
+        if (res.status === 'success' && res.data && res.data.length > 0) {
+          const bounds = new google.maps.LatLngBounds();
+          const heatMapPoints = [];
+          
+          res.data.forEach(p => {
+            if(p.lat && p.lng) {
+              const latlng = new google.maps.LatLng(parseFloat(p.lat), parseFloat(p.lng));
+              heatMapPoints.push(latlng);
+              bounds.extend(latlng);
+            }
           });
+          
+          if(heatMapPoints.length > 0) {
+            heatmapLayer = new google.maps.visualization.HeatmapLayer({ 
+              data: heatMapPoints, map: mapInstance, radius: 30, opacity: 0.8
+            });
+            mapInstance.fitBounds(bounds); 
+          }
+        } else if (res.status === 'error') {
+            Swal.fire('ข้อผิดพลาด', 'API หลังบ้านยังไม่ได้ตั้งค่า หรือ ' + res.message, 'error');
+        } else {
+            Swal.fire('แจ้งเตือน', 'ยังไม่มีสมาชิกที่บันทึกพิกัด GPS ในระบบ', 'info');
         }
       } else {
-        // 📍 โหมด Micro View: ปักหมุดรายบุคคล (Need-to-Know Basis)
+        mapLegend.style.display = 'block'; // 🎨 แสดงคำอธิบายสัญลักษณ์สี
         alertInfo.className = "alert alert-info border-0 bg-primary bg-opacity-10 text-primary small fw-bold mb-4";
         alertText.innerHTML = "กำลังแสดงผล <b>Micro View (ปักหมุดบุคคล)</b> - แผนที่นี้ใช้สำหรับการจัดเส้นทาง (Routing) และปฏิบัติงานในพื้นที่เท่านั้น ห้ามเผยแพร่สู่สาธารณะ";
-        
-        mapInstance.setMapTypeId('roadmap'); // แผนที่ถนนเพื่อการเดินทาง
+        mapInstance.setMapTypeId('roadmap');
         
         const res = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "getMapDataMicro", adminUid: currentAdminData.uid }) }).then(r=>r.json());
-        if (res.status === 'success' && res.data.length > 0) {
+        
+        if (res.status === 'success' && res.data && res.data.length > 0) {
           const infoWindow = new google.maps.InfoWindow();
+          const bounds = new google.maps.LatLngBounds();
+          let hasValidPins = false;
           
           res.data.forEach(m => {
-            const marker = new google.maps.Marker({ 
-              position: { lat: m.lat, lng: m.lng }, 
-              map: mapInstance, 
-              title: m.name,
-              animation: google.maps.Animation.DROP
-            });
-            
-            // ใส่ Event เมื่อแอดมินคลิกที่หมุด
-            marker.addListener("click", () => {
-              const statusColor = m.status.includes('เป็นสมาชิก') ? 'bg-success' : 'bg-warning text-dark';
-              const contentHtml = `
-                <div style="font-family: 'Prompt', sans-serif; min-width: 220px; padding: 5px;">
-                  <h6 class="fw-bold mb-1 text-primary"><i class="fa-solid fa-house-chimney-user me-1"></i> ${m.name}</h6>
-                  <p class="mb-1 small text-muted"><i class="fa-solid fa-phone me-1"></i> ${m.phone || 'ไม่มีข้อมูล'}</p>
-                  <span class="badge ${statusColor} mb-3 shadow-sm">${m.status}</span><br>
-                  <a href="https://www.google.com/maps/dir/?api=1&destination=${m.lat},${m.lng}" target="_blank" class="btn btn-sm btn-primary w-100 text-white rounded-pill fw-bold shadow-sm">
-                    <i class="fa-solid fa-location-arrow me-1"></i> นำทางไปบ้านสมาชิก
-                  </a>
-                </div>
-              `;
-              infoWindow.setContent(contentHtml);
-              infoWindow.open(mapInstance, marker);
-            });
-            mapMarkers.push(marker);
+            if(m.lat && m.lng) {
+              hasValidPins = true;
+              const pos = { lat: parseFloat(m.lat), lng: parseFloat(m.lng) };
+              
+              // 🎨 สร้างหมุดพร้อมสีที่แยกตามศูนย์ประสานงาน
+              const marker = new google.maps.Marker({ 
+                position: pos, 
+                map: mapInstance, 
+                title: m.name,
+                icon: getMarkerColorForCenter(m.center), // ดึงสีจากฟังก์ชัน
+                animation: google.maps.Animation.DROP
+              });
+              bounds.extend(pos);
+              
+              marker.addListener("click", () => {
+                const statusColor = m.status.includes('เป็นสมาชิก') ? 'bg-success' : 'bg-warning text-dark';
+                const contentHtml = `
+                  <div style="font-family: 'Prompt', sans-serif; min-width: 220px; padding: 5px;">
+                    <h6 class="fw-bold mb-1 text-primary"><i class="fa-solid fa-house-chimney-user me-1"></i> ${m.name}</h6>
+                    <p class="mb-1 small text-muted"><i class="fa-solid fa-map-pin me-1"></i> ศูนย์ฯ: ${m.center || 'ไม่ระบุ'}</p>
+                    <p class="mb-1 small text-muted"><i class="fa-solid fa-phone me-1"></i> ${m.phone || 'ไม่มีข้อมูล'}</p>
+                    <span class="badge ${statusColor} mb-3 shadow-sm">${m.status}</span><br>
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=${m.lat},${m.lng}" target="_blank" class="btn btn-sm btn-primary w-100 text-white rounded-pill fw-bold shadow-sm">
+                      <i class="fa-solid fa-location-arrow me-1"></i> นำทางไปบ้านสมาชิก
+                    </a>
+                  </div>
+                `;
+                infoWindow.setContent(contentHtml);
+                infoWindow.open(mapInstance, marker);
+              });
+              mapMarkers.push(marker);
+            }
           });
+          
+          if(hasValidPins) {
+             mapInstance.fitBounds(bounds); 
+          }
+        } else if (res.status === 'error') {
+            Swal.fire('ข้อผิดพลาด', 'API หลังบ้านยังไม่ได้ตั้งค่า หรือ ' + res.message, 'error');
+        } else {
+            Swal.fire('แจ้งเตือน', 'ยังไม่มีสมาชิกที่บันทึกพิกัด GPS ในระบบ', 'info');
         }
       }
     } catch(e) {
